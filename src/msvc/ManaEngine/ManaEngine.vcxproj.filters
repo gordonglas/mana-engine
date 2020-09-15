@@ -8,13 +8,25 @@
     <Filter Include="inc">
       <UniqueIdentifier>{1016d136-a701-474c-bae5-2d35c47e3e16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\base">
+      <UniqueIdentifier>{9cdd2a5c-672e-4002-905e-c4bd18547ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\base">
+      <UniqueIdentifier>{e3882c85-dc33-40fa-bcfa-0ddc2bc4c46e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\target">
+      <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ManaEngine.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\..\base\command-line.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\strings-win.cpp">
+      <Filter>src\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -22,6 +34,18 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\framework.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\command-line.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\target\target-win.h">
+      <Filter>inc\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\strings.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\macros.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

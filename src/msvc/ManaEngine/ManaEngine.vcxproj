@@ -98,38 +98,38 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -237,11 +237,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\inc\base\command-line.h" />
+    <ClInclude Include="..\..\..\inc\base\strings.h" />
     <ClInclude Include="..\..\..\inc\framework.h" />
+    <ClInclude Include="..\..\..\inc\macros.h" />
+    <ClInclude Include="..\..\..\inc\target\target-win.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ManaEngine.cpp" />
+    <ClCompile Include="..\..\base\command-line.cpp" />
+    <ClCompile Include="..\..\base\strings-win.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>
