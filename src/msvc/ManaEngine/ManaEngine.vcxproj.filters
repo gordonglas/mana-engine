@@ -17,6 +17,12 @@
     <Filter Include="inc\target">
       <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\audio">
+      <UniqueIdentifier>{6e491162-b081-47d3-9802-6a156d12dfb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\audio">
+      <UniqueIdentifier>{7a88a899-1852-4dcf-831e-5c182bfecb53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -28,25 +34,46 @@
     <ClCompile Include="..\..\base\strings-win.cpp">
       <Filter>src\base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\base\log-win.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\lock-win.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\audio\audio.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\com.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\framework.h">
-      <Filter>inc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\inc\base\command-line.h">
       <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\target\target-win.h">
-      <Filter>inc\target</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\base\strings.h">
       <Filter>inc\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\macros.h">
+    <ClInclude Include="..\..\..\inc\target\target-os.h">
+      <Filter>inc\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mana-globals.h">
       <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\log.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\lock.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\audio.h">
+      <Filter>inc\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\com.h">
+      <Filter>inc\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

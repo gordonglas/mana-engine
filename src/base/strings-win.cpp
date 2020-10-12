@@ -1,6 +1,6 @@
 #include "pch.h"
+#include "target/target-os.h"
 #include "base/strings.h"
-#include "target/target-win.h"
 #include <fstream>
 
 namespace Mana

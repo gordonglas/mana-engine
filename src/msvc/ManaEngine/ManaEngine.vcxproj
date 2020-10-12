@@ -100,37 +100,43 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\xaudio2\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\xaudio2\$(Configuration)\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\xaudio2\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\xaudio2\$(Configuration)\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\xaudio2\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\xaudio2\$(Configuration)\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\xaudio2\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\xaudio2\$(Configuration)\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\xaudio2\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\xaudio2\$(Configuration)\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\xaudio2\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\xaudio2\$(Configuration)\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -141,6 +147,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -157,6 +164,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -175,6 +183,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -193,6 +202,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -209,6 +219,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -227,6 +238,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -237,15 +249,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\inc\audio\audio.h" />
+    <ClInclude Include="..\..\..\inc\base\com.h" />
     <ClInclude Include="..\..\..\inc\base\command-line.h" />
+    <ClInclude Include="..\..\..\inc\base\lock.h" />
+    <ClInclude Include="..\..\..\inc\base\log.h" />
     <ClInclude Include="..\..\..\inc\base\strings.h" />
-    <ClInclude Include="..\..\..\inc\framework.h" />
-    <ClInclude Include="..\..\..\inc\macros.h" />
-    <ClInclude Include="..\..\..\inc\target\target-win.h" />
+    <ClInclude Include="..\..\..\inc\mana-globals.h" />
+    <ClInclude Include="..\..\..\inc\target\target-os.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\audio\audio.cpp" />
+    <ClCompile Include="..\..\base\com.cpp" />
     <ClCompile Include="..\..\base\command-line.cpp" />
+    <ClCompile Include="..\..\base\lock-win.cpp" />
+    <ClCompile Include="..\..\base\log-win.cpp" />
     <ClCompile Include="..\..\base\strings-win.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -1,8 +1,7 @@
 #include "pch.h"
+#include "target/target-os.h"
 #include "base/command-line.h"
 #include <shellapi.h>
-#include <stdio.h> // size_t
-#include <string.h> // strncpy_s
 #include "base/strings.h"
 
 constexpr size_t MAX_ARG_VAL_LEN = 100;
@@ -20,6 +19,7 @@ namespace Mana
 
 		// if no command-line args are passed,
 		// argv array will have one value containing the path to this exe.
+		// Note: CommandLineToArgvW removes double-quotes around individual args.
 		LPWSTR* wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
 		if (!wargv)
 		{
@@ -34,15 +34,15 @@ namespace Mana
 
 		LocalFree(wargv);
 #else
-		for (int i = 0; i < argc; ++i)
+		// TODO: do other OSes provide the path to the exe as first value? (if not, change 1 to 0 here)
+		for (int i = 1; i < argc; ++i)
 		{
 			args.push_back(argv[i]);
 		}
 #endif
 
-		// TODO: HERE!!! test this function!
-		// TODO: does Windows/Mac/Linux remove the double quotes around values for us?
-		// TODO: how about additional leading / trailing spaces?
+		// TODO: does Mac/Linux remove the double(or single) quotes around values for us?
+		// TODO: how about additional leading / trailing spaces on Mac/Linux?
 
 		bool isKey;
 		char key[MAX_ARG_VAL_LEN];
@@ -51,7 +51,7 @@ namespace Mana
 		for (size_t i = 0; i < args.size(); ++i)
 		{
 			const char* arg = args[i].c_str();
-			int len = strnlen(arg, MAX_ARG_VAL_LEN);
+			size_t len = strnlen(arg, MAX_ARG_VAL_LEN);
 
 			isKey = len > 2 && arg[0] == '-' && arg[1] == '-';
 
@@ -64,7 +64,7 @@ namespace Mana
 
 				// see if next arg is the corresponding value
 
-				if (i + 1 >= (size_t)argc)
+				if (i + 1 >= args.size())
 				{
 					// key is a bool (no corresponding value)
 					map[key] = "";

@@ -8,7 +8,9 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "framework.h"
-#include "macros.h"
+#include "mana-globals.h"
+#include "target/target-os.h"
+#include "base/strings.h"
+#include "base/command-line.h"
 
 #endif //PCH_H

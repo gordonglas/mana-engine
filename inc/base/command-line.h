@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Makes the assumption that we are always working with ascii (or utf8)
 command line arg strings.

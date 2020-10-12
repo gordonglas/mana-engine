@@ -1,5 +1,40 @@
 # ManaEngine - 2d in 3d game engine for Windows 7 and up
 
+## TODO:
+* audio engine
+    * DONE-Call CreateSourceVoice "SimultaniousSounds" times within Load and store in vector, and Play can loop through them.
+    * DONE-IsPlaying, IsPaused
+    * DONE-Stop, StopAll
+    * DONE-Pause, PauseAll, Resume, ResumeAll
+    * DONE-AudioCategory = {SoundFx, Music, Voice} - allows us to control a group of related sounds with volume or mute/unmute.
+    * DONE-AudioLoadType = {Static, Streaming}
+    * DONE-AudioFormat = {Wav, Ogg Mod}
+    * DONE-SetVolume (of all voices of a specific file), SetVolume (by AudioCategory), SetMasterVolume (sets master voice volume - affects all files)
+    * DONE-SetPan: https://docs.microsoft.com/en-us/windows/win32/xaudio2/how-to--pan-a-sound
+    * NO-MuteAll (save current volumes), UnmuteAll (restore current volumes)
+        * While global IsMuted, newly created sounds should be created with the volume 0, while their "last volume" should be set to 1.0f.
+    * DONE-IsPlaying, IsPaused
+    * DONE-allow to play looped (and specify loop sample range)
+    * NO-Stop a looping sound (could call Voice::ExitLoop, but most use-cases can probably just call Stop)
+    * DONE-function to unload file
+    * DONE-function to unload XAudio2
+    * LATER-Pitch functions? https://docs.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-volume-and-pitch-control#pitch-control (Voice->SetFrequencyRatio)
+    * NO-Seek function? https://stackoverflow.com/questions/16649023/how-to-seek-to-a-position-in-milliseconds-using-xaudio2
+        * May never need this, since we support a loop region in Play.
+    * stream libopenmpt through xaudio2
+    * stream ogg vorbis through xaudio2 (see notes after code in Game Coding Complete)
+    * some way to handle copying the xaudio dll to the game folder. Post build step, or one-time setup script?
+    * Test running on Windows 7 laptop to make sure all used XAaudio2.9 api calls are supported.
+    * LATER-static load ogg vorbis through xaudio2 (see code in Game Coding Complete)
+    * LATER-GetLengthMillis (see code in Game Coding Complete - or can probably calculate it ourselves.)
+
+* merge stuff from ManaEngine_OLD and ManaGame_OLD
+    * ManaEngine_OLD has `ManaServerConsole.cpp` (winsock)
+* Write golang app to mimic `git lfs` sha256 and store map of filename to hash.
+    * where should this run?
+    * add to new git repo (with git lfs rules)
+
+
 ## How to create a new Static Library project:
 
 -Create folders under GameDev root:
@@ -52,7 +87,19 @@
 
 -Build all configurations.
 
-TODO: merge stuff from ManaEngine_OLD and ManaGame_OLD
+
+## Additional Engine info:
+
+* Uses XAudio2 (v2.9 for Windows 7 SP1 support):
+    * https://docs.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-redistributable#installing-the-nuget-package
+    * Nuget package: https://www.nuget.org/packages/Microsoft.XAudio2.Redist/
+    * Manual package install instructions:
+        * Rename nuget package to `.zip` extension and extract files under `ManaEngine\third-party\xaudio2`.
+        * Add include folder to include search paths, above the Windows SDK, so it uses this version instead.
+        * Add Release lib folder for ALL configurations. The `.targets` file in the nuget package has a comment that says to do this, since the Debug version hasn't been well tested.
+    * Known issues: Not all calls are compatible with Xbox One. Not compatible with UWP apps.
+    * XAudio2 v2.9 dll doesn't come with Windows 7, so we will need to check/deploy it in our installer. (Or maybe we just include it in same folder as exe? Check docs)
+
 
 ## How to create a new Game project:
 
@@ -109,12 +156,6 @@ TODO: merge stuff from ManaEngine_OLD and ManaGame_OLD
     -C/C++ -> Preprocessor -> Preprocessor Definitions: Replace `_DEBUG` with `NDEBUG` (it should look same as `Release`)
 
 -Build all configurations.
-
-TODO: remove unused code (window ui and rc stuff, targetver.h in ManaGame, etc)
-TODO: x-platform string type (edit string.h/cpp)
-TODO: merge stuff from ManaEngine_OLD and ManaGame_OLD
-TODO: learn git lfs go code so we can make sure it will scale
-TODO: add to new git repo
 
 
 ## How to build Game Coding Complete 4th edition code for Visual Studio 2017:
