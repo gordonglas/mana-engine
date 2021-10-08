@@ -1,6 +1,27 @@
-# ManaEngine - 2d in 3d game engine for Windows 7 and up
+# ManaEngine - 2d in 3d game engine for Windows 10 and up
 
 ## TODO:
+* DONE-Thread-safe Queue -use template, doesn't need an interface
+* Thread functionality
+    * Set Processor Affinity (or better yet, a "CPU set"!) for the main thread and queue thread to use different CPUs if possible.  
+      See: "How do I keep thread pool threads, or other threads in general, from competing with my render thread for CPU?"  
+      https://devblogs.microsoft.com/oldnewthing/20170309-00/?p=95695  
+      https://docs.microsoft.com/en-us/windows/win32/procthread/cpu-sets
+    * DONE-interface/factory: See: https://stackoverflow.com/questions/38078450/hiding-specific-implementation-of-c-interface
+    * DONE-Create thread
+    * DONE-run code on thread (queue with lock?)
+    * DONE-Stop thread
+    * DONE-Dealloc/close thread
+    * ON-HOLD-Suspend/Resume - maybe use a waitfunction, instead of the SuspendThread/ResumeThread functions (since those are only intended for use with debuggers and can cause deadlocks if a function tries to wait on a critical section)
+* File functionality
+    * DONE-GetFileSize
+    * ReadAllBytes into memory
+        * Pass in a "Cancellation Token"
+    * NO-Use overlapped io?
+        * OVERLAPPED structure - You can also create an event and put the handle in the OVERLAPPED structure; the wait functions can then be used to wait for the I/O operation to complete by waiting on the event handle.
+            * FILE_FLAG_OVERLAPPED
+        * CancelIo — this function only cancels operations issued by the calling thread for the specified file handle.
+        * The ReadFileEx and WriteFileEx functions enable an application to specify a routine to execute (see FileIOCompletionRoutine) when the asynchronous I/O request is completed. (instead of using a wait-function).
 * audio engine
     * DONE-Call CreateSourceVoice "SimultaniousSounds" times within Load and store in vector, and Play can loop through them.
     * DONE-IsPlaying, IsPaused
@@ -22,6 +43,22 @@
     * NO-Seek function? https://stackoverflow.com/questions/16649023/how-to-seek-to-a-position-in-milliseconds-using-xaudio2
         * May never need this, since we support a loop region in Play.
     * stream libopenmpt through xaudio2
+        * DONE-Create thread for updating the audio streams.
+        * DONE-During loads, create thread for loading.
+            * DONE-Load(mod) reads entire mod file into memory.
+            * -Create streaming buffers and pass to XAudio2
+                * DONE-looping
+                * DONE-move streaming buffer creation from Load to Play!
+                * TODO: HERE!!!-reset AudioFile fields when stop/pause, etc (such as "pFile->currentBufPos = 0;", reset libopenmpt mod position to start, etc.)
+                * -Add any locking necessary.
+                * -test Play, Stop, Pause of mod and wav.
+            * DONE-Delete streaming buffers
+            * DONE-Use a single wait-event object for all streams to say "one of the streams needs more data")
+            * DONE-Sets up XAudio2 voice-callback for when stream is ready for more data to be buffered.
+            * DONE-In the "VoiceStreamNeedsMoreDataCallback", set the signaled state of the "I need more data" wait event that's waiting in the update-thread.
+        * update-thread waits on multiple stream event objects.
+            * When the event object is signaled, it passes next chunk from memory to the uncompress/create pcm data.
+              And fills streaming buffer with that pcm data. Then ResetEvent and wait again.
     * stream ogg vorbis through xaudio2 (see notes after code in Game Coding Complete)
     * some way to handle copying the xaudio dll to the game folder. Post build step, or one-time setup script?
     * Test running on Windows 7 laptop to make sure all used XAaudio2.9 api calls are supported.
@@ -90,15 +127,14 @@
 
 ## Additional Engine info:
 
-* Uses XAudio2 (v2.9 for Windows 7 SP1 support):
+* Uses XAudio2 (v2.9):
     * https://docs.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-redistributable#installing-the-nuget-package
     * Nuget package: https://www.nuget.org/packages/Microsoft.XAudio2.Redist/
-    * Manual package install instructions:
+    * Manual package install instructions: (NOT NEEDED/USED)
         * Rename nuget package to `.zip` extension and extract files under `ManaEngine\third-party\xaudio2`.
         * Add include folder to include search paths, above the Windows SDK, so it uses this version instead.
         * Add Release lib folder for ALL configurations. The `.targets` file in the nuget package has a comment that says to do this, since the Debug version hasn't been well tested.
     * Known issues: Not all calls are compatible with Xbox One. Not compatible with UWP apps.
-    * XAudio2 v2.9 dll doesn't come with Windows 7, so we will need to check/deploy it in our installer. (Or maybe we just include it in same folder as exe? Check docs)
 
 
 ## How to create a new Game project:

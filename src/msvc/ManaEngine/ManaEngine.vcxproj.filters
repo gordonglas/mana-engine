@@ -28,22 +28,28 @@
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\base\command-line.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\strings-win.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\log-win.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\lock-win.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\audio\audio.cpp">
+    <ClCompile Include="..\..\audio\AudioWin.cpp">
       <Filter>src\audio</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\base\com.cpp">
+    <ClCompile Include="..\..\base\Com.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CommandLine.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\FileWin.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\LockWin.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\LogWin.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\StringsWin.cpp">
+      <Filter>src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\ThreadWin.cpp">
       <Filter>src\base</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,29 +57,53 @@
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\command-line.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\strings.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\target\target-os.h">
-      <Filter>inc\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\mana-globals.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\log.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\lock.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\audio.h">
+    <ClInclude Include="..\..\..\inc\audio\Audio.h">
       <Filter>inc\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\com.h">
+    <ClInclude Include="..\..\..\inc\base\Com.h">
       <Filter>inc\base</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\CommandLine.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\File.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\SynchronizedQueue.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\Lock.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\Log.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\Strings.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\StringTypes.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\ManaGlobals.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\target\OSDefines.h">
+      <Filter>inc\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\target\TargetOS.h">
+      <Filter>inc\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\IThread.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\IWorkItem.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\base\WorkItemLoadAudio.h">
+      <Filter>inc\base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
