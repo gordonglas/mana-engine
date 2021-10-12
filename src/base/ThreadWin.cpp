@@ -21,7 +21,7 @@ namespace Mana
 			}
 		}
 
-		bool Init(unsigned long (*ThreadFunc)(IThread* pThread)) override;
+		bool Init(ThreadFunc pThreadFunc) override;
 
 		void Start() override
 		{
@@ -88,19 +88,19 @@ namespace Mana
 		SynchronizedQueue<IWorkItem*> m_queue;
 		HANDLE m_hWait = nullptr;
 		bool m_bStopping = false;
-		unsigned long (*m_pThreadFunc)(IThread* pThread) = nullptr;
+		ThreadFunc m_pThreadFunc = nullptr;
 
 		friend DWORD WINAPI ThreadFunction(LPVOID lpParam);
 	};
 
-	bool Thread::Init(unsigned long (*ThreadFunc)(IThread* pThread))
+	bool Thread::Init(ThreadFunc pThreadFunc)
 	{
 		ScopedCriticalSection lock(m_lock);
 
 		if (m_bInitialized)
 			return false;
 
-		m_pThreadFunc = ThreadFunc;
+		m_pThreadFunc = pThreadFunc;
 
 		m_hThread = ::CreateThread(
 			nullptr,	// default security attributes
@@ -176,10 +176,10 @@ namespace Mana
 				return instance;
 			}
 
-			IThread* CreateThread(unsigned long (*ThreadFunc)(IThread* pThread));
+			IThread* CreateThread(ThreadFunc pThreadFunc);
 		};
 
-		IThread* PrivateThreadFactory::CreateThread(unsigned long (*ThreadFunc)(IThread* pThread))
+		IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc)
 		{
 			Thread* pThread = new Thread();
 			if (!pThread)
@@ -187,7 +187,7 @@ namespace Mana
 				return nullptr;
 			}
 
-			if (!pThread->Init(ThreadFunc))
+			if (!pThread->Init(pThreadFunc))
 			{
 				return nullptr;
 			}
@@ -196,9 +196,9 @@ namespace Mana
 		}
 
 		// public factory function
-		IThread* Create(unsigned long (*ThreadFunc)(IThread* pThread))
+		IThread* Create(ThreadFunc pThreadFunc)
 		{
-			return PrivateThreadFactory::Instance().CreateThread(ThreadFunc);
+			return PrivateThreadFactory::Instance().CreateThread(pThreadFunc);
 		}
 	}
 }

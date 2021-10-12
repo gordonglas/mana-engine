@@ -4,6 +4,9 @@
 
 namespace Mana
 {
+	class IThread;
+	typedef unsigned long (*ThreadFunc)(IThread* pThread);
+
 	// Thread interface.
 	// Either pass a pointer to your own ThreadFunc,
 	// or process work items via a queue with EnqueueWorkItem().
@@ -14,7 +17,7 @@ namespace Mana
 		virtual ~IThread() {}
 
 		// TODO: maybe hide init somehow? make private with friend?
-		virtual bool Init(unsigned long (*ThreadFunc)(IThread* pThread)) = 0;
+		virtual bool Init(ThreadFunc pThreadFunc) = 0;
 		virtual void Start() = 0;
 		// once stopped, you cannot call Start again
 		virtual void Stop() = 0;
@@ -33,6 +36,6 @@ namespace Mana
 
 	namespace ThreadFactory
 	{
-		IThread* Create(unsigned long (*ThreadFunc)(IThread* pThread) = nullptr);
+		IThread* Create(ThreadFunc pThreadFunc = nullptr);
 	};
 }
