@@ -1,6 +1,8 @@
 #include "pch.h"
-#include "audio/Audio.h"
+#include "audio/AudioWin.h"
+#include <xaudio2.h>
 #include "base/File.h"
+#include "base/IThread.h"
 
 #include <libopenmpt/libopenmpt.hpp>
 #pragma comment(lib, "libopenmpt.lib")
@@ -15,37 +17,14 @@
 
 namespace Mana
 {
-    AudioFile::AudioFile()
+    AudioFileWin::AudioFileWin()
     {
-        audioFileHandle = 0;
-        category = AudioCategory::Sound;
-        loadType = AudioLoadType::Static;
-        format = AudioFormat::Wav;
-        pan = 0.0f;
-        isPaused = false;
         wfx = { 0 };
-        pDataBuffer = nullptr;
-        dataBufferSize = 0;
-        playBegin = 0;
-        playLength = 0;
-        loopBegin = 0;
-        loopLength = 0;
-        loopCount = 0;
         sourceVoicePos = 0;
-        currentStreamBufIndex = 0;
-        currentBufPos = 0;
-        fileSize = 0;
-        lastBufferPlaying = false;
-        lib = nullptr;
     }
 
-    AudioFile::~AudioFile()
+    AudioFileWin::~AudioFileWin()
     {
-        if (pDataBuffer)
-        {
-            delete[] pDataBuffer;
-            pDataBuffer = nullptr;
-        }
     }
 
     static HRESULT FindChunk(HANDLE hFile, DWORD fourcc,
@@ -117,7 +96,7 @@ namespace Mana
         return hr;
     }
 
-    Audio* g_pAudioEngine = nullptr;
+    AudioBase* g_pAudioEngine = nullptr;
     IThread* pAudioThread = nullptr;
     HANDLE hAudioThreadWait = nullptr;
 
@@ -149,7 +128,8 @@ namespace Mana
         {
             // TODO: probably need to protect most(or all?) accesses of "m_fileMap" with CriticalSection.
             //       maybe change it to a "SynchronizedMap"?
-            std::vector<AudioFile*> streamingFiles = g_pAudioEngine->GetStreamingFiles();
+            //       OR perhaps use strong ptrs instead? (probably better?)
+            std::vector<AudioFileBase*> streamingFiles = g_pAudioEngine->GetStreamingFiles();
 
             // fill/queue any empty streaming XAudio buffers
             // See: https://docs.microsoft.com/en-us/windows/win32/xaudio2/how-to--use-source-voice-callbacks
@@ -158,8 +138,10 @@ namespace Mana
 
             XAUDIO2_BUFFER buffer;
 
-            for (AudioFile* pFile : streamingFiles)
+            for (AudioFileBase* pFileBase : streamingFiles)
             {
+                AudioFileWin* pFile = (AudioFileWin*)pFileBase;
+
                 if (pFile->lastBufferPlaying)
                 {
                     // last buffer just finished playing.
@@ -181,9 +163,9 @@ namespace Mana
                 submitBuffer = true;
 
                 pFile->sourceVoices[0]->GetState(&voiceState, XAUDIO2_VOICE_NOSAMPLESPLAYED);
-                while (voiceState.BuffersQueued < AudioStreamBufCount - 1)
+                while (voiceState.BuffersQueued < AudioStreamBufCount)
                 {
-                    //OutputDebugStringW((std::wstring(L"BuffersQueued: ") + std::to_wstring(voiceState.BuffersQueued) + L"\n").c_str());
+                    OutputDebugStringW((std::wstring(L"BuffersQueued: ") + std::to_wstring(voiceState.BuffersQueued) + L"\n").c_str());
 
                     // init next buffer with silence (zeros)
                     memset(&pFile->pDataBuffer[pFile->currentStreamBufIndex * AudioStreamBufSize],
@@ -193,10 +175,10 @@ namespace Mana
                     size_t numSamples = AudioStreamBufSize / (pFile->wfx.Format.wBitsPerSample / 8);
                     size_t pcmFrames = numSamples / pFile->wfx.Format.nChannels;
 
-                    // TODO: delete pFile->lib
-
                     if (pFile->format == AudioFormat::Mod)
                     {
+                        //OutputDebugStringW(L"FILL MOD BUF\n");
+
                         std::size_t pcmFramesRendered = ((openmpt::module*)(pFile->lib))->read_interleaved_stereo(
                             pFile->wfx.Format.nSamplesPerSec, pcmFrames,
                             (std::int16_t*)&pFile->pDataBuffer[pFile->currentStreamBufIndex * AudioStreamBufSize]);
@@ -218,7 +200,9 @@ namespace Mana
                                 lastBufferPlaying = true;
                                 OutputDebugStringW(L"FINAL BUF 2\n");
 
-                                buffer.AudioBytes = AudioStreamBufSize; // TODO: probably should only pass a small set of the frames.
+                                // buffer should be all silence (zeros) at this point.
+                                // TODO: probably should only pass a small set of the frames
+                                buffer.AudioBytes = AudioStreamBufSize;
                                 buffer.pAudioData = &pFile->pDataBuffer[pFile->currentStreamBufIndex * AudioStreamBufSize];
                                 buffer.Flags = XAUDIO2_END_OF_STREAM;
                             }
@@ -251,6 +235,7 @@ namespace Mana
                     {
                         pFile->currentStreamBufIndex = 0;
                     }
+                    // TODO: if looping.. this could eventually overflow! fix this.
                     pFile->currentBufPos += buffer.AudioBytes;
 
                     if (!submitBuffer)
@@ -336,7 +321,7 @@ namespace Mana
     VoiceCallback voiceCallback;
 
     // Requires call to CoInitialize. Call: base/com.h::Init.
-    bool Audio::Init()
+    bool AudioWin::Init()
 	{
         m_pXAudio2 = nullptr;
         m_pMasterVoice = nullptr;
@@ -357,7 +342,7 @@ namespace Mana
 		return true;
 	}
 
-    void Audio::Uninit()
+    void AudioWin::Uninit()
     {
         // stop and destroy all voices and buffers by calling Unload on all AudioFiles
 
@@ -382,7 +367,7 @@ namespace Mana
         std::vector<AudioFileHandle> fileHandleList;
         for (auto it = m_fileMap.begin(); it != m_fileMap.end(); ++it)
         {
-            AudioFile* pAudioFile = it->second;
+            AudioFileBase* pAudioFile = it->second;
             fileHandleList.push_back(pAudioFile->audioFileHandle);
         }
 
@@ -404,36 +389,7 @@ namespace Mana
         }
     }
 
-    AudioFileHandle Audio::GetNextFreeAudioFileHandle()
-    {
-        AudioFileHandle next = m_lastAudioFileHandle + 1;
-        if (next > MAX_SOUNDS_LOADED)
-            next = 1; // wrap around
-
-        // make sure next value isn't in use
-        bool firstPass = true;
-        while (true)
-        {
-            if (m_fileMap.find(next) == m_fileMap.end())
-                break;
-
-            next++;
-            if (next > MAX_SOUNDS_LOADED) {
-                if (!firstPass)
-                {
-                    return 0; // too many sounds loaded.
-                }
-
-                firstPass = false;
-                next = 1;
-            }
-        }
-
-        m_lastAudioFileHandle = next;
-        return next;
-    }
-
-    AudioFileHandle Audio::Load(xstring filePath,
+    AudioFileHandle AudioWin::Load(xstring filePath,
         AudioCategory category, AudioFormat format,
         int simultaneousSounds)
 	{
@@ -442,7 +398,7 @@ namespace Mana
         if (simultaneousSounds < 1)
             return 0;
 
-        AudioFile* pFile = new AudioFile;
+        AudioFileWin* pFile = new AudioFileWin;
         if (!pFile)
             return 0;
 
@@ -542,6 +498,8 @@ namespace Mana
             wfx.Format.nBlockAlign = wfx.Format.nChannels * (wfx.Format.wBitsPerSample / 8);
             wfx.Format.nAvgBytesPerSec = wfx.Format.nSamplesPerSec * wfx.Format.nBlockAlign;
             wfx.Format.cbSize = 0;
+
+            pFile->pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
         }
         // TODO: add other formats
         else
@@ -560,7 +518,7 @@ namespace Mana
 
         pFile->audioFileHandle = audioFileHandle;
 
-        m_fileMap.insert(std::map<AudioFileHandle, AudioFile*>::value_type(audioFileHandle, pFile));
+        m_fileMap.insert(std::map<AudioFileHandle, AudioFileBase*>::value_type(audioFileHandle, pFile));
 
         int numSounds = simultaneousSounds;
         while (numSounds > 0)
@@ -601,7 +559,6 @@ namespace Mana
         }
 
         // set defaults
-        // TODO: (do we need this here? it's already set in AudioFile ctor)
         pFile->sourceVoicePos = 0;
         pFile->isPaused = false;
         pFile->pan = 0.0f;
@@ -609,9 +566,9 @@ namespace Mana
 		return audioFileHandle;
 	}
 
-    void Audio::Unload(AudioFileHandle audioFileHandle)
+    void AudioWin::Unload(AudioFileHandle audioFileHandle)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             return;
@@ -635,26 +592,38 @@ namespace Mana
 
         pAudioFile->sourceVoices.clear();
 
+        delete pAudioFile->lib;
+        pAudioFile->lib = nullptr;
+
         delete pAudioFile;
         pAudioFile = nullptr;
     }
 
-    bool Audio::Play(AudioFileHandle audioFileHandle)
+    bool AudioWin::Play(AudioFileHandle audioFileHandle)
     {
         return Play(audioFileHandle, false, 0, 0, 0);
     }
 
-    bool Audio::Play(AudioFileHandle audioFileHandle,
+    bool AudioWin::Play(AudioFileHandle audioFileHandle,
         unsigned loopCount, unsigned loopBegin, unsigned loopLength)
     {
         return Play(audioFileHandle, true, loopCount, loopBegin, loopLength);
     }
 
-    bool Audio::Play(AudioFileHandle audioFileHandle, bool updateLoopFields,
+    bool AudioWin::Play(AudioFileHandle audioFileHandle, bool updateLoopFields,
         unsigned loopCount, unsigned loopBegin, unsigned loopLength)
     {
-        AudioFile* pFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pFile)
+        {
+            return false;
+        }
+
+        // TODO: There's a big problem when Play gets called after the streaming sound
+        //       has finished playing (and is not looping). Might need to manage a "isPlaying" bool ourselves.
+        //       Also, how about if it's paused, then play is called? (it should "resume"?)
+        if (pFile->loadType == AudioLoadType::Streaming &&
+            !pFile->isPaused && IsPlaying(audioFileHandle))
         {
             return false;
         }
@@ -690,7 +659,7 @@ namespace Mana
             {
                 if (pFile->format == AudioFormat::Mod)
                 {
-                    ((openmpt::module*)pFile->lib)->set_repeat_count(loopCount == Audio::LOOP_INFINITE ? -1 : (int32_t)loopCount);
+                    ((openmpt::module*)pFile->lib)->set_repeat_count(loopCount == LOOP_INFINITE ? -1 : (int32_t)loopCount);
                 }
             }
         }
@@ -702,7 +671,7 @@ namespace Mana
             // "Memory allocated to hold a XAUDIO2_BUFFER or XAUDIO2_BUFFER_WMA structure
             //  can be freed as soon as the IXAudio2SourceVoice::SubmitSourceBuffer call
             //  it is passed to returns." (except for the underlying data buffer,
-            //  which we need for streaming anyway, which is "AudioFile::pDataBuffer")
+            //  which we need for streaming anyway, which is "AudioFileBase::pDataBuffer")
             XAUDIO2_BUFFER buffer = { 0 };
             buffer.AudioBytes = (UINT32)pFile->dataBufferSize; // size of the audio buffer in bytes
             buffer.pAudioData = pFile->pDataBuffer;    // buffer containing audio data
@@ -727,7 +696,11 @@ namespace Mana
             // Since we're using the XAudio2 OnBufferEnd callback, we need to submit more
             // than 1 buffer to prevent a short silence when the first buffer finishes playing.
 
-            pFile->pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
+            // in case Play is called multiple times on the same streaming file...
+            //if (pFile->pDataBuffer)
+            //{
+            //    memset(&pFile->pDataBuffer[0], 0, AudioStreamBufSize * AudioStreamBufCount);
+            //}
 
             size_t numSamples = AudioStreamBufSize / (pFile->wfx.Format.wBitsPerSample / 8);
             size_t pcmFrames = numSamples / pFile->wfx.Format.nChannels;
@@ -772,9 +745,9 @@ namespace Mana
         return true;
     }
 
-    void Audio::Stop(AudioFileHandle audioFileHandle)
+    void AudioWin::Stop(AudioFileHandle audioFileHandle)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             return;
@@ -797,19 +770,12 @@ namespace Mana
         }
 
         pAudioFile->isPaused = false;
+        pAudioFile->currentBufPos = 0;
     }
 
-    void Audio::StopAll()
+    void AudioWin::Pause(AudioFileHandle audioFileHandle)
     {
-        for (const auto& pair : m_fileMap)
-        {
-            Stop(pair.first);
-        }
-    }
-
-    void Audio::Pause(AudioFileHandle audioFileHandle)
-    {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             return;
@@ -845,17 +811,9 @@ namespace Mana
         pAudioFile->isPaused = true;
     }
 
-    void Audio::PauseAll()
+    void AudioWin::Resume(AudioFileHandle audioFileHandle)
     {
-        for (const auto& pair : m_fileMap)
-        {
-            Pause(pair.first);
-        }
-    }
-
-    void Audio::Resume(AudioFileHandle audioFileHandle)
-    {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             return;
@@ -879,17 +837,9 @@ namespace Mana
         }
     }
 
-    void Audio::ResumeAll()
+    float AudioWin::GetVolume(AudioFileHandle audioFileHandle)
     {
-        for (const auto& pair : m_fileMap)
-        {
-            Resume(pair.first);
-        }
-    }
-
-    float Audio::GetVolume(AudioFileHandle audioFileHandle)
-    {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             return 1.0f;
@@ -918,7 +868,7 @@ namespace Mana
         //return volumes[0];
     }
 
-    float Audio::GetVolume(AudioCategory category)
+    float AudioWin::GetVolume(AudioCategory category)
     {
         // Calculate the mean iteratively.
         // Algo from: The Art of Computer Programming Vol 2, section 4.2.2
@@ -930,10 +880,12 @@ namespace Mana
         {
             if (pair.second->category == category)
             {
+                AudioFileWin* pFile = (AudioFileWin*)pair.second;
+
                 // we assume all voices of a sound have the same volume
-                if (pair.second->sourceVoices.size() > 0)
+                if (pFile->sourceVoices.size() > 0)
                 {
-                    pair.second->sourceVoices[0]->GetVolume(&volume);
+                    pFile->sourceVoices[0]->GetVolume(&volume);
 
                     avg += (volume - avg) / x;
                     ++x;
@@ -944,7 +896,7 @@ namespace Mana
         return avg;
     }
 
-    float Audio::GetMasterVolume()
+    float AudioWin::GetMasterVolume()
     {
         if (!m_pMasterVoice)
             return 1.0f;
@@ -954,9 +906,9 @@ namespace Mana
         return volume;
     }
 
-    void Audio::SetVolume(AudioFileHandle audioFileHandle, float volume)
+    void AudioWin::SetVolume(AudioFileHandle audioFileHandle, float volume)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             return;
@@ -974,7 +926,7 @@ namespace Mana
         }
     }
 
-    void Audio::SetVolume(AudioCategory category, float volume)
+    void AudioWin::SetVolume(AudioCategory category, float volume)
     {
         ClampVolume(volume);
 
@@ -982,7 +934,9 @@ namespace Mana
         {
             if (pair.second->category == category)
             {
-                for (const auto& pSourceVoice : pair.second->sourceVoices)
+                AudioFileWin* pFile = (AudioFileWin*)pair.second;
+
+                for (const auto& pSourceVoice : pFile->sourceVoices)
                 {
                     if (FAILED(pSourceVoice->SetVolume(volume)))
                     {
@@ -994,7 +948,7 @@ namespace Mana
         }
     }
 
-    void Audio::SetMasterVolume(float& volume)
+    void AudioWin::SetMasterVolume(float& volume)
     {
         if (!m_pMasterVoice)
             return;
@@ -1008,9 +962,9 @@ namespace Mana
         }
     }
 
-    void Audio::SetPan(AudioFileHandle audioFileHandle, float pan)
+    void AudioWin::SetPan(AudioFileHandle audioFileHandle, float pan)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             OutputDebugStringW(L"ERROR: SetPan GetAudioFile failed");
@@ -1096,9 +1050,9 @@ namespace Mana
         pAudioFile->pan = pan;
     }
 
-    float Audio::GetPan(AudioFileHandle audioFileHandle)
+    float AudioWin::GetPan(AudioFileHandle audioFileHandle)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileBase* pAudioFile = GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             OutputDebugStringW(L"ERROR: GetPan GetAudioFile failed");
@@ -1108,16 +1062,19 @@ namespace Mana
         return pAudioFile->pan;
     }
 
-    bool Audio::IsPlaying(AudioFileHandle audioFileHandle)
+    bool AudioWin::IsPlaying(AudioFileHandle audioFileHandle)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             OutputDebugStringW(L"ERROR: IsPlaying GetAudioFile failed");
             return false;
         }
 
-        // returns true if at least one voice of this sound is playing
+        if (pAudioFile->isPaused)
+            return false;
+
+        // returns true if at least one voice of this sound is queued up within XAudio2.
         XAUDIO2_VOICE_STATE state;
         for (const auto& pSourceVoice : pAudioFile->sourceVoices)
         {
@@ -1131,9 +1088,9 @@ namespace Mana
         return false;
     }
 
-    bool Audio::IsPaused(AudioFileHandle audioFileHandle)
+    bool AudioWin::IsPaused(AudioFileHandle audioFileHandle)
     {
-        AudioFile* pAudioFile = GetAudioFile(audioFileHandle);
+        AudioFileBase* pAudioFile = GetAudioFile(audioFileHandle);
         if (!pAudioFile)
         {
             OutputDebugStringW(L"ERROR: IsPaused GetAudioFile failed");
@@ -1143,35 +1100,7 @@ namespace Mana
         return pAudioFile->isPaused;
     }
 
-    std::vector<AudioFile*> Audio::GetStreamingFiles()
-    {
-        std::vector<AudioFile*> streamingFiles;
-
-        for (auto const& item : m_fileMap)
-        {
-            if (item.second->loadType == AudioLoadType::Streaming)
-            {
-                streamingFiles.push_back(item.second);
-            }
-        }
-
-        return streamingFiles;
-    }
-
-    // private
-
-    AudioFile* Audio::GetAudioFile(AudioFileHandle audioFileHandle)
-    {
-        auto search = m_fileMap.find(audioFileHandle);
-        if (search == m_fileMap.end())
-        {
-            return nullptr;
-        }
-
-        return search->second;
-    }
-
-    void Audio::ClampVolume(float& volume)
+    void AudioWin::ClampVolume(float& volume)
     {
         if (volume < AUDIO_MIN_VOLUME)
             volume = AUDIO_MIN_VOLUME;

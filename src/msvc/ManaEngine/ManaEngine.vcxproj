@@ -267,7 +267,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\inc\audio\Audio.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioBase.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioWin.h" />
     <ClInclude Include="..\..\..\inc\base\Com.h" />
     <ClInclude Include="..\..\..\inc\base\CommandLine.h" />
     <ClInclude Include="..\..\..\inc\base\File.h" />
@@ -285,6 +286,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\audio\AudioBase.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
     <ClCompile Include="..\..\base\Com.cpp" />
     <ClCompile Include="..\..\base\CommandLine.cpp" />

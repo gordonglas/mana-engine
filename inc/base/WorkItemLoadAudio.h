@@ -1,5 +1,5 @@
 #include "base/IWorkItem.h"
-#include "audio/Audio.h"
+#include "audio/AudioBase.h"
 #include "base/Lock.h"
 #include "base/StringTypes.h"
 
@@ -8,7 +8,7 @@ namespace Mana
 	class WorkItemLoadAudio : public IWorkItem
 	{
 	public:
-		WorkItemLoadAudio(Audio* audioEngine, xstring file,
+		WorkItemLoadAudio(AudioBase* audioEngine, xstring file,
 			AudioCategory audioCategory, AudioFormat audioFormat,
 			int simultaneousSounds = 1)
 		{
@@ -57,7 +57,7 @@ namespace Mana
 
 	private:
 		CriticalSection m_lock;
-		Audio* m_pAudioEngine;
+		AudioBase* m_pAudioEngine;
 		xstring m_file;
 		AudioCategory m_audioCategory;
 		AudioFormat m_audioFormat;

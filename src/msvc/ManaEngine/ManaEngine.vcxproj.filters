@@ -52,12 +52,15 @@
     <ClCompile Include="..\..\base\ThreadWin.cpp">
       <Filter>src\base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\audio\AudioBase.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\Audio.h">
+    <ClInclude Include="..\..\..\inc\audio\AudioBase.h">
       <Filter>inc\audio</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\base\Com.h">
@@ -101,6 +104,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\base\WorkItemLoadAudio.h">
       <Filter>inc\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\AudioWin.h">
+      <Filter>inc\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
