@@ -37,38 +37,38 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -276,6 +276,8 @@
     <ClInclude Include="..\..\..\inc\base\IWorkItem.h" />
     <ClInclude Include="..\..\..\inc\base\Lock.h" />
     <ClInclude Include="..\..\..\inc\base\Log.h" />
+    <ClInclude Include="..\..\..\inc\base\ProcessBase.h" />
+    <ClInclude Include="..\..\..\inc\base\ProcessManager.h" />
     <ClInclude Include="..\..\..\inc\base\Strings.h" />
     <ClInclude Include="..\..\..\inc\base\StringTypes.h" />
     <ClInclude Include="..\..\..\inc\base\SynchronizedQueue.h" />
@@ -291,6 +293,8 @@
     <ClCompile Include="..\..\base\Com.cpp" />
     <ClCompile Include="..\..\base\CommandLine.cpp" />
     <ClCompile Include="..\..\base\FileWin.cpp" />
+    <ClCompile Include="..\..\base\ProcessBase.cpp" />
+    <ClCompile Include="..\..\base\ProcessManager.cpp" />
     <ClCompile Include="..\..\base\ThreadWin.cpp" />
     <ClCompile Include="..\..\base\LockWin.cpp" />
     <ClCompile Include="..\..\base\LogWin.cpp" />
