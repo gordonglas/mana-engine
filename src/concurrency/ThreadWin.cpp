@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "base/IThread.h"
-#include "base/Lock.h"
-#include "base/Log.h"
-#include "base/SynchronizedQueue.h"
+#include "concurrency/IThread.h"
+#include "utils/Lock.h"
+#include "utils/Log.h"
+#include "datastructures/SynchronizedQueue.h"
 #include <vector>
 
 namespace Mana

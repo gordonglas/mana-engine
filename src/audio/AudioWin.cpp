@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "audio/AudioWin.h"
 #include <xaudio2.h>
-#include "base/File.h"
-#include "base/IThread.h"
+#include "utils/File.h"
+#include "concurrency/IThread.h"
 
 #include <libopenmpt/libopenmpt.hpp>
 #pragma comment(lib, "libopenmpt.lib")
@@ -320,7 +320,7 @@ namespace Mana
     // TODO: will a single VoiceCallback object work properly with multiple simultaneous streaming files?
     VoiceCallback voiceCallback;
 
-    // Requires call to CoInitialize. Call: base/com.h::Init.
+    // Requires call to CoInitialize. Call: utils/Com.h::Init.
     bool AudioWin::Init()
 	{
         m_pXAudio2 = nullptr;

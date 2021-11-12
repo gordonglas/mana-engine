@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "base/Lock.h"
+#include "utils/Lock.h"
 
 namespace Mana
 {

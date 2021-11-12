@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "target/TargetOS.h"
-#include "base/CommandLine.h"
+#include "utils/CommandLine.h"
 #ifdef OS_WIN
 #include <shellapi.h>
 #endif
-#include "base/Strings.h"
+#include "utils/Strings.h"
 
 constexpr size_t MAX_ARG_VAL_LEN = 100;
 

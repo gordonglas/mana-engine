@@ -10,7 +10,7 @@
 // add headers that you want to pre-compile here
 #include "ManaGlobals.h"
 #include "target/TargetOS.h"
-#include "base/Strings.h"
-#include "base/CommandLine.h"
+#include "utils/Strings.h"
+#include "utils/CommandLine.h"
 
 #endif //PCH_H

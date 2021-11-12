@@ -2,7 +2,7 @@
 
 #include <queue>
 #include <utility>
-#include "base/Lock.h"
+#include "utils/Lock.h"
 
 namespace Mana
 {

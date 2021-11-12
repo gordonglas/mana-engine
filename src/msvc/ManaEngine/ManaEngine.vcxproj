@@ -269,36 +269,36 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\inc\audio\AudioBase.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioWin.h" />
-    <ClInclude Include="..\..\..\inc\base\Com.h" />
-    <ClInclude Include="..\..\..\inc\base\CommandLine.h" />
-    <ClInclude Include="..\..\..\inc\base\File.h" />
-    <ClInclude Include="..\..\..\inc\base\IThread.h" />
-    <ClInclude Include="..\..\..\inc\base\IWorkItem.h" />
-    <ClInclude Include="..\..\..\inc\base\Lock.h" />
-    <ClInclude Include="..\..\..\inc\base\Log.h" />
-    <ClInclude Include="..\..\..\inc\base\ProcessBase.h" />
-    <ClInclude Include="..\..\..\inc\base\ProcessManager.h" />
-    <ClInclude Include="..\..\..\inc\base\Strings.h" />
-    <ClInclude Include="..\..\..\inc\base\StringTypes.h" />
-    <ClInclude Include="..\..\..\inc\base\SynchronizedQueue.h" />
-    <ClInclude Include="..\..\..\inc\base\WorkItemLoadAudio.h" />
+    <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
+    <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
+    <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
+    <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
+    <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h" />
+    <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h" />
     <ClInclude Include="..\..\..\inc\ManaGlobals.h" />
     <ClInclude Include="..\..\..\inc\target\OSDefines.h" />
     <ClInclude Include="..\..\..\inc\target\TargetOS.h" />
+    <ClInclude Include="..\..\..\inc\utils\CommandLine.h" />
+    <ClInclude Include="..\..\..\inc\utils\Com.h" />
+    <ClInclude Include="..\..\..\inc\utils\File.h" />
+    <ClInclude Include="..\..\..\inc\utils\Lock.h" />
+    <ClInclude Include="..\..\..\inc\utils\Log.h" />
+    <ClInclude Include="..\..\..\inc\utils\Strings.h" />
+    <ClInclude Include="..\..\..\inc\utils\StringTypes.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
-    <ClCompile Include="..\..\base\Com.cpp" />
-    <ClCompile Include="..\..\base\CommandLine.cpp" />
-    <ClCompile Include="..\..\base\FileWin.cpp" />
-    <ClCompile Include="..\..\base\ProcessBase.cpp" />
-    <ClCompile Include="..\..\base\ProcessManager.cpp" />
-    <ClCompile Include="..\..\base\ThreadWin.cpp" />
-    <ClCompile Include="..\..\base\LockWin.cpp" />
-    <ClCompile Include="..\..\base\LogWin.cpp" />
-    <ClCompile Include="..\..\base\StringsWin.cpp" />
+    <ClCompile Include="..\..\concurrency\ThreadWin.cpp" />
+    <ClCompile Include="..\..\mainloop\ProcessBase.cpp" />
+    <ClCompile Include="..\..\mainloop\ProcessManager.cpp" />
+    <ClCompile Include="..\..\utils\CommandLine.cpp" />
+    <ClCompile Include="..\..\utils\ComWin.cpp" />
+    <ClCompile Include="..\..\utils\FileWin.cpp" />
+    <ClCompile Include="..\..\utils\LockWin.cpp" />
+    <ClCompile Include="..\..\utils\LogWin.cpp" />
+    <ClCompile Include="..\..\utils\StringsWin.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>

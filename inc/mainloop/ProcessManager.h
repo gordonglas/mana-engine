@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "base/ProcessBase.h"
+#include "mainloop/ProcessBase.h"
 #include <list>
 
 namespace Mana

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/IWorkItem.h"
+#include "concurrency/IWorkItem.h"
 
 namespace Mana
 {

@@ -6,7 +6,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
-#include "base/StringTypes.h"
+#include "utils/StringTypes.h"
 
 namespace Mana
 {

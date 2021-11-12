@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "base/Log.h"
+#include "utils/Log.h"
 #include "target/TargetOS.h"
-#include "base/Strings.h"
-#include "base/Lock.h"
+#include "utils/Strings.h"
+#include "utils/Lock.h"
 #include <cwchar> // _vscwprintf, vswprintf
 #include <string>
 

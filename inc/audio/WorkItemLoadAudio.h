@@ -1,7 +1,7 @@
-#include "base/IWorkItem.h"
+#include "concurrency/IWorkItem.h"
 #include "audio/AudioBase.h"
-#include "base/Lock.h"
-#include "base/StringTypes.h"
+#include "utils/Lock.h"
+#include "utils/StringTypes.h"
 
 namespace Mana
 {

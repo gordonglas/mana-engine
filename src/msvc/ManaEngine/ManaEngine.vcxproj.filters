@@ -8,12 +8,6 @@
     <Filter Include="inc">
       <UniqueIdentifier>{1016d136-a701-474c-bae5-2d35c47e3e16}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\base">
-      <UniqueIdentifier>{9cdd2a5c-672e-4002-905e-c4bd18547ca9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\base">
-      <UniqueIdentifier>{e3882c85-dc33-40fa-bcfa-0ddc2bc4c46e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\target">
       <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
     </Filter>
@@ -23,6 +17,27 @@
     <Filter Include="src\audio">
       <UniqueIdentifier>{7a88a899-1852-4dcf-831e-5c182bfecb53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\utils">
+      <UniqueIdentifier>{35b70756-3f22-44d6-b3d8-d8d5e07020ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\concurrency">
+      <UniqueIdentifier>{2cda618d-9c83-4896-986c-17fa8f1c1af1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\datastructures">
+      <UniqueIdentifier>{a245580d-28f3-4ce0-80c6-ea2559481d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\mainloop">
+      <UniqueIdentifier>{16c71184-26ca-4d0d-8ed9-855c92b651f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\concurrency">
+      <UniqueIdentifier>{2d2462b6-2fcc-4916-8e21-810ee30a834e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\mainloop">
+      <UniqueIdentifier>{956679a1-2adf-4f5f-955d-9127f2d1f48c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{15de6231-e213-432f-8528-c38fd0e043ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -31,35 +46,35 @@
     <ClCompile Include="..\..\audio\AudioWin.cpp">
       <Filter>src\audio</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\base\Com.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\CommandLine.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\FileWin.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\LockWin.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\LogWin.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\StringsWin.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base\ThreadWin.cpp">
-      <Filter>src\base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\audio\AudioBase.cpp">
       <Filter>src\audio</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\base\ProcessBase.cpp">
-      <Filter>src\base</Filter>
+    <ClCompile Include="..\..\concurrency\ThreadWin.cpp">
+      <Filter>src\concurrency</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\base\ProcessManager.cpp">
-      <Filter>src\base</Filter>
+    <ClCompile Include="..\..\mainloop\ProcessBase.cpp">
+      <Filter>src\mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mainloop\ProcessManager.cpp">
+      <Filter>src\mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\CommandLine.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\ComWin.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\FileWin.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\LockWin.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\LogWin.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\StringsWin.cpp">
+      <Filter>src\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,30 +83,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\audio\AudioBase.h">
       <Filter>inc\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\Com.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\CommandLine.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\File.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\SynchronizedQueue.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\Lock.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\Log.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\Strings.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\StringTypes.h">
-      <Filter>inc\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\ManaGlobals.h">
       <Filter>inc</Filter>
@@ -102,23 +93,47 @@
     <ClInclude Include="..\..\..\inc\target\TargetOS.h">
       <Filter>inc\target</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\IThread.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\IWorkItem.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\WorkItemLoadAudio.h">
-      <Filter>inc\base</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\inc\audio\AudioWin.h">
       <Filter>inc\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\ProcessBase.h">
-      <Filter>inc\base</Filter>
+    <ClInclude Include="..\..\..\inc\utils\CommandLine.h">
+      <Filter>inc\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\base\ProcessManager.h">
-      <Filter>inc\base</Filter>
+    <ClInclude Include="..\..\..\inc\utils\File.h">
+      <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Lock.h">
+      <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Log.h">
+      <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Strings.h">
+      <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\StringTypes.h">
+      <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h">
+      <Filter>inc\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\IThread.h">
+      <Filter>inc\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h">
+      <Filter>inc\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h">
+      <Filter>inc\datastructures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h">
+      <Filter>inc\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h">
+      <Filter>inc\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Com.h">
+      <Filter>inc\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -32,9 +32,9 @@ namespace Mana {
 
 #endif
 
-#include "base/StringTypes.h"
+#include "utils/StringTypes.h"
 
 #if defined(_DEBUG)
 #define MANA_LOGGING_ENABLED 1
 #endif
-#include "base/Log.h"
+#include "utils/Log.h"

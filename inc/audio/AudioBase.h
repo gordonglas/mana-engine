@@ -8,8 +8,8 @@
 #include <map>
 #include <vector>
 #include <fstream>
-#include "base/File.h"
-#include "base/IThread.h"
+#include "utils/File.h"
+#include "concurrency/IThread.h"
 
 namespace Mana
 {
