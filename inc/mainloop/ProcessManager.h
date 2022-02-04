@@ -2,29 +2,27 @@
 
 #pragma once
 
-#include "mainloop/ProcessBase.h"
 #include <list>
+#include "mainloop/ProcessBase.h"
 
-namespace Mana
-{
-	class ProcessManager
-	{
-		typedef std::list<StrongProcessPtr> ProcessList;
-		
-	public:
-		~ProcessManager();
+namespace Mana {
+class ProcessManager {
+  typedef std::list<StrongProcessPtr> ProcessList;
 
-		// interface
-		unsigned int UpdateProcesses(unsigned long deltaMs);
-		WeakProcessPtr AttachProcess(StrongProcessPtr pProcess);
-		void AbortAllProcesses(bool immediate);
+ public:
+  ~ProcessManager();
 
-		// accessors
-		unsigned int GetProcessCount() const { return m_processList.size(); }
+  // interface
+  unsigned int UpdateProcesses(unsigned long deltaMs);
+  WeakProcessPtr AttachProcess(StrongProcessPtr pProcess);
+  void AbortAllProcesses(bool immediate);
 
-	private:
-		ProcessList m_processList;
+  // accessors
+  unsigned int GetProcessCount() const { return (int)m_processList.size(); }
 
-		void ClearAllProcesses(); // should only be called by destructor
-	};
-}
+ private:
+  ProcessList m_processList;
+
+  void ClearAllProcesses();  // should only be called by destructor
+};
+}  // namespace Mana

@@ -38,6 +38,12 @@
     <Filter Include="src\utils">
       <UniqueIdentifier>{15de6231-e213-432f-8528-c38fd0e043ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\os">
+      <UniqueIdentifier>{faf2a6d1-cce6-46f0-ba46-d3e7998eceb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\os">
+      <UniqueIdentifier>{9995f74e-a8fb-4108-bdbf-f329c5658300}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -75,6 +81,12 @@
     </ClCompile>
     <ClCompile Include="..\..\utils\StringsWin.cpp">
       <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mainloop\MainGameBase.cpp">
+      <Filter>src\mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\os\WindowWin.cpp">
+      <Filter>src\os</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +146,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\Com.h">
       <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h">
+      <Filter>inc\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\os\WindowBase.h">
+      <Filter>inc\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\os\WindowWin.h">
+      <Filter>inc\os</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

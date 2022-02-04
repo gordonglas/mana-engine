@@ -67,9 +67,6 @@
 
 * merge stuff from ManaEngine_OLD and ManaGame_OLD
     * ManaEngine_OLD has `ManaServerConsole.cpp` (winsock)
-* Write golang app to mimic `git lfs` sha256 and store map of filename to hash.
-    * where should this run?
-    * add to new git repo (with git lfs rules)
 
 
 ## How to create a new Static Library project:

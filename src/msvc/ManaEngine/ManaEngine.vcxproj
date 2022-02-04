@@ -273,9 +273,12 @@
     <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
+    <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h" />
     <ClInclude Include="..\..\..\inc\ManaGlobals.h" />
+    <ClInclude Include="..\..\..\inc\os\WindowBase.h" />
+    <ClInclude Include="..\..\..\inc\os\WindowWin.h" />
     <ClInclude Include="..\..\..\inc\target\OSDefines.h" />
     <ClInclude Include="..\..\..\inc\target\TargetOS.h" />
     <ClInclude Include="..\..\..\inc\utils\CommandLine.h" />
@@ -291,8 +294,10 @@
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
     <ClCompile Include="..\..\concurrency\ThreadWin.cpp" />
+    <ClCompile Include="..\..\mainloop\MainGameBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessManager.cpp" />
+    <ClCompile Include="..\..\os\WindowWin.cpp" />
     <ClCompile Include="..\..\utils\CommandLine.cpp" />
     <ClCompile Include="..\..\utils\ComWin.cpp" />
     <ClCompile Include="..\..\utils\FileWin.cpp" />
