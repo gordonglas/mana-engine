@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace Mana {
+
 DWORD WINAPI ThreadFunction(LPVOID lpParam);
 
 class Thread : public IThread {
@@ -138,6 +139,7 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
 }
 
 namespace ThreadFactory {
+
 // TODO: do we really need this? leave it for now in case we want to add more
 // properties/management of the threads.
 class PrivateThreadFactory {
@@ -167,5 +169,7 @@ IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc) {
 IThread* Create(ThreadFunc pThreadFunc) {
   return PrivateThreadFactory::Instance().CreateThread(pThreadFunc);
 }
+
 }  // namespace ThreadFactory
+
 }  // namespace Mana

@@ -3,6 +3,7 @@
 #include "os/WindowWin.h"
 
 namespace Mana {
+
 constexpr size_t MAX_LEN_TITLE = 100;
 std::wstring windowClassName;
 
@@ -79,4 +80,5 @@ bool WindowWin::ShowWindow() {
 
   return true;
 }
+
 }  // namespace Mana

@@ -4,6 +4,7 @@
 #include "os/WindowBase.h"
 
 namespace Mana {
+
 class WindowWin : public WindowBase {
  public:
   WindowWin(HINSTANCE hInstance, int nCmdShow, WNDPROC wndProc)
@@ -27,4 +28,5 @@ class WindowWin : public WindowBase {
   HWND hWnd_;
   WNDPROC wndProc_;
 };
+
 }  // namespace Mana

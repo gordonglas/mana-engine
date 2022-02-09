@@ -2,6 +2,7 @@
 #include "mainloop/ProcessBase.h"
 
 namespace Mana {
+
 ProcessBase::ProcessBase() {
   m_state = State::UNINITIALIZED;
 }
@@ -24,4 +25,5 @@ StrongProcessPtr ProcessBase::RemoveChild() {
 
   return StrongProcessPtr();
 }
+
 }  // namespace Mana

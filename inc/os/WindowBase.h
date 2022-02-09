@@ -4,6 +4,7 @@
 #include "utils/CommandLine.h"
 
 namespace Mana {
+
 class WindowBase {
  public:
   WindowBase() {}
@@ -18,4 +19,5 @@ class WindowBase {
  protected:
   xstring error_;
 };
+
 }  // namespace Mana

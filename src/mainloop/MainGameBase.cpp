@@ -2,6 +2,7 @@
 #include "mainloop/ManaGameBase.h"
 
 namespace Mana {
+
 bool ManaGameBase::OnInit() {
   if (!commandLine_.Parse(argc_, argv_)) {
     error_ = _X("CommandLine error");
@@ -23,4 +24,5 @@ bool ManaGameBase::Run(int argc, char** argv, xstring title) {
 
   return OnShutdown();
 }
+
 }  // namespace Mana

@@ -1,6 +1,7 @@
 #pragma once
 
 namespace Mana {
+
 // use in main thread
 class ComInitilizer {
  public:
@@ -9,4 +10,5 @@ class ComInitilizer {
 
  private:
 };
+
 }  // namespace Mana

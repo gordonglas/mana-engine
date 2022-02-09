@@ -9,6 +9,7 @@
 constexpr size_t MAX_ARG_VAL_LEN = 100;
 
 namespace Mana {
+
 bool CommandLine::Parse(int argc, char* argv[]) {
   map.clear();
 
@@ -110,4 +111,5 @@ std::string CommandLine::Get(std::string& key) {
 
   return value;
 }
+
 }  // namespace Mana

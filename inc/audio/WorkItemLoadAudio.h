@@ -4,6 +4,7 @@
 #include "utils/StringTypes.h"
 
 namespace Mana {
+
 class WorkItemLoadAudio : public IWorkItem {
  public:
   WorkItemLoadAudio(AudioBase* audioEngine,
@@ -54,4 +55,5 @@ class WorkItemLoadAudio : public IWorkItem {
   size_t m_handle;
   bool m_doneProcessing;
 };
+
 }  // namespace Mana

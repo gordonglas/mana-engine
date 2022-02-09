@@ -2,6 +2,7 @@
 #include "utils/Lock.h"
 
 namespace Mana {
+
 CriticalSection::CriticalSection() {
   ::InitializeCriticalSection(&m_cs);
 }
@@ -25,4 +26,5 @@ ScopedCriticalSection::ScopedCriticalSection(CriticalSection& cs) : m_cs(cs) {
 ScopedCriticalSection::~ScopedCriticalSection() {
   m_cs.Unlock();
 }
+
 }  // namespace Mana

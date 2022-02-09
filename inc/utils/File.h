@@ -9,6 +9,7 @@
 #include "utils/StringTypes.h"
 
 namespace Mana {
+
 class File {
  public:
   File() {}
@@ -32,4 +33,5 @@ class File {
   FILE* m_pFile = nullptr;
   unsigned char* m_pBuf = nullptr;
 };
+
 }  // namespace Mana

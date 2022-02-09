@@ -12,6 +12,7 @@ Values can be within double quotes.
 #include <vector>
 
 namespace Mana {
+
 class CommandLine {
  public:
   // Assumes format: --{key1} {value1} --{key2} --{key3} {value3}
@@ -25,4 +26,5 @@ class CommandLine {
  private:
   std::map<std::string, std::string> map;
 };
+
 }  // namespace Mana

@@ -5,6 +5,7 @@
 #include "utils/Lock.h"
 
 namespace Mana {
+
 template <typename T>
 class SynchronizedQueue {
  public:
@@ -61,4 +62,5 @@ const size_t SynchronizedQueue<T>::Size() {
   ScopedCriticalSection lock(m_lock);
   return (size_t)m_queue.size();
 }
+
 }  // namespace Mana

@@ -2,6 +2,7 @@
 #include "audio/AudioBase.h"
 
 namespace Mana {
+
 AudioFileBase::AudioFileBase() {
   audioFileHandle = 0;
   category = AudioCategory::Sound;
@@ -96,4 +97,5 @@ AudioFileBase* AudioBase::GetAudioFile(AudioFileHandle audioFileHandle) {
 
   return search->second;
 }
+
 }  // namespace Mana

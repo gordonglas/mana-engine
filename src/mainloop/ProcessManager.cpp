@@ -2,6 +2,7 @@
 #include "mainloop/ProcessManager.h"
 
 namespace Mana {
+
 ProcessManager::~ProcessManager() {
   ClearAllProcesses();
 }
@@ -97,4 +98,5 @@ void ProcessManager::AbortAllProcesses(bool immediate) {
     }
   }
 }
+
 }  // namespace Mana

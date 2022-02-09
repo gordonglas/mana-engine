@@ -4,6 +4,7 @@
 #include "target/TargetOS.h"
 
 namespace Mana {
+
 class CriticalSection {
  public:
   CriticalSection();
@@ -31,4 +32,5 @@ class ScopedCriticalSection {
  private:
   CriticalSection& m_cs;
 };
+
 }  // namespace Mana

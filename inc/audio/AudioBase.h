@@ -12,6 +12,7 @@
 #include "utils/File.h"
 
 namespace Mana {
+
 typedef size_t AudioFileHandle;
 
 enum class AudioCategory { Sound, Music, Voice };
@@ -146,4 +147,5 @@ class AudioBase {
                     unsigned loopBegin,
                     unsigned loopLength) = 0;
 };
+
 }  // namespace Mana

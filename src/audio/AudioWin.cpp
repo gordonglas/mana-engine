@@ -10,12 +10,13 @@
 // this only works for little-endian (reverse the chars for big-endian systems)
 #define fourccRIFF 'FFIR'
 #define fourccDATA 'atad'
-#define fourccFMT ' tmf'
+#define fourccFMT  ' tmf'
 #define fourccWAVE 'EVAW'
 #define fourccXWMA 'AMWX'
 #define fourccDPDS 'sdpd'
 
 namespace Mana {
+
 AudioFileWin::AudioFileWin() {
   wfx = {0};
   sourceVoicePos = 0;
@@ -1032,4 +1033,5 @@ void AudioWin::ClampVolume(float& volume) {
   else if (volume > AUDIO_MAX_VOLUME)
     volume = AUDIO_MAX_VOLUME;
 }
+
 }  // namespace Mana

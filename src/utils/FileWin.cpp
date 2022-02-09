@@ -2,6 +2,7 @@
 #include "utils/File.h"
 
 namespace Mana {
+
 File::~File() {
   if (m_pBuf) {
     delete[] m_pBuf;
@@ -89,4 +90,5 @@ size_t File::GetFileSize(const xchar* fileName) {
 
   return (size_t)buf.st_size;
 }
+
 }  // namespace Mana

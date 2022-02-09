@@ -6,6 +6,7 @@
 #include "ManaGlobals.h"
 
 namespace Mana {
+
 class ProcessBase;
 typedef std::shared_ptr<ProcessBase> StrongProcessPtr;
 typedef std::weak_ptr<ProcessBase> WeakProcessPtr;
@@ -120,4 +121,5 @@ inline StrongProcessPtr ProcessBase::GetTopLevelProcess()
                 return this;
 }
 */
+
 }  // namespace Mana

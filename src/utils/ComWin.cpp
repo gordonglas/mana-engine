@@ -3,6 +3,7 @@
 #include <objbase.h>
 
 namespace Mana {
+
 bool ComInitilizer::Init() {
   // uses COM STA
   // if (CoInitialize(nullptr) != S_OK)
@@ -18,4 +19,5 @@ bool ComInitilizer::Init() {
 void ComInitilizer::Uninit() {
   CoUninitialize();
 }
+
 }  // namespace Mana

@@ -16,6 +16,7 @@
 #include <xmmintrin.h>
 
 namespace Mana {
+
   // TODO: simplify these (Use C++11 types)
   // portable data types
   typedef unsigned char      U8;
@@ -28,6 +29,7 @@ namespace Mana {
   typedef long long          I64;
   typedef float              F32;
   typedef __m128             VF32;
+
 }  // namespace Mana
 
 #endif

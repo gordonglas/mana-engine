@@ -3,6 +3,7 @@
 #include "target/TargetOS.h"
 
 namespace Mana {
+
 enum class WorkItemType { LoadAudio };
 
 class IWorkItem {
@@ -15,4 +16,5 @@ class IWorkItem {
   // returns 0 if not done processing yet
   virtual size_t GetHandleIfDoneProcessing() = 0;
 };
+
 }  // namespace Mana

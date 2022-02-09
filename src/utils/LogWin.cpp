@@ -7,6 +7,7 @@
 #include <string>
 
 namespace Mana {
+
 char logFile[20];
 CriticalSection logFileLock;
 bool initialized = false;
@@ -191,4 +192,5 @@ static std::wstring GetTimeString() {
 //
 //	return ret;
 //}
+
 }  // namespace Mana

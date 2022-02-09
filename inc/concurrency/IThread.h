@@ -3,6 +3,7 @@
 #include "concurrency/IWorkItem.h"
 
 namespace Mana {
+
 class IThread;
 typedef unsigned long (*ThreadFunc)(IThread* pThread);
 
@@ -35,4 +36,5 @@ class IThread {
 namespace ThreadFactory {
 IThread* Create(ThreadFunc pThreadFunc = nullptr);
 };
+
 }  // namespace Mana

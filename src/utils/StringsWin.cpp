@@ -4,6 +4,7 @@
 #include <fstream>
 
 namespace Mana {
+
 int Utf16ToUtf8(char* output, size_t outputSize, const wchar_t* wide) {
   // TODO: wcsnlen?
   int wideCharLen = (int)std::wcslen(wide) + 1;
@@ -73,4 +74,5 @@ std::wstring Utf8ToUtf16(std::string utf8) {
   delete[] output;
   return ret;
 }
+
 }  // namespace Mana

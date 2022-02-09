@@ -5,6 +5,7 @@
 #include "utils/CommandLine.h"
 
 namespace Mana {
+
 class ManaGameBase {
  public:
   ManaGameBase() {}
@@ -31,4 +32,5 @@ class ManaGameBase {
   virtual bool OnGameLoop() = 0;
   virtual bool OnShutdown() = 0;
 };
+
 }  // namespace Mana

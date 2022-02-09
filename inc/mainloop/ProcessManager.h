@@ -6,6 +6,7 @@
 #include "mainloop/ProcessBase.h"
 
 namespace Mana {
+
 class ProcessManager {
   typedef std::list<StrongProcessPtr> ProcessList;
 
@@ -25,4 +26,5 @@ class ProcessManager {
 
   void ClearAllProcesses();  // should only be called by destructor
 };
+
 }  // namespace Mana
