@@ -288,6 +288,7 @@
     <ClInclude Include="..\..\..\inc\utils\Log.h" />
     <ClInclude Include="..\..\..\inc\utils\Strings.h" />
     <ClInclude Include="..\..\..\inc\utils\StringTypes.h" />
+    <ClInclude Include="..\..\..\inc\utils\Timer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -297,6 +298,7 @@
     <ClCompile Include="..\..\mainloop\MainGameBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessManager.cpp" />
+    <ClCompile Include="..\..\ManaGlobals.cpp" />
     <ClCompile Include="..\..\os\WindowWin.cpp" />
     <ClCompile Include="..\..\utils\CommandLine.cpp" />
     <ClCompile Include="..\..\utils\ComWin.cpp" />
@@ -304,6 +306,7 @@
     <ClCompile Include="..\..\utils\LockWin.cpp" />
     <ClCompile Include="..\..\utils\LogWin.cpp" />
     <ClCompile Include="..\..\utils\StringsWin.cpp" />
+    <ClCompile Include="..\..\utils\Timer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>

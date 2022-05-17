@@ -40,3 +40,6 @@ namespace Mana {
 #define MANA_LOGGING_ENABLED 1
 #endif
 #include "utils/Log.h"
+
+#include "utils/Timer.h"
+extern Mana::Timer g_clock;

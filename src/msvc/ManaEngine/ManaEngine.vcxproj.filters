@@ -88,6 +88,12 @@
     <ClCompile Include="..\..\os\WindowWin.cpp">
       <Filter>src\os</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\utils\Timer.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ManaGlobals.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -155,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\os\WindowWin.h">
       <Filter>inc\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Timer.h">
+      <Filter>inc\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
