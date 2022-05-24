@@ -268,6 +268,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\inc\audio\AudioBase.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioFileBase.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioFileModWin.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioFileWavWin.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioWin.h" />
     <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
@@ -293,6 +297,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
+    <ClCompile Include="..\..\audio\AudioFileModWin.cpp" />
+    <ClCompile Include="..\..\audio\AudioFileWavWin.cpp" />
+    <ClCompile Include="..\..\audio\AudioFileWin.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
     <ClCompile Include="..\..\concurrency\ThreadWin.cpp" />
     <ClCompile Include="..\..\mainloop\MainGameBase.cpp" />

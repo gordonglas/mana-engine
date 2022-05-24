@@ -1,98 +1,11 @@
 #include "pch.h"
-#include "audio/AudioWin.h"
 #include <xaudio2.h>
-#include "utils/File.h"
+#include "audio/AudioWin.h"
+#include "audio/AudioFileModWin.h"
+#include "audio/AudioFileWavWin.h"
 #include "concurrency/IThread.h"
 
-#include <libopenmpt/libopenmpt.hpp>
-#pragma comment(lib, "libopenmpt.lib")
-
-// this only works for little-endian (reverse the chars for big-endian systems)
-#define fourccRIFF 'FFIR'
-#define fourccDATA 'atad'
-#define fourccFMT  ' tmf'
-#define fourccWAVE 'EVAW'
-#define fourccXWMA 'AMWX'
-#define fourccDPDS 'sdpd'
-
 namespace Mana {
-
-AudioFileWin::AudioFileWin() :
-  wfx({0}),
-  sourceVoicePos(0) {
-  //wfx = {0};
-}
-
-AudioFileWin::~AudioFileWin() {}
-
-static HRESULT FindChunk(HANDLE hFile,
-                         DWORD fourcc,
-                         DWORD& dwChunkSize,
-                         DWORD& dwChunkDataPosition) {
-  HRESULT hr = S_OK;
-  if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
-    return HRESULT_FROM_WIN32(GetLastError());
-
-  DWORD dwChunkType;
-  DWORD dwChunkDataSize;
-  DWORD dwRIFFDataSize = 0;
-  DWORD dwFileType;
-  DWORD bytesRead = 0;
-  DWORD dwOffset = 0;
-
-  while (hr == S_OK) {
-    DWORD dwRead;
-    if (0 == ReadFile(hFile, &dwChunkType, sizeof(DWORD), &dwRead, NULL))
-      hr = HRESULT_FROM_WIN32(GetLastError());
-
-    if (0 == ReadFile(hFile, &dwChunkDataSize, sizeof(DWORD), &dwRead, NULL))
-      hr = HRESULT_FROM_WIN32(GetLastError());
-
-    switch (dwChunkType) {
-      case fourccRIFF:
-        dwRIFFDataSize = dwChunkDataSize;
-        dwChunkDataSize = 4;
-        if (0 == ReadFile(hFile, &dwFileType, sizeof(DWORD), &dwRead, NULL))
-          hr = HRESULT_FROM_WIN32(GetLastError());
-        break;
-
-      default:
-        if (INVALID_SET_FILE_POINTER ==
-            SetFilePointer(hFile, dwChunkDataSize, NULL, FILE_CURRENT)) {
-          return HRESULT_FROM_WIN32(GetLastError());
-        }
-    }
-
-    dwOffset += sizeof(DWORD) * 2;
-
-    if (dwChunkType == fourcc) {
-      dwChunkSize = dwChunkDataSize;
-      dwChunkDataPosition = dwOffset;
-      return S_OK;
-    }
-
-    dwOffset += dwChunkDataSize;
-
-    if (bytesRead >= dwRIFFDataSize)
-      return S_FALSE;
-  }
-
-  return S_OK;
-}
-
-static HRESULT ReadChunkData(HANDLE hFile,
-                             void* buffer,
-                             DWORD buffersize,
-                             DWORD bufferoffset) {
-  HRESULT hr = S_OK;
-  if (INVALID_SET_FILE_POINTER ==
-      SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
-    return HRESULT_FROM_WIN32(GetLastError());
-  DWORD dwRead;
-  if (0 == ReadFile(hFile, buffer, buffersize, &dwRead, NULL))
-    hr = HRESULT_FROM_WIN32(GetLastError());
-  return hr;
-}
 
 AudioBase* g_pAudioEngine = nullptr;
 IThread* pAudioThread = nullptr;
@@ -180,13 +93,15 @@ unsigned long AudioThreadFunction(IThread* pThread) {
         if (pFile->format == AudioFormat::Mod) {
           // OutputDebugStringW(L"FILL MOD BUF\n");
 
+          AudioFileModWin* pModFile = (AudioFileModWin*)pFile;
+
+          // TODO: move this to an override'd function in AudioFileModWin, so we keep all the mod load/reads in one place.
           std::size_t pcmFramesRendered =
-              ((openmpt::module*)(pFile->lib))
-                  ->read_interleaved_stereo(
-                      pFile->wfx.Format.nSamplesPerSec, pcmFrames,
-                      (std::int16_t*)&pFile
-                          ->pDataBuffer[pFile->currentStreamBufIndex *
-                                        AudioStreamBufSize]);
+              pModFile->modLib->read_interleaved_stereo(
+                  pModFile->wfx.Format.nSamplesPerSec, pcmFrames,
+                  (std::int16_t*)&pModFile
+                      ->pDataBuffer[pModFile->currentStreamBufIndex *
+                                    AudioStreamBufSize]);
 
           if (pcmFramesRendered == 0) {
             // end of the file reached. nothing more to render.
@@ -391,7 +306,14 @@ AudioFileHandle AudioWin::Load(xstring filePath,
   if (simultaneousSounds < 1)
     return 0;
 
-  AudioFileWin* pFile = new AudioFileWin;
+  AudioFileWin* pFile = nullptr;
+  if (format == AudioFormat::Wav) {
+    pFile = new AudioFileWavWin;
+  }
+  else if (format == AudioFormat::Mod) {
+    pFile = new AudioFileModWin;
+  }
+
   if (!pFile)
     return 0;
 
@@ -399,100 +321,13 @@ AudioFileHandle AudioWin::Load(xstring filePath,
   pFile->category = category;
   pFile->format = format;
 
-  if (format == AudioFormat::Wav) {
-    // only support static loading for wav
-    pFile->loadType = AudioLoadType::Static;
-
-    HANDLE hFile = CreateFileW(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ,
-                               NULL, OPEN_EXISTING, 0, NULL);
-
-    if (hFile == INVALID_HANDLE_VALUE) {
-      delete pFile;
-      return 0;
-    }
-
-    if (SetFilePointer(hFile, 0, NULL, FILE_BEGIN) ==
-        INVALID_SET_FILE_POINTER) {
-      delete pFile;
-      return 0;
-    }
-
-    DWORD dwChunkSize;
-    DWORD dwChunkPosition;
-    // check the file type, should be fourccWAVE or 'XWMA'
-    FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition);
-    DWORD filetype;
-    ReadChunkData(hFile, &filetype, sizeof(DWORD), dwChunkPosition);
-    if (filetype != fourccWAVE) {
-      CloseHandle(hFile);
-      delete pFile;
-      return 0;
-    }
-
-    // Locate the 'fmt ' chunk, and copy its contents into a
-    // WAVEFORMATEXTENSIBLE structure.
-    FindChunk(hFile, fourccFMT, dwChunkSize, dwChunkPosition);
-    ReadChunkData(hFile, &pFile->wfx, dwChunkSize, dwChunkPosition);
-
-    // wchar_t msg[50];
-    // swprintf_s(msg, L"channels: %d\n", pFile->wfx.Format.nChannels);
-    // OutputDebugStringW(msg);
-
-    // Locate the 'data' chunk, and read its contents into a buffer.
-    // fill out the audio data buffer with the contents of the fourccDATA chunk
-    FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
-    pFile->pDataBuffer = new BYTE[dwChunkSize];
-    pFile->dataBufferSize = dwChunkSize;
-    ReadChunkData(hFile, pFile->pDataBuffer, dwChunkSize, dwChunkPosition);
-
-    CloseHandle(hFile);
-  } else if (format == AudioFormat::Mod) {
-    // only support streaming loading for mod
-    pFile->loadType = AudioLoadType::Streaming;
-
-    // load entire mod file into memory
-    File* file = new File();
-    if (!file) {
-      delete pFile;
-      return 0;
-    }
-    pFile->fileSize = file->ReadAllBytes(filePath.c_str());
-    if (pFile->fileSize == 0) {
-      OutputDebugStringW(L"ReadAllBytes failed");
-      delete file;
-      delete pFile;
-      return 0;
-    }
-
-    pFile->lib = new openmpt::module(file->GetBuffer(), pFile->fileSize);
-    // don't need the file buffer after module ctor
-    delete file;
-    file = nullptr;
-
-    WAVEFORMATEXTENSIBLE& wfx = pFile->wfx;
-    // Even though libopenmpt recommends using 32bit float pcm data,
-    // XAudio2's optimal format is 16-bit ints according to the XAudio2 docs
-    wfx.Format.wFormatTag = WAVE_FORMAT_PCM;
-    wfx.Format.nChannels = 2;
-    wfx.Format.nSamplesPerSec = 44100UL;  // 48000UL
-    wfx.Format.wBitsPerSample = 16;
-    wfx.Format.nBlockAlign =
-        wfx.Format.nChannels * (wfx.Format.wBitsPerSample / 8);
-    wfx.Format.nAvgBytesPerSec =
-        wfx.Format.nSamplesPerSec * wfx.Format.nBlockAlign;
-    wfx.Format.cbSize = 0;
-
-    pFile->pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
-  }
-  // TODO: add other formats
-  else {
+  if (!pFile->Load(filePath)) {
+    delete pFile;
     return 0;
   }
 
   audioFileHandle = GetNextFreeAudioFileHandle();
   if (!audioFileHandle) {
-    if (pFile->pDataBuffer)
-      delete[] pFile->pDataBuffer;
     delete pFile;
     return 0;
   }
@@ -511,8 +346,6 @@ AudioFileHandle AudioWin::Load(xstring filePath,
               &pSourceVoice, (WAVEFORMATEX*)&pFile->wfx, 0u, 2.0f,
               (IXAudio2VoiceCallback*)&voiceCallback))) {
         OutputDebugStringW(L"ERROR: CreateSourceVoice streaming failed\n");
-        if (pFile->pDataBuffer)
-          delete[] pFile->pDataBuffer;
         delete pFile;
         return 0;
       }
@@ -520,8 +353,6 @@ AudioFileHandle AudioWin::Load(xstring filePath,
       if (FAILED(m_pXAudio2->CreateSourceVoice(&pSourceVoice,
                                                (WAVEFORMATEX*)&pFile->wfx))) {
         OutputDebugStringW(L"ERROR: CreateSourceVoice failed\n");
-        if (pFile->pDataBuffer)
-          delete[] pFile->pDataBuffer;
         delete pFile;
         return 0;
       }
@@ -565,8 +396,7 @@ void AudioWin::Unload(AudioFileHandle audioFileHandle) {
 
   pAudioFile->sourceVoices.clear();
 
-  delete pAudioFile->lib;
-  pAudioFile->lib = nullptr;
+  pAudioFile->Unload();
 
   delete pAudioFile;
   pAudioFile = nullptr;
@@ -593,13 +423,10 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle,
     return false;
   }
 
-  // TODO: There's a big problem when Play gets called after the streaming sound
-  //       has finished playing (and is not looping). Might need to manage a
-  //       "isPlaying" bool ourselves. Also, how about if it's paused, then play
-  //       is called? (it should "resume"?)
+  // if streaming sound is already playing, do nothing.
   if (pFile->loadType == AudioLoadType::Streaming && !pFile->isPaused &&
       IsPlaying(audioFileHandle)) {
-    return false;
+    return true;
   }
 
   IXAudio2SourceVoice* pSourceVoice =
@@ -626,9 +453,10 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle,
 
     if (pFile->loadType == AudioLoadType::Streaming) {
       if (pFile->format == AudioFormat::Mod) {
-        ((openmpt::module*)pFile->lib)
-            ->set_repeat_count(loopCount == LOOP_INFINITE ? -1
-                                                          : (int32_t)loopCount);
+        AudioFileModWin* pModFile = (AudioFileModWin*)pFile;
+        // TODO: call AudioFileModWin->SetRepeatCount or something
+        pModFile->modLib->set_repeat_count(
+            loopCount == LOOP_INFINITE ? -1 : (int32_t)loopCount);
       }
     }
   }
@@ -667,25 +495,19 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle,
     // more than 1 buffer to prevent a short silence when the first buffer
     // finishes playing.
 
-    // in case Play is called multiple times on the same streaming file...
-    // if (pFile->pDataBuffer)
-    //{
-    //    memset(&pFile->pDataBuffer[0], 0, AudioStreamBufSize *
-    //    AudioStreamBufCount);
-    //}
-
     size_t numSamples =
         AudioStreamBufSize / (pFile->wfx.Format.wBitsPerSample / 8);
     size_t pcmFrames = numSamples / pFile->wfx.Format.nChannels;
 
     size_t bufIndex = 0;
     while (bufIndex < AudioStreamBufCount) {
+      AudioFileModWin* pModFile = (AudioFileModWin*)pFile;
+      // TODO: call same new Read function as needed above (in AudioFileModWin)
       std::size_t pcmFramesRendered =
-          ((openmpt::module*)(pFile->lib))
-              ->read_interleaved_stereo(
-                  pFile->wfx.Format.nSamplesPerSec, pcmFrames,
-                  (std::int16_t*)&pFile
-                      ->pDataBuffer[bufIndex * AudioStreamBufSize]);
+          pModFile->modLib->read_interleaved_stereo(
+            pModFile->wfx.Format.nSamplesPerSec, pcmFrames,
+              (std::int16_t*)&pModFile
+                  ->pDataBuffer[bufIndex * AudioStreamBufSize]);
 
       XAUDIO2_BUFFER buffer = {0};
       buffer.AudioBytes =
@@ -753,6 +575,8 @@ void AudioWin::Pause(AudioFileHandle audioFileHandle) {
 
   // Pause only works for files that only have 1 simultaneous sound
   // (doesn't make sense otherwise)
+  // TODO: or does it?? We probably want ability to pause all sounds
+  //       (like when pausing the game)
   if (pAudioFile->sourceVoices.size() > 1) {
     return;
   }

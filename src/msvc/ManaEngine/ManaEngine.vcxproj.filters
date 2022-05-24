@@ -94,6 +94,15 @@
     <ClCompile Include="..\..\ManaGlobals.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\audio\AudioFileWin.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\audio\AudioFileWavWin.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\audio\AudioFileModWin.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -164,6 +173,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\Timer.h">
       <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\AudioFileBase.h">
+      <Filter>inc\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\AudioFileWavWin.h">
+      <Filter>inc\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h">
+      <Filter>inc\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\audio\AudioFileModWin.h">
+      <Filter>inc\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

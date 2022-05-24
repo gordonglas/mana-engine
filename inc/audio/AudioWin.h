@@ -5,32 +5,13 @@
 #include <xaudio2.h>
 #include "ManaGlobals.h"
 #include "audio/AudioBase.h"
+#include "audio/AudioFileWin.h"
+#include "audio/AudioFileWavWin.h"
 #include "target/TargetOS.h"
 
 //#pragma comment(lib, "xaudio2_9redist.lib")
 
 namespace Mana {
-
-// Assumes streaming files' uncompressed pcm data
-// is larger than (AudioStreamBufSize * AudioStreamBufCount),
-// else just load it as an uncompressed pcm wav file.
-// Should always be an even value.
-constexpr size_t AudioStreamBufSize = 65536;
-constexpr size_t AudioStreamBufCount = 3;
-
-class AudioFileWin : public AudioFileBase {
- public:
-  AudioFileWin();
-  // dtor doesn't stop sounds or destroy xaudio2 buffers.
-  // The Audio engine handles this.
-  ~AudioFileWin();
-
-  WAVEFORMATEXTENSIBLE wfx;
-  std::vector<IXAudio2SourceVoice*> sourceVoices;
-  size_t sourceVoicePos;
-
-  // XAUDIO2_BUFFER buffer;
-};
 
 // XAudio2.9 wrapper with focus on simple indie games.
 // Can load: static uncompressed wav, streaming ogg vorbis, and various mod

@@ -20,8 +20,7 @@ AudioFileBase::AudioFileBase() :
       currentStreamBufIndex(0),
       currentBufPos(0),
       fileSize(0),
-      lastBufferPlaying(false),
-      lib(nullptr) {
+      lastBufferPlaying(false) {
 }
 
 AudioFileBase::~AudioFileBase() {
