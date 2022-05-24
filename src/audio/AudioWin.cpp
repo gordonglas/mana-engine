@@ -17,9 +17,10 @@
 
 namespace Mana {
 
-AudioFileWin::AudioFileWin() {
-  wfx = {0};
-  sourceVoicePos = 0;
+AudioFileWin::AudioFileWin() :
+  wfx({0}),
+  sourceVoicePos(0) {
+  //wfx = {0};
 }
 
 AudioFileWin::~AudioFileWin() {}
@@ -97,6 +98,7 @@ AudioBase* g_pAudioEngine = nullptr;
 IThread* pAudioThread = nullptr;
 HANDLE hAudioThreadWait = nullptr;
 
+// TODO: move this somewhere else. (into logger?)
 std::wstring GetDateTimeNow() {
   SYSTEMTIME st;
   GetSystemTime(&st);
@@ -123,7 +125,6 @@ unsigned long AudioThreadFunction(IThread* pThread) {
     // TODO: probably need to protect most(or all?) accesses of "m_fileMap" with
     // CriticalSection.
     //       maybe change it to a "SynchronizedMap"?
-    //       OR perhaps use strong ptrs instead? (probably better?)
     std::vector<AudioFileBase*> streamingFiles =
         g_pAudioEngine->GetStreamingFiles();
 
@@ -325,7 +326,7 @@ bool AudioWin::Init() {
   m_pMasterVoice = nullptr;
 
   HRESULT hr;
-  if (FAILED(hr = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))
+  if (FAILED(hr = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_USE_DEFAULT_PROCESSOR)))
     return false;
 
   if (FAILED(hr = m_pXAudio2->CreateMasteringVoice(&m_pMasterVoice)))
