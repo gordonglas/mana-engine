@@ -1,12 +1,61 @@
 # ManaEngine - 2d in 3d game engine for Windows 10 and up
 
 ## TODO:
-* DONE-Thread-safe Queue -use template, doesn't need an interface
+* audio engine - re-org
+  * DONE-Remove libopenmpt (We won't be using mod files.)
+TODO: HERE!!!
+  * (WIP)-Get gameloop running when dragging the window.
+     -See: https://www.gamedev.net/forums/topic.asp?topic_id=287698
+
+    * try getting separate thread working??? See example:
+        C:\Users\gglas\Desktop\run-game-in-thread-example.cpp
+
+int WINAPI WinMain(...){
+    RegisterClassEx(...);
+    auto_handle<HWND> hwnd = CreateWindow(...);
+    RenderThread renderthread(hwnd);
+    renderthread.Run();
+    ShowWindow(hwnd, nCmdShow);
+    MSG msg;
+    while(GetMessage(&msg, NULL, 0, 0))	{
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    renderthread.PostMessage(Message(WM_QUIT));
+    renderthread.Join();
+    return 0;
+}
+
+void RenderThread::Entry(){
+    try	{
+        OpenGL opengl(hwnd);
+        // context creation and cleanup etc.
+        Message* msg;
+        do {
+            while((msg = msgq.Read()))
+                HandleMessage(msg);
+        } while(running);
+    }
+    catch(int ex)
+    // if an exception made it here, it's rather bad
+    {
+        SendMessage(hwnd, WM_UNHANDLED_EXCEPTION, ex, 0);
+        SendMessage(hwnd, WM_CLOSE, 0, 0);
+    }
+}
+
+
+  * (WIP)-Move code from AudioWin::Play into AudioFileOggWin::Load.
+    * DONE-Play (for non-looping, streaming sounds) should only be "resuming" the current buffers, not resetting any positions.
+      ... Stop causes issues with the audio thread. Need to figure out a way to sync them up cleanly somehow.
+      ... otherwise, might need to make it single threaded!!!! similar to https://www.gamedev.net/forums/topic/496350-xaudio2-and-ogg/
+    * Stop should clear voice's queues, reset position back to start, and seek to start, so it prepares for next call to "Play".
+      * This also might need to be called from audio thread at end of non-looping streaming file?
+    * TEST-Pause should only "stop" the voices and not change any positions.
+    * DONE-Resume should only call "Play" on the voices.
+  * Get static ogg working (then we can remove wav!)
+
 * Thread functionality
-    * Set Processor Affinity (or better yet, a "CPU set"!) for the main thread and queue thread to use different CPUs if possible.  
-      See: "How do I keep thread pool threads, or other threads in general, from competing with my render thread for CPU?"  
-      https://devblogs.microsoft.com/oldnewthing/20170309-00/?p=95695  
-      https://docs.microsoft.com/en-us/windows/win32/procthread/cpu-sets
     * DONE-interface/factory: See: https://stackoverflow.com/questions/38078450/hiding-specific-implementation-of-c-interface
     * DONE-Create thread
     * DONE-run code on thread (queue with lock?)

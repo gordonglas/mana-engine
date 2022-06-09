@@ -29,11 +29,10 @@ class AudioWin : public AudioBase {
                        int simultaneousSounds = 1) override;
   void Unload(AudioFileHandle audioFileHandle) override;
 
-  bool Play(AudioFileHandle audioFileHandle) override;
+  void Update() override;
+
   bool Play(AudioFileHandle audioFileHandle,
-            unsigned loopCount,
-            unsigned loopBegin = 0,
-            unsigned loopLength = 0) override;
+            unsigned loopCount = 0) override;
 
   void Stop(AudioFileHandle audioFileHandle) override;
   void Pause(AudioFileHandle audioFileHandle) override;
@@ -64,12 +63,6 @@ class AudioWin : public AudioBase {
 
   IXAudio2* m_pXAudio2 = nullptr;
   IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
-
-  bool Play(AudioFileHandle audioFileHandle,
-            bool updateLoopFields,
-            unsigned loopCount,
-            unsigned loopBegin,
-            unsigned loopLength) override;
 
   void ClampVolume(float& volume) override;
 };

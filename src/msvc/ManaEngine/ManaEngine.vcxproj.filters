@@ -100,7 +100,10 @@
     <ClCompile Include="..\..\audio\AudioFileWavWin.cpp">
       <Filter>src\audio</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\audio\AudioFileModWin.cpp">
+    <ClCompile Include="..\..\audio\AudioFileBase.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\audio\AudioFileOggWin.cpp">
       <Filter>src\audio</Filter>
     </ClCompile>
   </ItemGroup>
@@ -183,7 +186,7 @@
     <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h">
       <Filter>inc\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\AudioFileModWin.h">
+    <ClInclude Include="..\..\..\inc\audio\AudioFileOggWin.h">
       <Filter>inc\audio</Filter>
     </ClInclude>
   </ItemGroup>

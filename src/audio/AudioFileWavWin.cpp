@@ -131,4 +131,7 @@ bool AudioFileWavWin::Load(const xstring& strFilePath) {
   return true;
 }
 
+void AudioFileWavWin::Unload() {
+}
+
 }  // namespace Mana

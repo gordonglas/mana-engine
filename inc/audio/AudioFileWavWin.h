@@ -13,9 +13,12 @@ class AudioFileWavWin : public AudioFileWin {
   AudioFileWavWin();
   // dtor doesn't stop sounds or destroy xaudio2 buffers.
   // The Audio engine handles this.
-  ~AudioFileWavWin();
+  virtual ~AudioFileWavWin();
 
   bool Load(const xstring& strFilePath) override;
+  void Unload() override;
+
+  void ResetToStartPos() override {}
 };
 
 }  // namespace Mana

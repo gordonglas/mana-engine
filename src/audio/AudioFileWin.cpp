@@ -4,9 +4,9 @@
 namespace Mana {
 
 AudioFileWin::AudioFileWin() : wfx({0}), sourceVoicePos(0) {
-  // wfx = {0};
 }
 
-AudioFileWin::~AudioFileWin() {}
+AudioFileWin::~AudioFileWin() {
+}
 
 }  // namespace Mana

@@ -14,18 +14,14 @@
 
 namespace Mana {
 
-// Assumes streaming files' uncompressed pcm data
-// is larger than (AudioStreamBufSize * AudioStreamBufCount),
-// else just load it as an uncompressed pcm wav file.
-// Should always be an even value.
-constexpr size_t AudioStreamBufSize = 65536;
-constexpr size_t AudioStreamBufCount = 3;
-
 class AudioBase;
 extern AudioBase* g_pAudioEngine;
 
 class AudioBase {
  public:
+  static const unsigned MAX_LOOP_COUNT = 254;
+  static const unsigned LOOP_INFINITE = 255;
+
   AudioBase() {}
   // TODO: maybe in debug build, assert if there are still files loaded?
   virtual ~AudioBase() {}
@@ -42,13 +38,11 @@ class AudioBase {
   // and removes from m_fileMap
   virtual void Unload(AudioFileHandle audioFileHandle) = 0;
 
-  // This version of play doesn't modify looping fields
-  virtual bool Play(AudioFileHandle audioFileHandle) = 0;
-  // loopBegin and loopLength are in pcm samples.
+  // fills/queues streaming buffers, if needed
+  virtual void Update() = 0;
+
   virtual bool Play(AudioFileHandle audioFileHandle,
-                    unsigned loopCount,
-                    unsigned loopBegin = 0,
-                    unsigned loopLength = 0) = 0;
+                    unsigned loopCount = 0) = 0;
 
   virtual void Stop(AudioFileHandle audioFileHandle) = 0;
   void StopAll();
@@ -101,13 +95,6 @@ class AudioBase {
 
   AudioFileBase* GetAudioFile(AudioFileHandle audioFileHandle);
   virtual void ClampVolume(float& volume) = 0;
-
- private:
-  virtual bool Play(AudioFileHandle audioFileHandle,
-                    bool updateLoopFields,
-                    unsigned loopCount,
-                    unsigned loopBegin,
-                    unsigned loopLength) = 0;
 };
 
 }  // namespace Mana

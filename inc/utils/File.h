@@ -25,6 +25,7 @@ class File {
   // are read into an internal buffer.
   size_t ReadAllBytes(const xchar* fileName);
   unsigned char* GetBuffer() { return m_pBuf; }
+  size_t GetFileSize() const { return fileSize_; };
 
   static size_t GetFileSize(const xchar* fileName);
 
@@ -32,6 +33,7 @@ class File {
   xstring m_fileName;
   FILE* m_pFile = nullptr;
   unsigned char* m_pBuf = nullptr;
+  size_t fileSize_ = 0;
 };
 
 }  // namespace Mana

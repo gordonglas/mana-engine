@@ -26,8 +26,8 @@ class WorkItemLoadAudio : public IWorkItem {
   WorkItemType GetType() override { return WorkItemType::LoadAudio; }
 
   void Process() override {
-    size_t handle = m_pAudioEngine->Load(m_file, m_audioCategory, m_audioFormat,
-                                         m_simultaneousSounds);
+    size_t handle = m_pAudioEngine->Load(m_file,
+        m_audioCategory, m_audioFormat, m_simultaneousSounds);
 
     {
       ScopedCriticalSection lock(m_lock);

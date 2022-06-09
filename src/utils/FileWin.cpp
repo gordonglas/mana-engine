@@ -39,6 +39,9 @@ size_t File::ReadAllBytes(const xchar* fileName) {
   }
 
   m_pBuf = new unsigned char[fileSize];
+  if (!m_pBuf) {
+    return 0;
+  }
 
   if (!Open(fileName, _X("rb"))) {
     return 0;
@@ -67,6 +70,7 @@ size_t File::ReadAllBytes(const xchar* fileName) {
 
   Close();
 
+  fileSize_ = fileSize;
   return fileSize;
 }
 

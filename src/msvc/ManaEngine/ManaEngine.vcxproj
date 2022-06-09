@@ -100,43 +100,43 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\libopenmpt\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\third-party\libopenmpt\lib\x86\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\libopenmpt\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\third-party\libopenmpt\lib\x86\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\libopenmpt\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\third-party\libopenmpt\lib\x86\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\libopenmpt\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\third-party\libopenmpt\lib\amd64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\libopenmpt\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\third-party\libopenmpt\lib\amd64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\libopenmpt\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\third-party\libopenmpt\lib\amd64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -158,6 +158,8 @@
     <Lib>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -180,6 +182,8 @@
     <Lib>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -206,6 +210,8 @@
     <Lib>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -225,6 +231,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <ClCompile>
@@ -243,6 +253,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -265,11 +279,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\inc\audio\AudioBase.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioFileBase.h" />
-    <ClInclude Include="..\..\..\inc\audio\AudioFileModWin.h" />
+    <ClInclude Include="..\..\..\inc\audio\AudioFileOggWin.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioFileWavWin.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioWin.h" />
@@ -297,7 +315,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
-    <ClCompile Include="..\..\audio\AudioFileModWin.cpp" />
+    <ClCompile Include="..\..\audio\AudioFileBase.cpp" />
+    <ClCompile Include="..\..\audio\AudioFileOggWin.cpp" />
     <ClCompile Include="..\..\audio\AudioFileWavWin.cpp" />
     <ClCompile Include="..\..\audio\AudioFileWin.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
