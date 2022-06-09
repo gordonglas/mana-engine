@@ -4,6 +4,10 @@
 
 namespace Mana {
 
+// A thread that can be used to process a queue of tasks,
+// and when there's nothing to process, goes to sleep,
+// and is woken up when an item is placed on the queue.
+// Intended for background tasks, such as loading files.
 class IThread;
 typedef unsigned long (*ThreadFunc)(IThread* pThread);
 
@@ -30,6 +34,7 @@ class IThread {
   // poll to see if all items are done processing
   virtual bool IsAllItemsProcessed() = 0;
   // should probably be called after IsAllItemsProcessed returns true
+  // TODO: This stinks. Find a safer way to clear the work items.
   virtual void ClearProcessedItems() = 0;
 };
 

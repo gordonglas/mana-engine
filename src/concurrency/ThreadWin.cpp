@@ -3,6 +3,7 @@
 #include "utils/Lock.h"
 #include "utils/Log.h"
 #include "datastructures/SynchronizedQueue.h"
+#include <atomic>
 #include <vector>
 
 namespace Mana {
@@ -26,8 +27,8 @@ class Thread : public IThread {
   }
 
   void Stop() override {
-    ScopedCriticalSection lock(m_lock);
     m_bStopping = true;
+    ScopedCriticalSection lock(m_lock);
     if (m_hWait) {
       SetEvent(m_hWait);
     }
@@ -35,7 +36,6 @@ class Thread : public IThread {
   }
 
   bool IsStopping() override {
-    ScopedCriticalSection lock(m_lock);
     return m_bStopping;
   }
 
@@ -71,11 +71,11 @@ class Thread : public IThread {
   bool m_bInitialized = false;
   CriticalSection m_lock;
   HANDLE m_hThread = nullptr;
-  // TODO: shared_ptr<IWorkItem>
+  // TODO: std::vector<shared_ptr<IWorkItem>>
   std::vector<IWorkItem*> m_list;
   SynchronizedQueue<IWorkItem*> m_queue;
   HANDLE m_hWait = nullptr;
-  bool m_bStopping = false;
+  std::atomic<bool> m_bStopping = false;
   ThreadFunc m_pThreadFunc = nullptr;
 
   friend DWORD WINAPI ThreadFunction(LPVOID lpParam);
