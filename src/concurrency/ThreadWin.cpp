@@ -13,48 +13,48 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam);
 class Thread : public IThread {
  public:
   ~Thread() override {
-    if (m_hWait) {
-      CloseHandle(m_hWait);
-      m_hWait = nullptr;
+    if (hWait_) {
+      CloseHandle(hWait_);
+      hWait_ = nullptr;
     }
   }
 
   bool Init(ThreadFunc pThreadFunc) override;
 
   void Start() override {
-    ScopedCriticalSection lock(m_lock);
-    ResumeThread(m_hThread);
+    ScopedCriticalSection lock(lock_);
+    ResumeThread(hThread_);
   }
 
   void Stop() override {
-    m_bStopping = true;
-    ScopedCriticalSection lock(m_lock);
-    if (m_hWait) {
-      SetEvent(m_hWait);
+    bStopping_ = true;
+    ScopedCriticalSection lock(lock_);
+    if (hWait_) {
+      SetEvent(hWait_);
     }
     // TODO: m_queue.Clear();
   }
 
   bool IsStopping() override {
-    return m_bStopping;
+    return bStopping_;
   }
 
   void Join() override {
     // thread is signaled when it exits
-    WaitForSingleObject(m_hThread, INFINITE);
+    WaitForSingleObject(hThread_, INFINITE);
   }
 
   void EnqueueWorkItem(IWorkItem* pWorkItem) override {
-    ScopedCriticalSection lock(m_lock);
-    m_list.push_back(pWorkItem);
-    m_queue.Push(pWorkItem);
-    SetEvent(m_hWait);
+    ScopedCriticalSection lock(lock_);
+    list_.push_back(pWorkItem);
+    queue_.Push(pWorkItem);
+    SetEvent(hWait_);
   }
 
   bool IsAllItemsProcessed() override {
-    ScopedCriticalSection lock(m_lock);
+    ScopedCriticalSection lock(lock_);
 
-    for (const auto& item : m_list) {
+    for (const auto& item : list_) {
       if (item->GetHandleIfDoneProcessing() == 0)
         return false;
     }
@@ -63,44 +63,44 @@ class Thread : public IThread {
   }
 
   void ClearProcessedItems() override {
-    ScopedCriticalSection lock(m_lock);
-    m_list.clear();
+    ScopedCriticalSection lock(lock_);
+    list_.clear();
   }
 
  private:
-  bool m_bInitialized = false;
-  CriticalSection m_lock;
-  HANDLE m_hThread = nullptr;
-  // TODO: std::vector<shared_ptr<IWorkItem>>
-  std::vector<IWorkItem*> m_list;
-  SynchronizedQueue<IWorkItem*> m_queue;
-  HANDLE m_hWait = nullptr;
-  std::atomic<bool> m_bStopping = false;
-  ThreadFunc m_pThreadFunc = nullptr;
+  bool bInitialized_ = false;
+  CriticalSection lock_;
+  HANDLE hThread_ = nullptr;
+  // TODO: shared_ptr<IWorkItem>
+  std::vector<IWorkItem*> list_;
+  SynchronizedQueue<IWorkItem*> queue_;
+  HANDLE hWait_ = nullptr;
+  std::atomic<bool> bStopping_ = false;
+  ThreadFunc pThreadFunc_ = nullptr;
 
   friend DWORD WINAPI ThreadFunction(LPVOID lpParam);
 };
 
 bool Thread::Init(ThreadFunc pThreadFunc) {
-  ScopedCriticalSection lock(m_lock);
+  ScopedCriticalSection lock(lock_);
 
-  if (m_bInitialized)
+  if (bInitialized_)
     return false;
 
-  m_pThreadFunc = pThreadFunc;
+  pThreadFunc_ = pThreadFunc;
 
-  m_hThread = ::CreateThread(nullptr,  // default security attributes
-                             0,        // use default stack size
+  hThread_ = ::CreateThread(nullptr,  // default security attributes
+                             0,       // use default stack size
                              ThreadFunction, this,
                              CREATE_SUSPENDED,  // user must call Thread::Start
                              nullptr);
 
-  if (!m_hThread) {
+  if (!hThread_) {
     ManaLogLnError(Channel::Init, _X("CreateThread failed"));
     return false;
   }
 
-  m_bInitialized = true;
+  bInitialized_ = true;
   return true;
 }
 
@@ -109,27 +109,27 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
 
   ManaLogLnInfo(Channel::Init, _X("ThreadFunction"));
 
-  if (pThread->m_pThreadFunc) {
-    return pThread->m_pThreadFunc(pThread);
+  if (pThread->pThreadFunc_) {
+    return pThread->pThreadFunc_(pThread);
   } else {
     // TODO: does nullptr work for lpName when using multiple threads?
-    pThread->m_hWait = CreateEventW(nullptr, FALSE, FALSE, nullptr);
-    if (pThread->m_hWait == nullptr) {
+    pThread->hWait_ = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+    if (pThread->hWait_ == nullptr) {
       ManaLogLnError(Channel::Init, _X("ThreadFunction: CreateEventW failed"));
       return 0;
     }
 
     while (!pThread->IsStopping()) {
-      if (pThread->m_queue.Size() == 0) {
-        WaitForSingleObject(pThread->m_hWait, INFINITE);
+      if (pThread->queue_.Size() == 0) {
+        WaitForSingleObject(pThread->hWait_, INFINITE);
 
         if (pThread->IsStopping()) {
           break;
         }
       }
 
-      while (pThread->m_queue.Size() > 0) {
-        IWorkItem* pWorkItem = pThread->m_queue.Pop();
+      while (pThread->queue_.Size() > 0) {
+        IWorkItem* pWorkItem = pThread->queue_.Pop();
         pWorkItem->Process();
       }
     }
