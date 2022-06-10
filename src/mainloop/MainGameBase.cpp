@@ -20,7 +20,7 @@ bool ManaGameBase::Run(int argc, char** argv, xstring title) {
   if (!OnInit())
     return false;
 
-  OnGameLoop();
+  OnStartGameLoop();
 
   return OnShutdown();
 }

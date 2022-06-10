@@ -29,7 +29,7 @@ class ManaGameBase {
   int nReturnCode_;
 
   virtual bool OnInit();
-  virtual bool OnGameLoop() = 0;
+  virtual bool OnStartGameLoop() = 0;
   virtual bool OnShutdown() = 0;
 };
 

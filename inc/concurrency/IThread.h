@@ -8,6 +8,7 @@ namespace Mana {
 // and when there's nothing to process, goes to sleep,
 // and is woken up when an item is placed on the queue.
 // Intended for background tasks, such as loading files.
+
 class IThread;
 typedef unsigned long (*ThreadFunc)(IThread* pThread);
 

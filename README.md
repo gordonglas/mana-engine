@@ -10,6 +10,14 @@ TODO: HERE!!!
     * try getting separate thread working??? See example:
         C:\Users\gglas\Desktop\run-game-in-thread-example.cpp
 
+      * Use a queue that generic messages can be posted to.
+        * Lock the queue somehow efficiently.
+          * Can we just use an std::atomic<bool> queueHasData?
+            Is this "correct", even though the queue is a separate data structure?
+          * Maybe just use SynchronizedQueue first (which uses a CriticalSection),
+            and if the performance becomes a problem, then we can worry about
+            optimizing later. Don't want to spend too much time optimizing first.
+
 int WINAPI WinMain(...){
     RegisterClassEx(...);
     auto_handle<HWND> hwnd = CreateWindow(...);
