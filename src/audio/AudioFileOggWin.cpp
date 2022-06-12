@@ -25,9 +25,6 @@ AudioFileOggWin::~AudioFileOggWin() {
 }
 
 bool AudioFileOggWin::Load(const xstring& strFilePath) {
-  // only support streaming loading for ogg
-  loadType = AudioLoadType::Streaming;
-
   // Load entire ogg file into memory.
   // At runtime, we'll decode from memory.
   pCompressedOggFile_ = new File();
@@ -71,15 +68,21 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
       wfx.Format.nSamplesPerSec * wfx.Format.nBlockAlign;
   wfx.Format.cbSize = 0;
 
-  pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
-
   // must seek back to the start after calling ov_open_callbacks
   // and before calling ov_pcm_total!
   ResetToStartPos();
 
-  // Make sure the ogg data size is longer than the streaming buffers size.
-  // And get total pcm sample byte size, so we can use it to tell when
-  // EOF is reached during streaming later.
+  // Get the size of the ogg file in pcm bytes.
+  // If the size is smaller than our total streaming
+  // buffer (combined) size, then load it as a "static" sound
+  // (Load the entire pcm bytes into memory and allow it to be
+  // used with multiple sound buffers. Typically used for soundFX
+  // that can overlap.)
+  // Else, it will be streamed (typically used for music/ambient tracks.)
+
+  // We also use total pcm byte size to tell when EOF is reached
+  // during reading/decoding.
+
   long totalPcmSamples = 0;
   for (int i = 0; i < ::ov_streams(&oggVorbisFile_); ++i) {
     totalPcmSamples += (long)::ov_pcm_total(&oggVorbisFile_, i);
@@ -94,15 +97,60 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
   OutputDebugStringW((std::wstring(L"ogg file Load: totalPcmBytes: ") +
                       std::to_wstring(nTotalPcmBytes) + L"\n")
                          .c_str());
-  assert((nTotalPcmBytes > AudioStreamBufCount * AudioStreamBufSize) &&
-         "ogg file's pcm data must be larger than the streaming buffers "
-         "total size! Use a static wav file instead.");
+  //assert((nTotalPcmBytes > AudioStreamBufCount * AudioStreamBufSize) &&
+  //       "ogg file's pcm data must be larger than the streaming buffers "
+  //       "total size! Use a static wav file instead.");
   totalPcmBytes = nTotalPcmBytes;
 
   // TODO: might also be useful to get the total time so it can be
   //       displayed in an in-game music player along with ability to seek.
-  //lenMillis = 1000.f * ov_time_total(&oggVorbisFile_, -1);
+  // lenMillis = 1000.f * ov_time_total(&oggVorbisFile_, -1);
   // Also see "ov_time_tell" to get current time offset.
+
+  if (totalPcmBytes <= AudioStreamBufCount * AudioStreamBufSize) {
+    loadType = AudioLoadType::Static;
+
+    // decode all pcm data into memory
+
+    pDataBuffer = new BYTE[totalPcmBytes];
+    dataBufferSize = totalPcmBytes;
+
+    int bytesPerSample = wfx.Format.wBitsPerSample / 8;
+    int readBufLen = AudioStreamBufSize;  // multiple of 4
+    unsigned currentBytesRead = 0;
+    long actualBytesRead = 1;
+    int ovBitstream = 0;
+
+    // read until EOF (ov_read returns 0)
+    while (1) {
+      actualBytesRead =
+          ::ov_read(&oggVorbisFile_, (char*)&pDataBuffer[currentBytesRead],
+                    readBufLen, 0, bytesPerSample, 1, &ovBitstream);
+      OutputDebugStringW(
+          (std::wstring(L"Ogg Load static: ov_read actualBytesRead: ") +
+           std::to_wstring(actualBytesRead) + L"\n")
+              .c_str());
+      assert(actualBytesRead >= 0 && "ov_read failed");
+      if (actualBytesRead <= 0) {
+        break;
+      }
+      currentBytesRead += actualBytesRead;
+    }
+
+    // don't need OggVorbis lib or compressed file data anymore
+    Unload();
+
+    OutputDebugStringW(
+        (std::wstring(L"Ogg Loaded statically: ") + strFilePath + L"\n").c_str());
+  } else {
+    loadType = AudioLoadType::Streaming;
+
+    pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
+
+    OutputDebugStringW(
+        (std::wstring(L"Ogg Loaded for streaming: ") + strFilePath + L"\n")
+            .c_str());
+  }
 
   return true;
 }

@@ -98,6 +98,13 @@ AudioFileHandle AudioWin::Load(xstring filePath,
     return 0;
   }
 
+  if (simultaneousSounds > 1 && pFile->loadType == AudioLoadType::Streaming) {
+    assert(false &&
+           "Audio file is too big to support multiple simultaneous sounds");
+    delete pFile;
+    return 0;
+  }
+
   audioFileHandle = GetNextFreeAudioFileHandle();
   if (!audioFileHandle) {
     delete pFile;
