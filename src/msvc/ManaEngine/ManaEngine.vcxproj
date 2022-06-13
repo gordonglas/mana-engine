@@ -288,7 +288,6 @@
     <ClInclude Include="..\..\..\inc\audio\AudioBase.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioFileBase.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioFileOggWin.h" />
-    <ClInclude Include="..\..\..\inc\audio\AudioFileWavWin.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h" />
     <ClInclude Include="..\..\..\inc\audio\AudioWin.h" />
     <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
@@ -317,7 +316,6 @@
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
     <ClCompile Include="..\..\audio\AudioFileBase.cpp" />
     <ClCompile Include="..\..\audio\AudioFileOggWin.cpp" />
-    <ClCompile Include="..\..\audio\AudioFileWavWin.cpp" />
     <ClCompile Include="..\..\audio\AudioFileWin.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
     <ClCompile Include="..\..\concurrency\ThreadWin.cpp" />

@@ -1,10 +1,8 @@
 #include "pch.h"
 #include <assert.h>
-#include <xaudio2.h>
 #include "audio/AudioWin.h"
 #include "audio/AudioFileBase.h"
 #include "audio/AudioFileOggWin.h"
-#include "audio/AudioFileWavWin.h"
 #include "concurrency/IThread.h"
 
 namespace Mana {
@@ -80,9 +78,7 @@ AudioFileHandle AudioWin::Load(xstring filePath,
     return 0;
 
   AudioFileWin* pFile = nullptr;
-  if (format == AudioFormat::Wav) {
-    pFile = new AudioFileWavWin;
-  } else if (format == AudioFormat::Ogg) {
+  if (format == AudioFormat::Ogg) {
     pFile = new AudioFileOggWin;
   }
 
