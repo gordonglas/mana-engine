@@ -14,6 +14,7 @@ AudioFileBase::AudioFileBase()
       pDataBuffer(nullptr),
       dataBufferSize(0),
       loopCount(0),
+      loopBackPcmSamplePos(0),
       currentStreamBufIndex(0),
       fileSize(0),
       totalPcmBytes(0),

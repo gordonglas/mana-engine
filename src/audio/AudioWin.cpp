@@ -71,6 +71,7 @@ void AudioWin::Uninit() {
 AudioFileHandle AudioWin::Load(xstring filePath,
                                AudioCategory category,
                                AudioFormat format,
+                               int64_t loopBackPcmSamplePos,
                                int simultaneousSounds) {
   AudioFileHandle audioFileHandle = 0;
 
@@ -88,6 +89,7 @@ AudioFileHandle AudioWin::Load(xstring filePath,
   pFile->filePath = filePath;
   pFile->category = category;
   pFile->format = format;
+  pFile->loopBackPcmSamplePos = loopBackPcmSamplePos;
 
   if (!pFile->Load(filePath)) {
     delete pFile;
@@ -189,7 +191,7 @@ void AudioWin::Update() {
       // last buffer just finished playing.
       OutputDebugStringW(L"file done playing\n");
       pFile->currentStreamBufIndex = 0;
-      pFile->ResetToStartPos();
+      pFile->StreamSeek(0);
       pFile->isStopped = true;
       continue;
     }
@@ -274,7 +276,7 @@ void AudioWin::Update() {
       // reset position to start of the file,
       // and fill the rest of the destination buffer.
       if (reachedEOF && pFile->loopCount > 0) {
-        pFile->ResetToStartPos();
+        pFile->StreamSeek(pFile->loopBackPcmSamplePos);
 
         if (currentBytesRead < AudioStreamBufSize) {
           // fill the rest of the destination buffer
@@ -396,7 +398,7 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, unsigned loopCount) {
     // finishes playing. We will submit all |AudioStreamBufCount| buffers.
 
     pFile->currentStreamBufIndex = 0;
-    pFile->ResetToStartPos();
+    pFile->StreamSeek(0);
     pFile->lastBufferPlaying = false;
 
     int bytesPerSample = pFile->wfx.Format.wBitsPerSample / 8;
@@ -496,7 +498,7 @@ void AudioWin::Stop(AudioFileHandle audioFileHandle) {
 
   if (pAudioFile->loadType == AudioLoadType::Streaming) {
     pAudioFile->currentStreamBufIndex = 0;
-    pAudioFile->ResetToStartPos();
+    pAudioFile->StreamSeek(0);
   }
 }
 

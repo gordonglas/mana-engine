@@ -27,6 +27,7 @@ class AudioWin : public AudioBase {
   AudioFileHandle Load(xstring filePath,
                        AudioCategory category,
                        AudioFormat format,
+                       int64_t loopBackPcmSamplePos = 0,
                        int simultaneousSounds = 1) override;
   void Unload(AudioFileHandle audioFileHandle) override;
 

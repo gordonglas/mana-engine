@@ -68,10 +68,15 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
       wfx.Format.nSamplesPerSec * wfx.Format.nBlockAlign;
   wfx.Format.cbSize = 0;
 
+  assert((loopBackPcmSamplePos * (wfx.Format.wBitsPerSample / 8)) %
+                 wfx.Format.nBlockAlign ==
+             0 &&
+         "pcmSamples is not on a pcm frame boundary!");
+
   // must seek back to the start after calling ov_open_callbacks
   // and before calling ov_pcm_total!
   currentStreamBufIndex = 0;
-  ResetToStartPos();
+  StreamSeek(0);
 
   // Get the size of the ogg file in pcm bytes.
   // If the size is smaller than our total streaming
@@ -146,6 +151,10 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
   } else {
     loadType = AudioLoadType::Streaming;
 
+    assert(loopBackPcmSamplePos * (wfx.Format.wBitsPerSample / 8) <
+               (int64_t)(totalPcmBytes - (AudioStreamBufCount * AudioStreamBufSize)) &&
+           "loopBackPcmSamplePos cannot be so close to the end of the file");
+
     pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
 
     OutputDebugStringW(
@@ -168,14 +177,18 @@ void AudioFileOggWin::Unload() {
   }
 }
 
-void AudioFileOggWin::ResetToStartPos() {
-  currentTotalPcmPos = 0;
+bool AudioFileOggWin::StreamSeek(int64_t pcmSamples) {
+  assert((pcmSamples * (wfx.Format.wBitsPerSample / 8)) % wfx.Format.nBlockAlign == 0 &&
+         "pcmSamples is not on a pcm frame boundary!");
 
-  int seekRet = ::ov_raw_seek(&oggVorbisFile_, 0);
-  OutputDebugStringW((std::wstring(L"AudioFileOggWin: ov_raw_seek returned: ") +
+  currentTotalPcmPos = pcmSamples * (wfx.Format.wBitsPerSample / 8);
+
+  int seekRet = ::ov_pcm_seek(&oggVorbisFile_, pcmSamples);
+  OutputDebugStringW((std::wstring(L"AudioFileOggWin: ov_pcm_seek returned: ") +
                       std::to_wstring(seekRet) + L"\n")
                          .c_str());
-  assert(seekRet == 0 && "AudioFileOggWin: ov_raw_seek returned != 0!");
+  assert(seekRet == 0 && "AudioFileOggWin: ov_pcm_seek returned != 0!");
+  return true;
 }
 
 size_t OggVorbisRead(void* pDestData,

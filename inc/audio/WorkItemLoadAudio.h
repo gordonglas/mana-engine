@@ -11,11 +11,13 @@ class WorkItemLoadAudio : public IWorkItem {
                     xstring file,
                     AudioCategory audioCategory,
                     AudioFormat audioFormat,
+                    int64_t loopBackPcmSamplePos = 0,
                     int simultaneousSounds = 1) {
     m_pAudioEngine = audioEngine;
     m_file = file;
     m_audioCategory = audioCategory;
     m_audioFormat = audioFormat;
+    m_loopBackPcmSamplePos = loopBackPcmSamplePos;
     m_simultaneousSounds = simultaneousSounds;
     m_handle = 0u;
     m_doneProcessing = false;
@@ -26,8 +28,9 @@ class WorkItemLoadAudio : public IWorkItem {
   WorkItemType GetType() override { return WorkItemType::LoadAudio; }
 
   void Process() override {
-    size_t handle = m_pAudioEngine->Load(m_file,
-        m_audioCategory, m_audioFormat, m_simultaneousSounds);
+    size_t handle =
+        m_pAudioEngine->Load(m_file, m_audioCategory, m_audioFormat,
+                             m_loopBackPcmSamplePos, m_simultaneousSounds);
 
     {
       ScopedCriticalSection lock(m_lock);
@@ -51,6 +54,7 @@ class WorkItemLoadAudio : public IWorkItem {
   xstring m_file;
   AudioCategory m_audioCategory;
   AudioFormat m_audioFormat;
+  int64_t m_loopBackPcmSamplePos;
   int m_simultaneousSounds;
   size_t m_handle;
   bool m_doneProcessing;

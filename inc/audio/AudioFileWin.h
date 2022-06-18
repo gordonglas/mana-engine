@@ -25,7 +25,7 @@ class AudioFileWin : public AudioFileBase {
   virtual bool Load(const xstring& strFilePath) override = 0;
   virtual void Unload() override = 0;
 
-  virtual void ResetToStartPos() override = 0;
+  virtual bool StreamSeek(int64_t pcmBytePos) override = 0;
 };
 
 }  // namespace Mana

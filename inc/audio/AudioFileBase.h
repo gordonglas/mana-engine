@@ -49,12 +49,14 @@ class AudioFileBase {
                       //  or AudioBase::LOOP_INFINITE to loop until stopped.
                       // If > 0 and != AudioBase::LOOP_INFINITE,
                       // gets decremented over time.
+  int64_t loopBackPcmSamplePos; // pcm pos to loop back to, in samples.
+                                // Must be on a pcm frame boundary.
 
   virtual bool Load(const xstring& strFilePath) = 0;
   virtual void Unload() = 0;
 
   // streaming-only functions
-  virtual void ResetToStartPos() = 0;
+  virtual bool StreamSeek(int64_t pcmBytePos) = 0;
 };
 
 }  // namespace Mana

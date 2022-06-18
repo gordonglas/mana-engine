@@ -33,6 +33,7 @@ class AudioBase {
   virtual AudioFileHandle Load(xstring filePath,
                                AudioCategory category,
                                AudioFormat format,
+                               int64_t loopBackPcmSamplePos = 0,
                                int simultaneousSounds = 1) = 0;
   // stops and destroys all voices and the buffer
   // and removes from m_fileMap

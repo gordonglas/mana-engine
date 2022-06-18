@@ -22,7 +22,7 @@ class AudioFileOggWin : public AudioFileWin {
   bool Load(const xstring& strFilePath) override;
   void Unload() override;
 
-  void ResetToStartPos() override;
+  bool StreamSeek(int64_t pcmBytePos) override;
 
   File* pCompressedOggFile_;
   size_t dataReadSoFar_;     // compressed data pos
