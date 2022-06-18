@@ -13,8 +13,10 @@
 namespace Mana {
 
 // XAudio2.9 wrapper with focus on simple indie games.
-// Can load: static uncompressed wav, streaming ogg vorbis, and various mod
-// formats.
+// Can load ogg files. If oggs are large, they will be streamed,
+// else their pcm data is fully loaded into memory,
+// and statically loaded files can play multiple buffers at once
+// (for sound FX)
 class AudioWin : public AudioBase {
  public:
   static const unsigned MAX_LOOP_COUNT = XAUDIO2_MAX_LOOP_COUNT;

@@ -274,14 +274,7 @@ void AudioWin::Update() {
       // reset position to start of the file,
       // and fill the rest of the destination buffer.
       if (reachedEOF && pFile->loopCount > 0) {
-        pFile->currentTotalPcmPos = 0;
-
-        // seek to start of compressed ogg file
-        int seekRet = ::ov_raw_seek(&pOggFile->oggVorbisFile_, 0);
-        OutputDebugStringW(
-            (std::wstring(L"Audio Update: ov_raw_seek returned: ") +
-             std::to_wstring(seekRet) + L"\n")
-                .c_str());
+        pFile->ResetToStartPos();
 
         if (currentBytesRead < AudioStreamBufSize) {
           // fill the rest of the destination buffer
