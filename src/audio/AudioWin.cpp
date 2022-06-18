@@ -188,6 +188,7 @@ void AudioWin::Update() {
     if (pFile->lastBufferPlaying) {
       // last buffer just finished playing.
       OutputDebugStringW(L"file done playing\n");
+      pFile->currentStreamBufIndex = 0;
       pFile->ResetToStartPos();
       pFile->isStopped = true;
       continue;
@@ -401,7 +402,8 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, unsigned loopCount) {
     // more than 1 buffer to prevent a short silence when the first buffer
     // finishes playing. We will submit all |AudioStreamBufCount| buffers.
 
-    pOggFile->ResetToStartPos();
+    pFile->currentStreamBufIndex = 0;
+    pFile->ResetToStartPos();
     pFile->lastBufferPlaying = false;
 
     int bytesPerSample = pFile->wfx.Format.wBitsPerSample / 8;
@@ -500,6 +502,7 @@ void AudioWin::Stop(AudioFileHandle audioFileHandle) {
   pAudioFile->isStopped = true;
 
   if (pAudioFile->loadType == AudioLoadType::Streaming) {
+    pAudioFile->currentStreamBufIndex = 0;
     pAudioFile->ResetToStartPos();
   }
 }

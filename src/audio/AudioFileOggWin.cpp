@@ -70,6 +70,7 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
 
   // must seek back to the start after calling ov_open_callbacks
   // and before calling ov_pcm_total!
+  currentStreamBufIndex = 0;
   ResetToStartPos();
 
   // Get the size of the ogg file in pcm bytes.
@@ -169,7 +170,6 @@ void AudioFileOggWin::Unload() {
 
 void AudioFileOggWin::ResetToStartPos() {
   currentTotalPcmPos = 0;
-  currentStreamBufIndex = 0;
 
   int seekRet = ::ov_raw_seek(&oggVorbisFile_, 0);
   OutputDebugStringW((std::wstring(L"AudioFileOggWin: ov_raw_seek returned: ") +
