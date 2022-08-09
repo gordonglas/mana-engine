@@ -44,6 +44,18 @@
     <Filter Include="src\os">
       <UniqueIdentifier>{9995f74e-a8fb-4108-bdbf-f329c5658300}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\config">
+      <UniqueIdentifier>{1914db43-444b-44a8-94d6-0bc35f18f365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\input">
+      <UniqueIdentifier>{c2cfe333-5e68-4dc5-ba90-d9752efa320f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input">
+      <UniqueIdentifier>{b2f16c7c-a4a4-46a9-8453-452249db4f8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\config">
+      <UniqueIdentifier>{c2a350eb-0de3-426f-8255-ebca9662b011}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -102,6 +114,15 @@
     </ClCompile>
     <ClCompile Include="..\..\audio\AudioFileOggWin.cpp">
       <Filter>src\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\input\InputBase.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\input\InputWin.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\config\ConfigManager.cpp">
+      <Filter>src\config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +203,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\audio\AudioFileOggWin.h">
       <Filter>inc\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\config\ConfigManager.h">
+      <Filter>inc\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\InputBase.h">
+      <Filter>inc\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\InputWin.h">
+      <Filter>inc\input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
