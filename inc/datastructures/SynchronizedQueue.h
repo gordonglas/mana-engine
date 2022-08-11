@@ -16,12 +16,12 @@ class SynchronizedQueue {
   void Push(T&& value);
 
   // returns front without popping it off
-  T& PeekFront();
+  //T& PeekFront();
 
   // returns front and pops it off
-  T& Pop();
+  T& Pop(T& nullItem);
 
-  const size_t Size();
+  //const size_t Size();
 
   SynchronizedQueue(const SynchronizedQueue&) = delete;
   SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
@@ -43,24 +43,41 @@ void SynchronizedQueue<T>::Push(T&& value) {
   m_queue.push(std::move(value));
 }
 
-template <typename T>
-T& SynchronizedQueue<T>::PeekFront() {
-  ScopedCriticalSection lock(m_lock);
-  return m_queue.front();
-}
+//template <typename T>
+//T& SynchronizedQueue<T>::PeekFront() {
+//  ScopedCriticalSection lock(m_lock);
+//  return m_queue.front();
+//}
+
+//template <typename T>
+//T& SynchronizedQueue<T>::Pop() {
+//  ScopedCriticalSection lock(m_lock);
+//  T& front = m_queue.front();
+//  m_queue.pop();
+//  return front;
+//}
+
+//template <typename T>
+//const size_t SynchronizedQueue<T>::Size() {
+//  ScopedCriticalSection lock(m_lock);
+//  return (size_t)m_queue.size();
+//}
+
+// Having PeekFront, Pop, and Size functions
+// like above, can cause race conditions.
+// So we will only have a Pop function
+// that checks for empty, and if empty, returns a "null item"
+// recognized by the caller.
 
 template <typename T>
-T& SynchronizedQueue<T>::Pop() {
+T& SynchronizedQueue<T>::Pop(T& nullItem) {
   ScopedCriticalSection lock(m_lock);
+  if (m_queue.empty()) {
+    return nullItem;
+  }
   T& front = m_queue.front();
   m_queue.pop();
   return front;
-}
-
-template <typename T>
-const size_t SynchronizedQueue<T>::Size() {
-  ScopedCriticalSection lock(m_lock);
-  return (size_t)m_queue.size();
 }
 
 }  // namespace Mana

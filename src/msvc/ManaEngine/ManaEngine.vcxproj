@@ -293,10 +293,12 @@
     <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
+    <ClInclude Include="..\..\..\inc\concurrency\NullWorkItem.h" />
     <ClInclude Include="..\..\..\inc\config\ConfigManager.h" />
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\input\InputBase.h" />
     <ClInclude Include="..\..\..\inc\input\InputWin.h" />
+    <ClInclude Include="..\..\..\inc\input\RawInputWin.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h" />
@@ -310,6 +312,7 @@
     <ClInclude Include="..\..\..\inc\utils\File.h" />
     <ClInclude Include="..\..\..\inc\utils\Lock.h" />
     <ClInclude Include="..\..\..\inc\utils\Log.h" />
+    <ClInclude Include="..\..\..\inc\utils\Memory.h" />
     <ClInclude Include="..\..\..\inc\utils\Strings.h" />
     <ClInclude Include="..\..\..\inc\utils\StringTypes.h" />
     <ClInclude Include="..\..\..\inc\utils\Timer.h" />
@@ -325,6 +328,7 @@
     <ClCompile Include="..\..\config\ConfigManager.cpp" />
     <ClCompile Include="..\..\input\InputBase.cpp" />
     <ClCompile Include="..\..\input\InputWin.cpp" />
+    <ClCompile Include="..\..\input\RawInputWin.cpp" />
     <ClCompile Include="..\..\mainloop\MainGameBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessManager.cpp" />
@@ -335,6 +339,7 @@
     <ClCompile Include="..\..\utils\FileWin.cpp" />
     <ClCompile Include="..\..\utils\LockWin.cpp" />
     <ClCompile Include="..\..\utils\LogWin.cpp" />
+    <ClCompile Include="..\..\utils\Memory.cpp" />
     <ClCompile Include="..\..\utils\StringsWin.cpp" />
     <ClCompile Include="..\..\utils\Timer.cpp" />
     <ClCompile Include="pch.cpp">

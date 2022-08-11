@@ -189,7 +189,7 @@ void AudioWin::Update() {
 
     if (pFile->lastBufferPlaying) {
       // last buffer just finished playing.
-      OutputDebugStringW(L"file done playing\n");
+      //OutputDebugStringW(L"file done playing\n");
       pFile->currentStreamBufIndex = 0;
       pFile->StreamSeek(0);
       pFile->isStopped = true;
@@ -207,9 +207,9 @@ void AudioWin::Update() {
                                      XAUDIO2_VOICE_NOSAMPLESPLAYED);
 
     while (voiceState.BuffersQueued < AudioStreamBufCount) {
-      OutputDebugStringW((std::wstring(L"BuffersQueued: ") +
-                          std::to_wstring(voiceState.BuffersQueued) + L"\n")
-                             .c_str());
+      //OutputDebugStringW((std::wstring(L"BuffersQueued: ") +
+      //                    std::to_wstring(voiceState.BuffersQueued) + L"\n")
+      //                       .c_str());
       //assert(voiceState.BuffersQueued > 0 && "BuffersQueued == 0!");
 
       // init next buffer with silence
@@ -236,7 +236,7 @@ void AudioWin::Update() {
       if (bytesToPcmEOF < readBufLen) {
         readBufLen = bytesToPcmEOF;
         reachedEOF = true;
-        OutputDebugStringW(L"Audio Update: reachedEOF true\n");
+        //OutputDebugStringW(L"Audio Update: reachedEOF true\n");
       }
 
       size_t maxBytesToRead = reachedEOF ? bytesToPcmEOF : AudioStreamBufSize;
@@ -247,17 +247,17 @@ void AudioWin::Update() {
         actualBytesRead = ::ov_read(
             &pOggFile->oggVorbisFile_, (char*)&pFile->pDataBuffer[destBufPos],
             readBufLen, 0, bytesPerSample, 1, &ovBitstream);
-        OutputDebugStringW(
-            (std::wstring(L"Audio Update: ov_read actualBytesRead: ") +
-             std::to_wstring(actualBytesRead) + L"\n")
-                .c_str());
+        //OutputDebugStringW(
+        //    (std::wstring(L"Audio Update: ov_read actualBytesRead: ") +
+        //     std::to_wstring(actualBytesRead) + L"\n")
+        //        .c_str());
         assert(actualBytesRead >= 0 && "ov_read failed");
         destBufPos += actualBytesRead;
         currentBytesRead += actualBytesRead;
         pFile->currentTotalPcmPos += actualBytesRead;
-        OutputDebugStringW((std::wstring(L"Audio Update: ov_read pcmPos: ") +
-                            std::to_wstring(pFile->currentTotalPcmPos) + L"\n")
-                               .c_str());
+        //OutputDebugStringW((std::wstring(L"Audio Update: ov_read pcmPos: ") +
+        //                    std::to_wstring(pFile->currentTotalPcmPos) + L"\n")
+        //                       .c_str());
         if (maxBytesToRead - currentBytesRead < (unsigned)readBufLen) {
           readBufLen = (int)maxBytesToRead - currentBytesRead;
         }
@@ -287,10 +287,10 @@ void AudioWin::Update() {
                 ::ov_read(&pOggFile->oggVorbisFile_,
                           (char*)&pFile->pDataBuffer[destBufPos], readBufLen, 0,
                           bytesPerSample, 1, &ovBitstream);
-            OutputDebugStringW(
-                (std::wstring(L"Audio Update: ov_read actualBytesRead: ") +
-                 std::to_wstring(actualBytesRead) + L"\n")
-                    .c_str());
+            //OutputDebugStringW(
+            //    (std::wstring(L"Audio Update: ov_read actualBytesRead: ") +
+            //     std::to_wstring(actualBytesRead) + L"\n")
+            //        .c_str());
             assert(actualBytesRead >= 0 && "ov_read failed");
             destBufPos += actualBytesRead;
             currentBytesRead += actualBytesRead;
@@ -303,7 +303,7 @@ void AudioWin::Update() {
       } else {  // not looping (or on last loop)
         if (reachedEOF) {
           pFile->lastBufferPlaying = true;
-          OutputDebugStringW(L"Audio Update: set lastBufferPlaying true\n");
+          //OutputDebugStringW(L"Audio Update: set lastBufferPlaying true\n");
         }
       }
 
@@ -427,18 +427,18 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, unsigned loopCount) {
         actualBytesRead = ::ov_read(
             &pOggFile->oggVorbisFile_, (char*)&pFile->pDataBuffer[destBufPos],
             readBufLen, 0, bytesPerSample, 1, &ovBitstream);
-        OutputDebugStringW(
-            (std::wstring(L"ogg file Play: ov_read actualBytesRead: ") +
-             std::to_wstring(actualBytesRead) + L"\n")
-                .c_str());
+        //OutputDebugStringW(
+        //    (std::wstring(L"ogg file Play: ov_read actualBytesRead: ") +
+        //     std::to_wstring(actualBytesRead) + L"\n")
+        //        .c_str());
         assert(actualBytesRead >= 0 && "ov_read failed");
         destBufPos += actualBytesRead;
         currentBytesRead += actualBytesRead;
         pFile->currentTotalPcmPos += actualBytesRead;
-        OutputDebugStringW(
-            (std::wstring(L"ogg file Play: ov_read pcmPos: ") +
-             std::to_wstring(pFile->currentTotalPcmPos) + L"\n")
-                .c_str());
+        //OutputDebugStringW(
+        //    (std::wstring(L"ogg file Play: ov_read pcmPos: ") +
+        //     std::to_wstring(pFile->currentTotalPcmPos) + L"\n")
+        //        .c_str());
         if (AudioStreamBufSize - currentBytesRead < readBufLen) {
           readBufLen = AudioStreamBufSize - currentBytesRead;
         }

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "concurrency/IThread.h"
+#include "concurrency/NullWorkItem.h"
 #include "utils/Lock.h"
 #include "utils/Log.h"
 #include "datastructures/SynchronizedQueue.h"
@@ -119,17 +120,28 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
       return 0;
     }
 
+    IWorkItem* pNullWorkItem = new NullWorkItem();
+
     while (!pThread->IsStopping()) {
-      if (pThread->queue_.Size() == 0) {
+      IWorkItem* pWorkItem = pThread->queue_.Pop(pNullWorkItem);
+      // if no items in the queue (no work to do)..
+      if (pWorkItem->GetType() == WorkItemType::NullWork) {
+        // ...wait until items are put in the queue
         WaitForSingleObject(pThread->hWait_, INFINITE);
 
         if (pThread->IsStopping()) {
           break;
         }
+      } else {
+        pWorkItem->Process();
       }
 
-      while (pThread->queue_.Size() > 0) {
-        IWorkItem* pWorkItem = pThread->queue_.Pop();
+      // keep processing work items until there are none
+      while (1) {
+        pWorkItem = pThread->queue_.Pop(pNullWorkItem);
+        if (pWorkItem->GetType() == WorkItemType::NullWork) {
+          break;
+        }
         pWorkItem->Process();
       }
     }

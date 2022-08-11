@@ -124,6 +124,12 @@
     <ClCompile Include="..\..\config\ConfigManager.cpp">
       <Filter>src\config</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\input\RawInputWin.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utils\Memory.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -212,6 +218,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\input\InputWin.h">
       <Filter>inc\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\RawInputWin.h">
+      <Filter>inc\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Memory.h">
+      <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\NullWorkItem.h">
+      <Filter>inc\concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

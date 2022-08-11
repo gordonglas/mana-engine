@@ -94,15 +94,16 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
     totalPcmSamples += (long)::ov_pcm_total(&oggVorbisFile_, i);
   }
   //long totalPcmSamples = (long)::ov_pcm_total(&oggVorbisFile_, -1);
-  OutputDebugStringW((std::wstring(L"ogg file Load: totalPcmSamples: ") +
-                      std::to_wstring(totalPcmSamples) + L"\n")
-                         .c_str());
+  //OutputDebugStringW((std::wstring(L"ogg file Load: totalPcmSamples: ") +
+  //                    std::to_wstring(totalPcmSamples) + L"\n")
+  //                       .c_str());
+
   assert(totalPcmSamples > 0);
   long nTotalPcmBytes =
       totalPcmSamples * (wfx.Format.wBitsPerSample / 8) * wfx.Format.nChannels;
-  OutputDebugStringW((std::wstring(L"ogg file Load: totalPcmBytes: ") +
-                      std::to_wstring(nTotalPcmBytes) + L"\n")
-                         .c_str());
+  //OutputDebugStringW((std::wstring(L"ogg file Load: totalPcmBytes: ") +
+  //                    std::to_wstring(nTotalPcmBytes) + L"\n")
+  //                       .c_str());
   //assert((nTotalPcmBytes > AudioStreamBufCount * AudioStreamBufSize) &&
   //       "ogg file's pcm data must be larger than the streaming buffers "
   //       "total size! Use a static wav file instead.");
@@ -132,10 +133,10 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
       actualBytesRead =
           ::ov_read(&oggVorbisFile_, (char*)&pDataBuffer[currentBytesRead],
                     readBufLen, 0, bytesPerSample, 1, &ovBitstream);
-      OutputDebugStringW(
-          (std::wstring(L"Ogg Load static: ov_read actualBytesRead: ") +
-           std::to_wstring(actualBytesRead) + L"\n")
-              .c_str());
+      //OutputDebugStringW(
+      //    (std::wstring(L"Ogg Load static: ov_read actualBytesRead: ") +
+      //     std::to_wstring(actualBytesRead) + L"\n")
+      //        .c_str());
       assert(actualBytesRead >= 0 && "ov_read failed");
       if (actualBytesRead <= 0) {
         break;
@@ -146,8 +147,8 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
     // don't need OggVorbis lib or compressed file data anymore
     Unload();
 
-    OutputDebugStringW(
-        (std::wstring(L"Ogg Loaded statically: ") + strFilePath + L"\n").c_str());
+    //OutputDebugStringW(
+    //    (std::wstring(L"Ogg Loaded statically: ") + strFilePath + L"\n").c_str());
   } else {
     loadType = AudioLoadType::Streaming;
 
@@ -157,9 +158,9 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
 
     pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
 
-    OutputDebugStringW(
-        (std::wstring(L"Ogg Loaded for streaming: ") + strFilePath + L"\n")
-            .c_str());
+    //OutputDebugStringW(
+    //    (std::wstring(L"Ogg Loaded for streaming: ") + strFilePath + L"\n")
+    //        .c_str());
   }
 
   return true;
@@ -184,9 +185,9 @@ bool AudioFileOggWin::StreamSeek(int64_t pcmSamples) {
   currentTotalPcmPos = pcmSamples * (wfx.Format.wBitsPerSample / 8);
 
   int seekRet = ::ov_pcm_seek(&oggVorbisFile_, pcmSamples);
-  OutputDebugStringW((std::wstring(L"AudioFileOggWin: ov_pcm_seek returned: ") +
-                      std::to_wstring(seekRet) + L"\n")
-                         .c_str());
+  //OutputDebugStringW((std::wstring(L"AudioFileOggWin: ov_pcm_seek returned: ") +
+  //                    std::to_wstring(seekRet) + L"\n")
+  //                       .c_str());
   assert(seekRet == 0 && "AudioFileOggWin: ov_pcm_seek returned != 0!");
   return true;
 }

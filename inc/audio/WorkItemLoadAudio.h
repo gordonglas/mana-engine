@@ -1,3 +1,5 @@
+#pragma once
+
 #include "audio/AudioBase.h"
 #include "concurrency/IWorkItem.h"
 #include "utils/Lock.h"
