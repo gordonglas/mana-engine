@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "concurrency/IThread.h"
-#include "concurrency/NullWorkItem.h"
 #include "utils/Lock.h"
 #include "utils/Log.h"
 #include "datastructures/SynchronizedQueue.h"
 #include <atomic>
+#include <functional>
+#include <optional>
 #include <vector>
 
 namespace Mana {
@@ -120,29 +121,26 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
       return 0;
     }
 
-    IWorkItem* pNullWorkItem = new NullWorkItem();
-
     while (!pThread->IsStopping()) {
-      IWorkItem* pWorkItem = pThread->queue_.Pop(pNullWorkItem);
-      // if no items in the queue (no work to do)..
-      if (pWorkItem->GetType() == WorkItemType::NullWork) {
-        // ...wait until items are put in the queue
+      std::optional<std::reference_wrapper<IWorkItem*>> workItem =
+          pThread->queue_.Pop();
+
+      if (!workItem.has_value()) {
         WaitForSingleObject(pThread->hWait_, INFINITE);
 
         if (pThread->IsStopping()) {
           break;
         }
       } else {
-        pWorkItem->Process();
+        workItem.value().get()->Process();
       }
 
-      // keep processing work items until there are none
       while (1) {
-        pWorkItem = pThread->queue_.Pop(pNullWorkItem);
-        if (pWorkItem->GetType() == WorkItemType::NullWork) {
+        workItem = pThread->queue_.Pop();
+        if (!workItem.has_value()) {
           break;
         }
-        pWorkItem->Process();
+        workItem.value().get()->Process();
       }
     }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+#include <optional>
 #include <queue>
 #include <utility>
 #include "utils/Lock.h"
@@ -15,11 +17,11 @@ class SynchronizedQueue {
   void Push(const T& value);
   void Push(T&& value);
 
-  // returns front without popping it off
+  // Returns front without popping it off
   //T& PeekFront();
 
-  // returns front and pops it off
-  T& Pop(T& nullItem);
+  // Returns nullopt if empty, else returns front and pops it off.
+  std::optional<std::reference_wrapper<T>> Pop();
 
   //const size_t Size();
 
@@ -66,14 +68,12 @@ void SynchronizedQueue<T>::Push(T&& value) {
 // Having PeekFront, Pop, and Size functions
 // like above, can cause race conditions.
 // So we will only have a Pop function
-// that checks for empty, and if empty, returns a "null item"
-// recognized by the caller.
-
+// that checks for empty, and if empty, returns a "null item".
 template <typename T>
-T& SynchronizedQueue<T>::Pop(T& nullItem) {
+std::optional<std::reference_wrapper<T>> SynchronizedQueue<T>::Pop() {
   ScopedCriticalSection lock(m_lock);
   if (m_queue.empty()) {
-    return nullItem;
+    return std::nullopt;
   }
   T& front = m_queue.front();
   m_queue.pop();
