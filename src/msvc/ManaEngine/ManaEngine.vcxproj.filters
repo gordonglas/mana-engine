@@ -225,9 +225,6 @@
     <ClInclude Include="..\..\..\inc\utils\Memory.h">
       <Filter>inc\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\concurrency\NullWorkItem.h">
-      <Filter>inc\concurrency</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

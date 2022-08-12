@@ -4,7 +4,7 @@
 
 namespace Mana {
 
-enum class WorkItemType { NullWork, LoadAudio };
+enum class WorkItemType { LoadAudio };
 
 class IWorkItem {
  public:

@@ -293,7 +293,6 @@
     <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
-    <ClInclude Include="..\..\..\inc\concurrency\NullWorkItem.h" />
     <ClInclude Include="..\..\..\inc\config\ConfigManager.h" />
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\input\InputBase.h" />
