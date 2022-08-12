@@ -56,6 +56,12 @@
     <Filter Include="src\config">
       <UniqueIdentifier>{c2a350eb-0de3-426f-8255-ebca9662b011}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\debugging">
+      <UniqueIdentifier>{d6444aa4-37c0-4503-8619-7b067f284057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\debugging">
+      <UniqueIdentifier>{c7ded794-6261-4c19-b482-bf65d9880a68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -129,6 +135,9 @@
     </ClCompile>
     <ClCompile Include="..\..\utils\Memory.cpp">
       <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\debugging\DebugWin.cpp">
+      <Filter>src\debugging</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\Memory.h">
       <Filter>inc\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\debugging\DebugWin.h">
+      <Filter>inc\debugging</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
