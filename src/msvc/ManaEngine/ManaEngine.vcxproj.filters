@@ -91,9 +91,6 @@
     <ClCompile Include="..\..\utils\FileWin.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils\LockWin.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\utils\LogWin.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
@@ -139,6 +136,9 @@
     <ClCompile Include="..\..\debugging\DebugWin.cpp">
       <Filter>src\debugging</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\concurrency\LockWin.cpp">
+      <Filter>src\concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -163,9 +163,6 @@
       <Filter>inc\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\File.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Lock.h">
       <Filter>inc\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\Log.h">
@@ -236,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\debugging\DebugWin.h">
       <Filter>inc\debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\Lock.h">
+      <Filter>inc\concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

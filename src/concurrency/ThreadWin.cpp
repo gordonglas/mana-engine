@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "concurrency/IThread.h"
-#include "utils/Lock.h"
+#include "concurrency/Lock.h"
 #include "utils/Log.h"
 #include "datastructures/SynchronizedQueue.h"
 #include <atomic>

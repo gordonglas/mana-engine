@@ -4,7 +4,7 @@
 #include <optional>
 #include <queue>
 #include <utility>
-#include "utils/Lock.h"
+#include "concurrency/Lock.h"
 
 namespace Mana {
 

@@ -2,7 +2,7 @@
 
 #include "audio/AudioBase.h"
 #include "concurrency/IWorkItem.h"
-#include "utils/Lock.h"
+#include "concurrency/Lock.h"
 #include "utils/StringTypes.h"
 
 namespace Mana {

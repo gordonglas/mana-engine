@@ -293,6 +293,7 @@
     <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
+    <ClInclude Include="..\..\..\inc\concurrency\Lock.h" />
     <ClInclude Include="..\..\..\inc\config\ConfigManager.h" />
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\debugging\DebugWin.h" />
@@ -310,7 +311,6 @@
     <ClInclude Include="..\..\..\inc\utils\CommandLine.h" />
     <ClInclude Include="..\..\..\inc\utils\Com.h" />
     <ClInclude Include="..\..\..\inc\utils\File.h" />
-    <ClInclude Include="..\..\..\inc\utils\Lock.h" />
     <ClInclude Include="..\..\..\inc\utils\Log.h" />
     <ClInclude Include="..\..\..\inc\utils\Memory.h" />
     <ClInclude Include="..\..\..\inc\utils\Strings.h" />
@@ -324,6 +324,7 @@
     <ClCompile Include="..\..\audio\AudioFileOggWin.cpp" />
     <ClCompile Include="..\..\audio\AudioFileWin.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
+    <ClCompile Include="..\..\concurrency\LockWin.cpp" />
     <ClCompile Include="..\..\concurrency\ThreadWin.cpp" />
     <ClCompile Include="..\..\config\ConfigManager.cpp" />
     <ClCompile Include="..\..\debugging\DebugWin.cpp" />
@@ -338,7 +339,6 @@
     <ClCompile Include="..\..\utils\CommandLine.cpp" />
     <ClCompile Include="..\..\utils\ComWin.cpp" />
     <ClCompile Include="..\..\utils\FileWin.cpp" />
-    <ClCompile Include="..\..\utils\LockWin.cpp" />
     <ClCompile Include="..\..\utils\LogWin.cpp" />
     <ClCompile Include="..\..\utils\Memory.cpp" />
     <ClCompile Include="..\..\utils\StringsWin.cpp" />
