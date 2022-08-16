@@ -19,6 +19,8 @@ class ManaGameBase {
 
   int GetReturnCode() { return nReturnCode_; }
 
+  virtual uint64_t GetFps() = 0;
+
  protected:
   int argc_;
   char** argv_;
@@ -30,6 +32,7 @@ class ManaGameBase {
 
   virtual bool OnInit();
   virtual bool OnStartGameLoop() = 0;
+  virtual void OnGameLoopIteration() = 0;
   virtual bool OnShutdown() = 0;
 };
 
