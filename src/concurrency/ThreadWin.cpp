@@ -38,7 +38,7 @@ class Thread : public IThread {
   }
 
   bool IsStopping() override {
-    return bStopping_;
+    return bStopping_ == true;
   }
 
   void Join() override {
