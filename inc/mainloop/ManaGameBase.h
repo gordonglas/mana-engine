@@ -19,9 +19,9 @@ class ManaGameBase {
 
   int GetReturnCode() { return nReturnCode_; }
 
-  virtual uint64_t GetFps() = 0;
+  //virtual uint64_t GetFps() = 0;
 
-  virtual void OnGameLoopIteration() = 0;
+  //virtual void OnGameLoopIteration() = 0;
 
  protected:
   int argc_;
