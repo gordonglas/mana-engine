@@ -122,7 +122,7 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
     }
 
     while (!pThread->IsStopping()) {
-      std::optional<std::reference_wrapper<IWorkItem*>> workItem =
+      std::optional<IWorkItem*> workItem =
           pThread->queue_.Pop();
 
       if (!workItem.has_value()) {
@@ -132,7 +132,7 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
           break;
         }
       } else {
-        workItem.value().get()->Process();
+        workItem.value()->Process();
       }
 
       while (1) {
@@ -140,7 +140,7 @@ DWORD WINAPI ThreadFunction(LPVOID lpParam) {
         if (!workItem.has_value()) {
           break;
         }
-        workItem.value().get()->Process();
+        workItem.value()->Process();
       }
     }
 

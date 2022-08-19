@@ -41,7 +41,8 @@ struct InputAction {
   //  2 - set == Scan-code prefix E1
   //  3 - set == key release, not set == key press
   U16 flags;
-  // RAWINPUT Keyboard MakeCode on Windows
+  // RAWINPUT Keyboard MakeCode on Windows (without the E0 or E1 prefix)
+  // https://kbdlayout.info/kbdusx/scancodes
   U16 scanCode;
   U8 deviceType;  // InputDeviceType
 };
