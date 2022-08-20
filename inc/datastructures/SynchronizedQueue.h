@@ -32,32 +32,36 @@ class SynchronizedQueue {
   SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
 
  private:
-  // TODO: HERE!!! try using a mutex instead and compare FPS.
   CriticalSection m_lock;
+  //Mutex mutex_;
   std::queue<T> m_queue;
 };
 
 template <typename T>
 const size_t SynchronizedQueue<T>::Size() {
   ScopedCriticalSection lock(m_lock);
+  //ScopedMutex lock(mutex_);
   return (size_t)m_queue.size();
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(const T& value) {
   ScopedCriticalSection lock(m_lock);
+  //ScopedMutex lock(mutex_);
   m_queue.push(value);
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(T&& value) {
   ScopedCriticalSection lock(m_lock);
+  //ScopedMutex lock(mutex_);
   m_queue.push(std::move(value));
 }
 
 template <typename T>
 std::optional<T> SynchronizedQueue<T>::PeekFront() {
   ScopedCriticalSection lock(m_lock);
+  //ScopedMutex lock(mutex_);
   if (m_queue.empty()) {
     return std::nullopt;
   }
@@ -67,6 +71,7 @@ std::optional<T> SynchronizedQueue<T>::PeekFront() {
 template <typename T>
 std::optional<T> SynchronizedQueue<T>::Pop() {
   ScopedCriticalSection lock(m_lock);
+  //ScopedMutex lock(mutex_);
   if (m_queue.empty()) {
     return std::nullopt;
   }
@@ -80,6 +85,7 @@ std::vector<T> SynchronizedQueue<T>::PopAll() {
   std::vector<T> popped;
 
   ScopedCriticalSection lock(m_lock);
+  //ScopedMutex lock(mutex_);
   while (!m_queue.empty()) {
     T front = m_queue.front();
     m_queue.pop();

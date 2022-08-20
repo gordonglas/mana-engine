@@ -33,4 +33,32 @@ class ScopedCriticalSection {
   CriticalSection& m_cs;
 };
 
+class Mutex {
+ public:
+  Mutex();
+  ~Mutex();
+  void Lock();
+  void Unlock();
+
+  Mutex(const Mutex&) = delete;
+  Mutex& operator=(const Mutex&) = delete;
+
+ protected:
+#ifdef OS_WIN
+  HANDLE mutex_;
+#endif
+};
+
+class ScopedMutex {
+ public:
+  ScopedMutex(Mutex& mutex);
+  ~ScopedMutex();
+
+  ScopedMutex(const ScopedMutex&) = delete;
+  ScopedMutex& operator=(const ScopedMutex&) = delete;
+
+ private:
+  Mutex& mutex_;
+};
+
 }  // namespace Mana
