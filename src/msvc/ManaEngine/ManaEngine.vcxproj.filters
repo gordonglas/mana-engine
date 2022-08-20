@@ -62,6 +62,12 @@
     <Filter Include="src\debugging">
       <UniqueIdentifier>{c7ded794-6261-4c19-b482-bf65d9880a68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\events">
+      <UniqueIdentifier>{2d3215f9-4f1d-429a-8542-6ebe7fa16ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\events">
+      <UniqueIdentifier>{59060c71-de79-4f3a-b756-40172990d440}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -138,6 +144,9 @@
     </ClCompile>
     <ClCompile Include="..\..\concurrency\LockWin.cpp">
       <Filter>src\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\events\EventManager.cpp">
+      <Filter>src\events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\concurrency\Lock.h">
       <Filter>inc\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\events\EventManager.h">
+      <Filter>inc\events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

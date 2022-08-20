@@ -1,6 +1,9 @@
 #include "pch.h"
-#include <strsafe.h>
+
 #include "input/RawInputWin.h"
+
+#include <strsafe.h>
+#include "events/EventManager.h"
 #include "input/InputBase.h"
 #include "input/InputWin.h"
 
@@ -124,8 +127,12 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
 
     OutputDebugStringW(buffer);
 
-    // convert to our generic type
-    InputAction action{};
+    // wrap InputAction into a SyncronizedEvent and pass
+    // to the SynchronizedQueue used to send it to the game-loop thread.
+    SynchronizedEvent syncEvent;
+    syncEvent.syncEventType = (U8)SynchronizedEventType::Input;
+
+    InputAction& action = syncEvent.inputAction;
     action.deviceType = (U8)InputDeviceType::Keyboard;
     action.deviceId = (U64)input->header.hDevice;
     action.virtualKey = input->data.keyboard.VKey;
@@ -136,9 +143,7 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
         ((input->data.keyboard.Flags & RI_KEY_BREAK) ? INPUTACTION_FLAG_RELEASE
                                                      : 0);
 
-    // TODO: HERE!!!: add InputAction to read-write locked input-queue,
-    // that our game-thread's game-logic-layer can read from.
-    //g_pInputEngine->EnqueueInputAction(action);
+    g_pEventMan->EnqueueForGameLoop(syncEvent);
 
   } //else if (input->header.dwType == RIM_TYPEMOUSE) {
   //

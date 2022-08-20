@@ -43,3 +43,6 @@ namespace Mana {
 
 #include "utils/Timer.h"
 extern Mana::Timer g_clock;
+
+#include "mainloop/ManaGameBase.h"
+extern Mana::ManaGameBase* g_pGame;

@@ -32,6 +32,7 @@ class SynchronizedQueue {
   SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
 
  private:
+  // TODO: HERE!!! try using a mutex instead and compare FPS.
   CriticalSection m_lock;
   std::queue<T> m_queue;
 };
