@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <optional>
 #include <queue>
 #include <utility>
@@ -11,9 +12,10 @@ namespace Mana {
 template <typename T>
 class SynchronizedQueue {
  public:
-  SynchronizedQueue() {}
+  SynchronizedQueue() : bEmpty_(true) {}
   ~SynchronizedQueue() {}
 
+  bool Empty_NoLock();
   const size_t Size();
 
   void Push(const T& value);
@@ -32,10 +34,18 @@ class SynchronizedQueue {
   SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
 
  private:
+  std::atomic<bool> bEmpty_;
   CriticalSection m_lock;
   //Mutex mutex_;
   std::queue<T> m_queue;
 };
+
+template <typename T>
+bool SynchronizedQueue<T>::Empty_NoLock() {
+  // Purposely not using a lock here, but an atomic<bool> instead.
+  // This allows the game-loop thread to avoid locking when it doesn't need to.
+  return bEmpty_;
+}
 
 template <typename T>
 const size_t SynchronizedQueue<T>::Size() {
@@ -49,6 +59,7 @@ void SynchronizedQueue<T>::Push(const T& value) {
   ScopedCriticalSection lock(m_lock);
   //ScopedMutex lock(mutex_);
   m_queue.push(value);
+  bEmpty_ = false;
 }
 
 template <typename T>
@@ -56,6 +67,7 @@ void SynchronizedQueue<T>::Push(T&& value) {
   ScopedCriticalSection lock(m_lock);
   //ScopedMutex lock(mutex_);
   m_queue.push(std::move(value));
+  bEmpty_ = false;
 }
 
 template <typename T>
@@ -77,6 +89,10 @@ std::optional<T> SynchronizedQueue<T>::Pop() {
   }
   T front = m_queue.front();
   m_queue.pop();
+
+  if (m_queue.empty())
+    bEmpty_ = true;
+
   return front;
 }
 
@@ -92,6 +108,7 @@ std::vector<T> SynchronizedQueue<T>::PopAll() {
     popped.push_back(front);
   }
 
+  bEmpty_ = true;
   return popped;
 }
 
