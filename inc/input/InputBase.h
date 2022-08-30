@@ -44,6 +44,7 @@ struct InputAction {
   // RAWINPUT Keyboard MakeCode on Windows (without the E0 or E1 prefix)
   // https://kbdlayout.info/kbdusx/scancodes
   U16 scanCode;
+
   U8 deviceType;  // InputDeviceType
 };
 

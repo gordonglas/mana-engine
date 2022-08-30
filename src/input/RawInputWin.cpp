@@ -47,16 +47,6 @@ bool RawInputWin::RegisterDevices() {
     return false;
   }
 
-  /*RAWINPUTDEVICE mice;
-  mice.usUsagePage = 1;
-  mice.usUsage = 2;
-  mice.dwFlags = 0;
-  mice.hwndTarget = hwndTarget_;
-
-  if (!RegisterRawInputDevices(&mice, 1, sizeof(mice))) {
-    return false;
-  }*/
-
   return true;
 }
 
@@ -70,16 +60,6 @@ bool RawInputWin::UnregisterDevices() {
   if (!RegisterRawInputDevices(&keyboards, 1, sizeof(keyboards))) {
     return false;
   }
-
-  /*RAWINPUTDEVICE mice;
-  mice.usUsagePage = 1;
-  mice.usUsage = 2;
-  mice.dwFlags = RIDEV_REMOVE;
-  mice.hwndTarget = hwndTarget_;
-
-  if (!RegisterRawInputDevices(&mice, 1, sizeof(mice))) {
-    return false;
-  }*/
 
   return true;
 }
@@ -144,10 +124,7 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
                                                      : 0);
 
     g_pEventMan->EnqueueForGameLoop(syncEvent);
-
-  } //else if (input->header.dwType == RIM_TYPEMOUSE) {
-  //
-  //}
+  }
 
   return true;
 }

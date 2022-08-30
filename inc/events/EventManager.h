@@ -26,6 +26,8 @@ class EventManager {
  public:
   bool Init() { return true; }
   void Uninit() {}
+
+  // queues up events going from main thread to the game-loop thread
   void EnqueueForGameLoop(SynchronizedEvent& event);
 
   SynchronizedQueue<SynchronizedEvent>& GetSyncQueue() { return syncQueue_; }
