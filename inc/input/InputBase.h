@@ -45,6 +45,11 @@ struct InputAction {
   // https://kbdlayout.info/kbdusx/scancodes
   U16 scanCode;
 
+  // mouse fields
+  U64 wParam; // see WM_MOUSEMOVE for what is stored here
+  int mouseX; // can have negative values in Windows for multi-monitors
+  int mouseY;
+
   U8 deviceType;  // InputDeviceType
 };
 

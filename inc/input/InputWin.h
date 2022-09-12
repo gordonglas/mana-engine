@@ -15,6 +15,7 @@ class InputWin : public InputBase {
   void Uninit() override;
 
   bool OnRawInput(HRAWINPUT hRawInput);
+  void OnMouseMove(WPARAM wParam, LPARAM lParam);
 
  private:
   HWND hwnd_;

@@ -2,6 +2,7 @@
 
 #include "input/RawInputWin.h"
 
+#include <cassert>
 #include <strsafe.h>
 #include "events/EventManager.h"
 #include "input/InputBase.h"
@@ -76,7 +77,8 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
   if (dataSize > rawInputSizeBytes_) {
     // this is ok, just want to make sure it doesn't happen often.
     // if it does happen often, adjust initial value for rawInputSizeBytes_
-    OutputDebugStringW(L"!!!!!!!! RAW INPUT REALLOC !!!!!!!!\n");
+    //OutputDebugStringW(L"!!!!!!!! RAW INPUT REALLOC !!!!!!!!\n");
+    assert(false && "RAW INPUT REALLOC !!");
     if (!ReallocRawInputPtr(dataSize)) {
       return false;
     }
