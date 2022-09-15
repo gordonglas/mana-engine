@@ -5,6 +5,7 @@
 #include <cassert>
 #include <strsafe.h>
 #include "events/EventManager.h"
+#include "input/DualShock4Win.h"
 #include "input/InputBase.h"
 #include "input/InputWin.h"
 
@@ -12,7 +13,7 @@ namespace Mana {
 
 RawInputWin::RawInputWin(HWND hwndTarget)
     : hwndTarget_(hwndTarget),
-      pRawInput_(nullptr), rawInputSizeBytes_(80) {}
+      pRawInput_(nullptr), rawInputSizeBytes_(96) {}
 RawInputWin::~RawInputWin() {}
 
 bool RawInputWin::Init() {
@@ -35,16 +36,24 @@ bool RawInputWin::Uninit() {
 
 bool RawInputWin::RegisterDevices() {
   // allow our game to recieve raw input
-  // from multiple keyboards and mice
+  // from keyboards and gamepads
 
-  RAWINPUTDEVICE keyboards;
-  keyboards.usUsagePage = 1;
-  keyboards.usUsage = 6;
-  keyboards.dwFlags = 0;
-  keyboards.hwndTarget = hwndTarget_;
+  RAWINPUTDEVICE rid[2];
 
-  // after registering it, the WinProc will get WM_INPUT messages
-  if (!RegisterRawInputDevices(&keyboards, 1, sizeof(keyboards))) {
+  rid[0].usUsagePage = 0x01;
+  rid[0].usUsage = 0x06;  // keyboards
+  // TODO: possibly specify RIDEV_DEVNOTIFY. See: https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-rawinputdevice
+  rid[0].dwFlags = 0;
+  rid[0].hwndTarget = hwndTarget_;
+
+  rid[1].usUsagePage = 0x01;
+  rid[1].usUsage = 0x05;  // gamepads
+  // TODO: possibly specify RIDEV_DEVNOTIFY. See: https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-rawinputdevice
+  rid[1].dwFlags = 0;
+  rid[1].hwndTarget = hwndTarget_;
+
+  // after registering, the WinProc will get WM_INPUT messages
+  if (!RegisterRawInputDevices(rid, 2, sizeof(rid[0]))) {
     return false;
   }
 
@@ -52,13 +61,19 @@ bool RawInputWin::RegisterDevices() {
 }
 
 bool RawInputWin::UnregisterDevices() {
-  RAWINPUTDEVICE keyboards;
-  keyboards.usUsagePage = 1;
-  keyboards.usUsage = 6;
-  keyboards.dwFlags = RIDEV_REMOVE;
-  keyboards.hwndTarget = hwndTarget_;
+  RAWINPUTDEVICE rid[2];
 
-  if (!RegisterRawInputDevices(&keyboards, 1, sizeof(keyboards))) {
+  rid[0].usUsagePage = 0x01;
+  rid[0].usUsage = 0x06; // keyboards
+  rid[0].dwFlags = RIDEV_REMOVE;
+  rid[0].hwndTarget = hwndTarget_;
+
+  rid[1].usUsagePage = 0x01;
+  rid[1].usUsage = 0x05; // gamepads
+  rid[1].dwFlags = RIDEV_REMOVE;
+  rid[1].hwndTarget = hwndTarget_;
+
+  if (!RegisterRawInputDevices(rid, 2, sizeof(rid[0]))) {
     return false;
   }
 
@@ -77,8 +92,12 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
   if (dataSize > rawInputSizeBytes_) {
     // this is ok, just want to make sure it doesn't happen often.
     // if it does happen often, adjust initial value for rawInputSizeBytes_
-    //OutputDebugStringW(L"!!!!!!!! RAW INPUT REALLOC !!!!!!!!\n");
-    assert(false && "RAW INPUT REALLOC !!");
+    wchar_t buffer[256];
+    StringCchPrintfW(buffer, ARRAYSIZE(buffer),
+                     L"!!!!!!!! RAW INPUT REALLOC !!!!!!!! dataSize=%04u\n",
+                     dataSize);
+    OutputDebugStringW(buffer);
+    //assert(false && "RAW INPUT REALLOC !!");
     if (!ReallocRawInputPtr(dataSize)) {
       return false;
     }
@@ -88,7 +107,12 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
                   sizeof(RAWINPUTHEADER));
 
   const RAWINPUT* input = (const RAWINPUT*)pRawInput_;
+
+  // ==============================================================
+  // --- keyboard -------------------------------------------------
   if (input->header.dwType == RIM_TYPEKEYBOARD) {
+
+#ifndef NDEBUG
     wchar_t prefix[80];
     prefix[0] = L'\0';
     if (input->data.keyboard.Flags & RI_KEY_E0) {
@@ -108,6 +132,7 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
                                                     : L"press");
 
     OutputDebugStringW(buffer);
+#endif  // DEBUG
 
     // wrap InputAction into a SyncronizedEvent and pass
     // to the SynchronizedQueue used to send it to the game-loop thread.
@@ -126,6 +151,52 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
                                                      : 0);
 
     g_pEventMan->EnqueueForGameLoop(syncEvent);
+
+  // ==============================================================
+  // --- gamepad / other ------------------------------------------
+  } else if (input->header.dwType == RIM_TYPEHID) { // not keyboard nor mouse
+    // probably a gamepad.
+    // get more device info so we can check
+
+    RID_DEVICE_INFO deviceInfo;
+    UINT deviceInfoSize = sizeof(deviceInfo);
+    bool gotInfo =
+        GetRawInputDeviceInfoW(input->header.hDevice, RIDI_DEVICEINFO,
+                               &deviceInfo, &deviceInfoSize) > 0;
+
+    // TODO: maybe move deviceName so it's reused and not on the stack?
+    WCHAR deviceName[1024] = {0};
+    UINT deviceNameLength = sizeof(deviceName) / sizeof(*deviceName);
+    bool gotName =
+        GetRawInputDeviceInfoW(input->header.hDevice, RIDI_DEVICENAME,
+                               deviceName, &deviceNameLength) > 0;
+
+    if (gotInfo && gotName) {
+
+      // TODO: output the following. Make sure deviceName is unique for multiple DS4 controllers, else find a way to support multiple.
+      //deviceInfo.hid.dwVendorId
+      //deviceInfo.hid.dwProductId
+      //deviceName
+
+      if (IsDualShock4(deviceInfo.hid)) {
+
+        // TODO: use "input->header.hDevice" to see if this is a new device
+        //       that isn't assigned to a player yet.
+        //       Only allow one controller per player.
+
+        SynchronizedEvent syncEvent;
+        syncEvent.syncEventType = (U8)SynchronizedEventType::Input;
+
+        if (!GetStateDualShock4(hwndTarget_, input->data.hid.bRawData,
+                                 input->data.hid.dwSizeHid, deviceName,
+                                 syncEvent.inputAction)) {
+          return false;
+        }
+
+        g_pEventMan->EnqueueForGameLoop(syncEvent);
+      }
+      // TODO: check IsDualSense
+    }
   }
 
   return true;
