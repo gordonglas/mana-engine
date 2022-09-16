@@ -151,6 +151,9 @@
     <ClCompile Include="..\..\input\DualShock4Win.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\input\DualSenseWin.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -253,6 +256,9 @@
       <Filter>inc\events</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\input\DualShock4Win.h">
+      <Filter>inc\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\DualSenseWin.h">
       <Filter>inc\input</Filter>
     </ClInclude>
   </ItemGroup>

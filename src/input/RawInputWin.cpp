@@ -5,6 +5,7 @@
 #include <cassert>
 #include <strsafe.h>
 #include "events/EventManager.h"
+#include "input/DualSenseWin.h"
 #include "input/DualShock4Win.h"
 #include "input/InputBase.h"
 #include "input/InputWin.h"
@@ -194,8 +195,23 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
         }
 
         g_pEventMan->EnqueueForGameLoop(syncEvent);
+
+      } else if (IsDualSense(deviceInfo.hid)) {
+        // TODO: use "input->header.hDevice" to see if this is a new device
+        //       that isn't assigned to a player yet.
+        //       Only allow one controller per player.
+
+        SynchronizedEvent syncEvent;
+        syncEvent.syncEventType = (U8)SynchronizedEventType::Input;
+
+        if (!GetStateDualSense(hwndTarget_, input->data.hid.bRawData,
+                               input->data.hid.dwSizeHid, deviceName,
+                               syncEvent.inputAction)) {
+          return false;
+        }
+
+        g_pEventMan->EnqueueForGameLoop(syncEvent);
       }
-      // TODO: check IsDualSense
     }
   }
 
