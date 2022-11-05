@@ -67,7 +67,7 @@ namespace Mana {
 //  OVERLAPPED overlapped;
 //};
 
-bool IsDualShock4(RID_DEVICE_INFO_HID info) {
+bool IsDualShock4(const RID_DEVICE_INFO_HID& info) {
   const DWORD sonyVendorID = 0x054C;
   const DWORD ds4Gen1ProductID = 0x05C4;
   const DWORD ds4Gen2ProductID = 0x09CC;
@@ -164,6 +164,8 @@ bool GetStateDualShock4(HWND hWnd,
 #endif  // DEBUG
 
   // TODO: HERE!!! finish. Set inputAction fields.
+  inputAction.deviceType = (U8)InputDeviceType::Gamepad;
+  inputAction.gamepadType = (U8)InputGamepadType::DualShock4;
 
   return true;
 }

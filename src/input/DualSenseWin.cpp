@@ -6,7 +6,7 @@
 
 namespace Mana {
 
-bool IsDualSense(RID_DEVICE_INFO_HID info) {
+bool IsDualSense(const RID_DEVICE_INFO_HID& info) {
   // https://github.com/nondebug/dualsense
   const DWORD sonyVendorID = 0x054C;
   const DWORD dualSenseGen1ProductID = 0x0CE6;
@@ -121,6 +121,8 @@ bool GetStateDualSense(HWND hWnd,
 #endif  // DEBUG
 
   // TODO: HERE!!! finish. Set inputAction fields.
+  inputAction.deviceType = (U8)InputDeviceType::Gamepad;
+  inputAction.gamepadType = (U8)InputGamepadType::DualSense;
 
   return true;
 }

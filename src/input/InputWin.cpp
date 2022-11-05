@@ -31,6 +31,11 @@ bool InputWin::OnRawInput(HRAWINPUT hRawInput) {
   return pRawInput_->OnRawInput(hRawInput);
 }
 
+bool InputWin::OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
+                                   U64 deviceId) {
+  return pRawInput_->OnInputDeviceChange(deviceChangeType, deviceId);
+}
+
 void InputWin::OnMouseMove(WPARAM wParam, LPARAM lParam) {
   // wrap InputAction into a SyncronizedEvent and pass
   // to the SynchronizedQueue used to send it to the game-loop thread.

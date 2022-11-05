@@ -7,7 +7,7 @@
 namespace Mana {
 
 // PS4 controller
-bool IsDualShock4(RID_DEVICE_INFO_HID info);
+bool IsDualShock4(const RID_DEVICE_INFO_HID& info);
 
 // fills |inputAction| with current state
 bool GetStateDualShock4(HWND hWnd,

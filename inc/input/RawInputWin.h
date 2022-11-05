@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ManaGlobals.h"
+#include "input/InputBase.h"
 
 namespace Mana {
 
@@ -17,6 +18,8 @@ class RawInputWin {
   bool Uninit();
 
   bool OnRawInput(HRAWINPUT hRawInput);
+  bool OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
+                           U64 deviceId);
 
  private:
   HWND hwndTarget_;

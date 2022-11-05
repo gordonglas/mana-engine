@@ -6,9 +6,13 @@
 
 namespace Mana {
 
+// SynchronizedEventType tells us which fields are relevant being sent in the
+// the SynchronizedEvent object, although we can usually tell this by fields
+// that are set to specific values within it's InputAction fields anyway.
 enum class SynchronizedEventType {
   Unknown,
   Input,
+  InputDeviceChange,
 };
 
 // events that are sent across the thread boundary

@@ -15,6 +15,8 @@ class InputWin : public InputBase {
   void Uninit() override;
 
   bool OnRawInput(HRAWINPUT hRawInput);
+  bool OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
+                           U64 deviceId) override;
   void OnMouseMove(WPARAM wParam, LPARAM lParam);
 
  private:

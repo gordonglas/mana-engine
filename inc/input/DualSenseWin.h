@@ -7,7 +7,7 @@
 namespace Mana {
 
 // PS5 controller
-bool IsDualSense(RID_DEVICE_INFO_HID info);
+bool IsDualSense(const RID_DEVICE_INFO_HID& info);
 
 // fills |inputAction| with current state
 bool GetStateDualSense(HWND hWnd,
