@@ -148,12 +148,6 @@
     <ClCompile Include="..\..\events\EventManager.cpp">
       <Filter>src\events</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\input\DualShock4Win.cpp">
-      <Filter>src\input</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\input\DualSenseWin.cpp">
-      <Filter>src\input</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -254,12 +248,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\events\EventManager.h">
       <Filter>inc\events</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\input\DualShock4Win.h">
-      <Filter>inc\input</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\input\DualSenseWin.h">
-      <Filter>inc\input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

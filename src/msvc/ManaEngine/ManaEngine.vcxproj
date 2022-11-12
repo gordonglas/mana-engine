@@ -298,8 +298,6 @@
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\debugging\DebugWin.h" />
     <ClInclude Include="..\..\..\inc\events\EventManager.h" />
-    <ClInclude Include="..\..\..\inc\input\DualSenseWin.h" />
-    <ClInclude Include="..\..\..\inc\input\DualShock4Win.h" />
     <ClInclude Include="..\..\..\inc\input\InputBase.h" />
     <ClInclude Include="..\..\..\inc\input\InputWin.h" />
     <ClInclude Include="..\..\..\inc\input\RawInputWin.h" />
@@ -332,8 +330,6 @@
     <ClCompile Include="..\..\config\ConfigManager.cpp" />
     <ClCompile Include="..\..\debugging\DebugWin.cpp" />
     <ClCompile Include="..\..\events\EventManager.cpp" />
-    <ClCompile Include="..\..\input\DualSenseWin.cpp" />
-    <ClCompile Include="..\..\input\DualShock4Win.cpp" />
     <ClCompile Include="..\..\input\InputBase.cpp" />
     <ClCompile Include="..\..\input\InputWin.cpp" />
     <ClCompile Include="..\..\input\RawInputWin.cpp" />

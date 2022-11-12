@@ -5,8 +5,6 @@
 #include <cassert>
 #include <strsafe.h>
 #include "events/EventManager.h"
-#include "input/DualSenseWin.h"
-#include "input/DualShock4Win.h"
 #include "input/InputBase.h"
 #include "input/InputWin.h"
 
@@ -14,7 +12,7 @@ namespace Mana {
 
 RawInputWin::RawInputWin(HWND hwndTarget)
     : hwndTarget_(hwndTarget),
-      pRawInput_(nullptr), rawInputSizeBytes_(96) {}
+      pRawInput_(nullptr), rawInputSizeBytes_(80) {}
 RawInputWin::~RawInputWin() {}
 
 bool RawInputWin::Init() {
@@ -37,9 +35,9 @@ bool RawInputWin::Uninit() {
 
 bool RawInputWin::RegisterDevices() {
   // allow our game to recieve raw input
-  // from keyboards and gamepads
+  // from keyboards
 
-  RAWINPUTDEVICE rid[2];
+  RAWINPUTDEVICE rid[1];
 
   rid[0].usUsagePage = 0x01;
   rid[0].usUsage = 0x06;  // keyboards
@@ -47,15 +45,9 @@ bool RawInputWin::RegisterDevices() {
   rid[0].dwFlags = RIDEV_DEVNOTIFY;
   rid[0].hwndTarget = hwndTarget_;
 
-  rid[1].usUsagePage = 0x01;
-  rid[1].usUsage = 0x05;  // gamepads
-  // register for device add/remove notifications via WM_INPUT_DEVICE_CHANGE
-  rid[1].dwFlags = RIDEV_DEVNOTIFY;
-  rid[1].hwndTarget = hwndTarget_;
-
   // after registering, the WinProc will get WM_INPUT and
   // WM_INPUT_DEVICE_CHANGE messages
-  if (!RegisterRawInputDevices(rid, 2, sizeof(rid[0]))) {
+  if (!RegisterRawInputDevices(rid, 1, sizeof(RAWINPUTDEVICE))) {
     return false;
   }
 
@@ -63,19 +55,14 @@ bool RawInputWin::RegisterDevices() {
 }
 
 bool RawInputWin::UnregisterDevices() {
-  RAWINPUTDEVICE rid[2];
+  RAWINPUTDEVICE rid[1];
 
   rid[0].usUsagePage = 0x01;
   rid[0].usUsage = 0x06; // keyboards
   rid[0].dwFlags = RIDEV_REMOVE;
   rid[0].hwndTarget = hwndTarget_;
 
-  rid[1].usUsagePage = 0x01;
-  rid[1].usUsage = 0x05; // gamepads
-  rid[1].dwFlags = RIDEV_REMOVE;
-  rid[1].hwndTarget = hwndTarget_;
-
-  if (!RegisterRawInputDevices(rid, 2, sizeof(rid[0]))) {
+  if (!RegisterRawInputDevices(rid, 1, sizeof(RAWINPUTDEVICE))) {
     return false;
   }
 
@@ -84,7 +71,7 @@ bool RawInputWin::UnregisterDevices() {
 
 // We actually DO get a OnInputDeviceChange->DeviceAdded event for
 // each device that's already attached to the computer, when the
-// app first calls RegisterRawInputDevices!
+// app first calls RegisterRawInputDevices.
 // So we don't have to put any "DeviceAdded" checks within OnRawInput.
 // TODO: make sure the above comment's logic is consistent with
 //       other forms of input devices, such as XInput.
@@ -159,65 +146,15 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
                                                      : 0);
 
     g_pEventMan->EnqueueForGameLoop(syncEvent);
-
-  // ==============================================================
-  // --- gamepad / other ------------------------------------------
-  } else if (input->header.dwType == RIM_TYPEHID) { // not keyboard nor mouse
-    // probably a gamepad.
-    // get more device info so we can check
-
-    RID_DEVICE_INFO deviceInfo;
-    UINT deviceInfoSize = sizeof(deviceInfo);
-    bool gotInfo =
-        GetRawInputDeviceInfoW(input->header.hDevice, RIDI_DEVICEINFO,
-                               &deviceInfo, &deviceInfoSize) > 0;
-
-    // TODO: maybe move deviceName so it's reused and not on the stack?
-    WCHAR deviceName[1024] = {0};
-    UINT deviceNameLength = sizeof(deviceName) / sizeof(*deviceName);
-    bool gotName =
-        GetRawInputDeviceInfoW(input->header.hDevice, RIDI_DEVICENAME,
-                               deviceName, &deviceNameLength) > 0;
-
-    if (gotInfo && gotName) {
-
-      // TODO: output the following. Make sure deviceName is unique for multiple DS4 controllers, else find a way to support multiple.
-      //deviceInfo.hid.dwVendorId
-      //deviceInfo.hid.dwProductId
-      //deviceName
-
-      if (IsDualShock4(deviceInfo.hid)) {
-
-        SynchronizedEvent syncEvent;
-        syncEvent.syncEventType = (U8)SynchronizedEventType::Input;
-
-        if (!GetStateDualShock4(hwndTarget_, input->data.hid.bRawData,
-                                 input->data.hid.dwSizeHid, deviceName,
-                                 syncEvent.inputAction)) {
-          return false;
-        }
-
-        g_pEventMan->EnqueueForGameLoop(syncEvent);
-
-      } else if (IsDualSense(deviceInfo.hid)) {
-
-        SynchronizedEvent syncEvent;
-        syncEvent.syncEventType = (U8)SynchronizedEventType::Input;
-
-        if (!GetStateDualSense(hwndTarget_, input->data.hid.bRawData,
-                               input->data.hid.dwSizeHid, deviceName,
-                               syncEvent.inputAction)) {
-          return false;
-        }
-
-        g_pEventMan->EnqueueForGameLoop(syncEvent);
-      }
-    }
   }
 
   return true;
 }
 
+// NOTE: Some devices don't work well with Raw Input API OnInputDeviceChange
+// notifications, such as Nintendo Switch Pro controllers, so we can only
+// really use OnInputDeviceChange for keyboards. We use JoyShockLibrary and
+// XInput for gamepads anyway, so it's not a problem.
 bool RawInputWin::OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
                                       U64 deviceId) {
   assert(deviceId > 0 && "null deviceId!!!");
@@ -260,28 +197,15 @@ bool RawInputWin::OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
     // get device type
     InputDeviceType deviceType = InputDeviceType::Unknown;
     switch (deviceInfo.dwType) {
-      case RIM_TYPEHID: {
-        // should only be a gamepad, so we check against a whitelist of
-        // supported gamepad types.
-        // Keep in mind we also support XInput (outside of Raw Input).
-        bool isSupportedHidGamepad = false;
-        if (IsDualShock4(deviceInfo.hid)) {
-          isSupportedHidGamepad = true;
-          action.gamepadType = (U8)InputGamepadType::DualShock4;
-        } else if (IsDualSense(deviceInfo.hid)) {
-          isSupportedHidGamepad = true;
-          action.gamepadType = (U8)InputGamepadType::DualSense;
-        }
-
-        if (isSupportedHidGamepad)
-          deviceType = InputDeviceType::Gamepad;
+      case RIM_TYPEKEYBOARD: {
+        deviceType = InputDeviceType::Keyboard;
       } break;
       //case RIM_TYPEMOUSE: {
       //  deviceType = InputDeviceType::Mouse;
       //} break;
-      case RIM_TYPEKEYBOARD: {
-        deviceType = InputDeviceType::Keyboard;
-      } break;
+      default:
+        // ignore other device types
+        return true;
     }
     action.deviceType = (U8)deviceType;
 
@@ -293,26 +217,16 @@ bool RawInputWin::OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
       sDeviceChangeType = "Removed";
 
     std::string sDeviceType("Unknown");
-    if (deviceType == InputDeviceType::Gamepad)
-      sDeviceType = "Gamepad";
-    else if (deviceType == InputDeviceType::Keyboard)
+    if (deviceType == InputDeviceType::Keyboard)
       sDeviceType = "Keyboard";
     //else if (deviceType == InputDeviceType::Mouse)
     //  sDeviceType = "Mouse";
 
-    std::string sGamepadType("Unknown");
-    if (deviceType == InputDeviceType::Gamepad) {
-      if (action.gamepadType == (U8)InputGamepadType::DualShock4)
-        sGamepadType = "DualShock4";
-      else if (action.gamepadType == (U8)InputGamepadType::DualSense)
-        sGamepadType = "DualSense";
-    }
-
     wchar_t buffer[256];
     StringCchPrintfW(buffer, ARRAYSIZE(buffer),
-                     L"Device %S, type:%S, gamepad:%S %p, name=%s\n",
-                     sDeviceChangeType.c_str(), sDeviceType.c_str(),
-                     sGamepadType.c_str(), hDevice, deviceName);
+                     L"Device %S, type:%S, hDevice: %p, name=%s\n",
+                     sDeviceChangeType.c_str(), sDeviceType.c_str(), hDevice,
+                     deviceName);
     OutputDebugStringW(buffer);
 #endif
 
