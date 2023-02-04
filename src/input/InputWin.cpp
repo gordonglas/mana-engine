@@ -14,8 +14,11 @@ bool InputWin::Init() {
   pRawInput_ = new RawInputWin(hwnd_);
   if (!pRawInput_)
     return false;
+  // Register to listen to keyboard input events
+  // and keyboard device add/remove events.
   if (!pRawInput_->Init())
     return false;
+
   return true;
 }
 

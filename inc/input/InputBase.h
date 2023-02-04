@@ -36,8 +36,11 @@ enum class InputDeviceType {
 enum class InputGamepadType {
   Unknown,
   XInput, // AKA, Xbox controller
-  DualShock4,
-  DualSense,
+  //DualShock4,
+  //DualSense,
+  //LeftJoyCon,
+  //RightJoyCon,
+  //SwitchPro,
 };
 
 constexpr U16 INPUTACTION_FLAG_E0 = 0x01;
