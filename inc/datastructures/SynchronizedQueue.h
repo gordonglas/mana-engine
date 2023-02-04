@@ -87,6 +87,10 @@ std::optional<T> SynchronizedQueue<T>::Pop() {
   if (m_queue.empty()) {
     return std::nullopt;
   }
+  // This can still cause a problem if the object's copy constructor
+  // throws an exception. But purposely not using a shared_ptr here
+  // for obviously performance reasons.
+  // See "Listing 3.5" in book "C++ Concurrency in Action" for details.
   T front = m_queue.front();
   m_queue.pop();
 
