@@ -36,6 +36,12 @@ class XInput {
   // |id| is always 0 through 3 and corresponds to a specific port.
   DWORD GetGamepadState(U8 id, XINPUT_STATE* state);
 
+  // TODO: check XInputGetCapabilities
+  // see: https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputgetcapabilities
+
+  // TODO: support for XInputGetBatteryInformation
+  // see: https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputgetbatteryinformation
+
  private:
   Timer clock_;
   GamepadTimer timer_[4] = {};
