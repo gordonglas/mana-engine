@@ -30,17 +30,7 @@ enum class InputDeviceType {
   Unknown,
   Keyboard,
   Mouse,
-  Gamepad,
-};
-
-enum class InputGamepadType {
-  Unknown,
-  XInput, // AKA, Xbox controller
-  //DualShock4,
-  //DualSense,
-  //LeftJoyCon,
-  //RightJoyCon,
-  //SwitchPro,
+  //Gamepad,
 };
 
 constexpr U16 INPUTACTION_FLAG_E0 = 0x01;
@@ -66,7 +56,6 @@ struct InputAction {
   U16 scanCode;
 
   U8 deviceType;   // InputDeviceType
-  U8 gamepadType;  // InputGamepadType
 
   // mouse fields
   U64 wParam; // see WM_MOUSEMOVE for what is stored here
