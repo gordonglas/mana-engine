@@ -3,10 +3,11 @@
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{c7e9788e-aaa9-4a23-80c7-8b9fae995722}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd;cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>cpp</Extensions>
     </Filter>
     <Filter Include="inc">
       <UniqueIdentifier>{1016d136-a701-474c-bae5-2d35c47e3e16}</UniqueIdentifier>
+      <Extensions>h</Extensions>
     </Filter>
     <Filter Include="inc\target">
       <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>

@@ -1,10 +1,15 @@
 # ManaEngine - 2d in 3d game engine for Windows 10 and up
 
 ## TODO:
+* ManaCommon static lib
+  * remove the CommonStuff call in ManaGame and test other scenarios having to do with referencing the same lib twice:
+    (ManaGame references ManaCommon.lib directly, and indirectly via ManaEngine.lib):
+    * Make sure the global ptr has same addr in both the common lib and here.
+    * Call the same function in ManaCommon directly from ManaGame and indirectly via ManaEngine.
+    * If ManaEngine sets some data in Common, does ManaGame see the same values?
 * audio engine - re-org
   * DONE-Remove libopenmpt (We won't be using mod files.)
-TODO: HERE!!!
-  * (WIP)-Get gameloop running when dragging the window.
+  * DONE-Get gameloop running when dragging the window.
      -See: https://www.gamedev.net/forums/topic.asp?topic_id=287698
 
     * try getting separate thread working??? See example:
@@ -12,48 +17,13 @@ TODO: HERE!!!
 
       * Use a queue that generic messages can be posted to.
         * Lock the queue somehow efficiently.
-          * Can we just use an std::atomic<bool> queueHasData?
+          * Can we just use an `std::atomic<bool>` queueHasData?
             Is this "correct", even though the queue is a separate data structure?
           * Maybe just use SynchronizedQueue first (which uses a CriticalSection),
             and if the performance becomes a problem, then we can worry about
             optimizing later. Don't want to spend too much time optimizing first.
 
-int WINAPI WinMain(...){
-    RegisterClassEx(...);
-    auto_handle<HWND> hwnd = CreateWindow(...);
-    RenderThread renderthread(hwnd);
-    renderthread.Run();
-    ShowWindow(hwnd, nCmdShow);
-    MSG msg;
-    while(GetMessage(&msg, NULL, 0, 0))	{
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    renderthread.PostMessage(Message(WM_QUIT));
-    renderthread.Join();
-    return 0;
-}
-
-void RenderThread::Entry(){
-    try	{
-        OpenGL opengl(hwnd);
-        // context creation and cleanup etc.
-        Message* msg;
-        do {
-            while((msg = msgq.Read()))
-                HandleMessage(msg);
-        } while(running);
-    }
-    catch(int ex)
-    // if an exception made it here, it's rather bad
-    {
-        SendMessage(hwnd, WM_UNHANDLED_EXCEPTION, ex, 0);
-        SendMessage(hwnd, WM_CLOSE, 0, 0);
-    }
-}
-
-
-  * (WIP)-Move code from AudioWin::Play into AudioFileOggWin::Load.
+  * NOT-DOING-Move code from AudioWin::Play into AudioFileOggWin::Load.
     * DONE-Play (for non-looping, streaming sounds) should only be "resuming" the current buffers, not resetting any positions.
       ... Stop causes issues with the audio thread. Need to figure out a way to sync them up cleanly somehow.
       ... otherwise, might need to make it single threaded!!!! similar to https://www.gamedev.net/forums/topic/496350-xaudio2-and-ogg/
@@ -122,11 +92,12 @@ void RenderThread::Entry(){
     * LATER-static load ogg vorbis through xaudio2 (see code in Game Coding Complete)
     * LATER-GetLengthMillis (see code in Game Coding Complete - or can probably calculate it ourselves.)
 
-* merge stuff from ManaEngine_OLD and ManaGame_OLD
-    * ManaEngine_OLD has `ManaServerConsole.cpp` (winsock)
+* ManaEngine_OLD has `ManaServerConsole.cpp` (winsock)
 
 
 ## How to create a new Static Library project:
+
+THIS IS OUTDATED.
 
 -Create folders under GameDev root:
   ManaEngine
@@ -182,8 +153,17 @@ void RenderThread::Entry(){
 ## Additional Engine info:
 
 * Uses XAudio2 (v2.9):
-    * https://docs.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-redistributable#installing-the-nuget-package
+    * It comes pre-installed on Windows 10. The redistributable is only needed for older versions of Windows.
+      ManaEngine targets Windows 10+, but it appears that the redist (nuget package) gets updated somewhat often,
+      and it's easier to manage with the nuget package.
+      See: https://learn.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-versions
+    * For how to compile with XAudio 2,
+      see: https://learn.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-redistributable#compiling-your-app
     * Nuget package: https://www.nuget.org/packages/Microsoft.XAudio2.Redist/
+      The Nuget package is included in both `ManaEngine` and `ManaGame` projects.
+      Note that the Nuget package has `.targets` files that handle linking to the XAudio lib file,
+      but only for Release and Debug configurations! So Profile configuration probably won't work with it.
+      Be sure to check for updates to the nuget package from time to time and test it.
     * Manual package install instructions: (NOT NEEDED/USED)
         * Rename nuget package to `.zip` extension and extract files under `ManaEngine\third-party\xaudio2`.
         * Add include folder to include search paths, above the Windows SDK, so it uses this version instead.
@@ -192,6 +172,8 @@ void RenderThread::Entry(){
 
 
 ## How to create a new Game project:
+
+THIS IS OUTDATED
 
 -Create folders under GameDev root:
   ManaGame  -Replace with the name of your game.
