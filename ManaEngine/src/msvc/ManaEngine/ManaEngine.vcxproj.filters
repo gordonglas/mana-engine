@@ -3,32 +3,10 @@
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{c7e9788e-aaa9-4a23-80c7-8b9fae995722}</UniqueIdentifier>
-      <Extensions>cpp</Extensions>
-    </Filter>
-    <Filter Include="inc">
-      <UniqueIdentifier>{1016d136-a701-474c-bae5-2d35c47e3e16}</UniqueIdentifier>
-      <Extensions>h</Extensions>
-    </Filter>
-    <Filter Include="inc\target">
-      <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\audio">
-      <UniqueIdentifier>{6e491162-b081-47d3-9802-6a156d12dfb4}</UniqueIdentifier>
+      <Extensions>h;cpp</Extensions>
     </Filter>
     <Filter Include="src\audio">
       <UniqueIdentifier>{7a88a899-1852-4dcf-831e-5c182bfecb53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\utils">
-      <UniqueIdentifier>{35b70756-3f22-44d6-b3d8-d8d5e07020ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\concurrency">
-      <UniqueIdentifier>{2cda618d-9c83-4896-986c-17fa8f1c1af1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\datastructures">
-      <UniqueIdentifier>{a245580d-28f3-4ce0-80c6-ea2559481d39}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\mainloop">
-      <UniqueIdentifier>{16c71184-26ca-4d0d-8ed9-855c92b651f9}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\concurrency">
       <UniqueIdentifier>{2d2462b6-2fcc-4916-8e21-810ee30a834e}</UniqueIdentifier>
@@ -39,17 +17,8 @@
     <Filter Include="src\utils">
       <UniqueIdentifier>{15de6231-e213-432f-8528-c38fd0e043ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\os">
-      <UniqueIdentifier>{faf2a6d1-cce6-46f0-ba46-d3e7998eceb1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\os">
       <UniqueIdentifier>{9995f74e-a8fb-4108-bdbf-f329c5658300}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\config">
-      <UniqueIdentifier>{1914db43-444b-44a8-94d6-0bc35f18f365}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\input">
-      <UniqueIdentifier>{c2cfe333-5e68-4dc5-ba90-d9752efa320f}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\input">
       <UniqueIdentifier>{b2f16c7c-a4a4-46a9-8453-452249db4f8e}</UniqueIdentifier>
@@ -57,17 +26,17 @@
     <Filter Include="src\config">
       <UniqueIdentifier>{c2a350eb-0de3-426f-8255-ebca9662b011}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\debugging">
-      <UniqueIdentifier>{d6444aa4-37c0-4503-8619-7b067f284057}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\debugging">
       <UniqueIdentifier>{c7ded794-6261-4c19-b482-bf65d9880a68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\events">
-      <UniqueIdentifier>{2d3215f9-4f1d-429a-8542-6ebe7fa16ae9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\events">
       <UniqueIdentifier>{59060c71-de79-4f3a-b756-40172990d440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\datastructures">
+      <UniqueIdentifier>{a245580d-28f3-4ce0-80c6-ea2559481d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\target">
+      <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,107 +129,107 @@
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\AudioBase.h">
-      <Filter>inc\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\ManaGlobals.h">
-      <Filter>inc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\inc\target\OSDefines.h">
-      <Filter>inc\target</Filter>
+      <Filter>src\target</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\target\TargetOS.h">
-      <Filter>inc\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\AudioWin.h">
-      <Filter>inc\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\CommandLine.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\File.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Log.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Strings.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\StringTypes.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h">
-      <Filter>inc\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\concurrency\IThread.h">
-      <Filter>inc\concurrency</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h">
-      <Filter>inc\concurrency</Filter>
+      <Filter>src\target</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h">
-      <Filter>inc\datastructures</Filter>
+      <Filter>src\datastructures</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h">
-      <Filter>inc\mainloop</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h">
-      <Filter>inc\mainloop</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Com.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h">
-      <Filter>inc\mainloop</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\os\WindowBase.h">
-      <Filter>inc\os</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\os\WindowWin.h">
-      <Filter>inc\os</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Timer.h">
-      <Filter>inc\utils</Filter>
+    <ClInclude Include="..\..\..\inc\audio\AudioBase.h">
+      <Filter>src\audio</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\audio\AudioFileBase.h">
-      <Filter>inc\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h">
-      <Filter>inc\audio</Filter>
+      <Filter>src\audio</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\audio\AudioFileOggWin.h">
-      <Filter>inc\audio</Filter>
+      <Filter>src\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\config\ConfigManager.h">
-      <Filter>inc\config</Filter>
+    <ClInclude Include="..\..\..\inc\audio\AudioFileWin.h">
+      <Filter>src\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\input\InputBase.h">
-      <Filter>inc\input</Filter>
+    <ClInclude Include="..\..\..\inc\audio\AudioWin.h">
+      <Filter>src\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\input\InputWin.h">
-      <Filter>inc\input</Filter>
+    <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h">
+      <Filter>src\audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\input\RawInputWin.h">
-      <Filter>inc\input</Filter>
+    <ClInclude Include="..\..\..\inc\concurrency\IThread.h">
+      <Filter>src\concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Memory.h">
-      <Filter>inc\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\debugging\DebugWin.h">
-      <Filter>inc\debugging</Filter>
+    <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h">
+      <Filter>src\concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\concurrency\Lock.h">
-      <Filter>inc\concurrency</Filter>
+      <Filter>src\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\config\ConfigManager.h">
+      <Filter>src\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\debugging\DebugWin.h">
+      <Filter>src\debugging</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\events\EventManager.h">
-      <Filter>inc\events</Filter>
+      <Filter>src\events</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\input\GamepadManager.h">
-      <Filter>inc\input</Filter>
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\InputBase.h">
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\InputWin.h">
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\input\RawInputWin.h">
+      <Filter>src\input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\input\XInputWin.h">
-      <Filter>inc\input</Filter>
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h">
+      <Filter>src\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h">
+      <Filter>src\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h">
+      <Filter>src\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\os\WindowWin.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\os\WindowBase.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Com.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\CommandLine.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\File.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Log.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Memory.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Strings.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\StringTypes.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\utils\Timer.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\ManaGlobals.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
