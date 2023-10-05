@@ -2,7 +2,7 @@
 
 #include "audio/AudioBase.h"
 #include "concurrency/IWorkItem.h"
-#include "concurrency/Lock.h"
+#include "concurrency/Mutex.h"
 #include "utils/StringTypes.h"
 
 namespace Mana {
@@ -35,14 +35,14 @@ class WorkItemLoadAudio : public IWorkItem {
                              m_loopBackPcmSamplePos, m_simultaneousSounds);
 
     {
-      ScopedCriticalSection lock(m_lock);
+      ScopedMutex lock(m_lock);
       m_handle = handle;
       m_doneProcessing = true;
     }
   }
 
   size_t GetHandleIfDoneProcessing() override {
-    ScopedCriticalSection lock(m_lock);
+    ScopedMutex lock(m_lock);
     if (m_doneProcessing) {
       return m_handle;
     } else {
@@ -51,7 +51,7 @@ class WorkItemLoadAudio : public IWorkItem {
   }
 
  private:
-  CriticalSection m_lock;
+  Mutex m_lock;
   AudioBase* m_pAudioEngine;
   xstring m_file;
   AudioCategory m_audioCategory;

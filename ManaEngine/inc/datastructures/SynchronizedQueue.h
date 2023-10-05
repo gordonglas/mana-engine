@@ -5,10 +5,11 @@
 #include <queue>
 #include <utility>
 #include <vector>
-#include "concurrency/Lock.h"
+#include "concurrency/Mutex.h"
 
 namespace Mana {
 
+// A cross-thread synchronized queue.
 template <typename T>
 class SynchronizedQueue {
  public:
@@ -35,8 +36,7 @@ class SynchronizedQueue {
 
  private:
   std::atomic<bool> bEmpty_;
-  CriticalSection m_lock;
-  //Mutex mutex_;
+  Mutex m_lock;
   std::queue<T> m_queue;
 };
 
@@ -49,31 +49,27 @@ bool SynchronizedQueue<T>::Empty_NoLock() {
 
 template <typename T>
 const size_t SynchronizedQueue<T>::Size() {
-  ScopedCriticalSection lock(m_lock);
-  //ScopedMutex lock(mutex_);
+  ScopedMutex lock(m_lock);
   return (size_t)m_queue.size();
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(const T& value) {
-  ScopedCriticalSection lock(m_lock);
-  //ScopedMutex lock(mutex_);
+  ScopedMutex lock(m_lock);
   m_queue.push(value);
   bEmpty_ = false;
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(T&& value) {
-  ScopedCriticalSection lock(m_lock);
-  //ScopedMutex lock(mutex_);
+  ScopedMutex lock(m_lock);
   m_queue.push(std::move(value));
   bEmpty_ = false;
 }
 
 template <typename T>
 std::optional<T> SynchronizedQueue<T>::PeekFront() {
-  ScopedCriticalSection lock(m_lock);
-  //ScopedMutex lock(mutex_);
+  ScopedMutex lock(m_lock);
   if (m_queue.empty()) {
     return std::nullopt;
   }
@@ -82,14 +78,13 @@ std::optional<T> SynchronizedQueue<T>::PeekFront() {
 
 template <typename T>
 std::optional<T> SynchronizedQueue<T>::Pop() {
-  ScopedCriticalSection lock(m_lock);
-  //ScopedMutex lock(mutex_);
+  ScopedMutex lock(m_lock);
   if (m_queue.empty()) {
     return std::nullopt;
   }
   // This can still cause a problem if the object's copy constructor
   // throws an exception. But purposely not using a shared_ptr here
-  // for obviously performance reasons.
+  // for performance reasons.
   // See "Listing 3.5" in book "C++ Concurrency in Action" for details.
   T front = m_queue.front();
   m_queue.pop();
@@ -104,8 +99,7 @@ template <typename T>
 std::vector<T> SynchronizedQueue<T>::PopAll() {
   std::vector<T> popped;
 
-  ScopedCriticalSection lock(m_lock);
-  //ScopedMutex lock(mutex_);
+  ScopedMutex lock(m_lock);
   while (!m_queue.empty()) {
     T front = m_queue.front();
     m_queue.pop();

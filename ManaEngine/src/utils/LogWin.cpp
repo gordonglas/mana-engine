@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "utils/Log.h"
-#include "concurrency/Lock.h"
+#include "concurrency/Mutex.h"
 #include "target/TargetOS.h"
 #include "utils/Strings.h"
 #include <cwchar> // _vscwprintf, vswprintf
@@ -9,7 +9,7 @@
 namespace Mana {
 
 char logFile[20];
-CriticalSection logFileLock;
+Mutex logFileMutex;
 bool initialized = false;
 
 static void Log(Verbosity verbosity,
@@ -122,7 +122,7 @@ static void Log(Verbosity verbosity,
   std::string utf8 = Utf16ToUtf8(wstr);
 
   {
-    ScopedCriticalSection slock(logFileLock);
+    ScopedMutex lock(logFileMutex);
     FILE* pFile = nullptr;
     if (fopen_s(&pFile, Mana::logFile, "ab") == 0 && pFile) {
       std::fwrite(utf8.c_str(), 1, utf8.length(), pFile);

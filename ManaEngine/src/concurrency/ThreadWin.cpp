@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "concurrency/IThread.h"
-#include "concurrency/Lock.h"
+#include "concurrency/Mutex.h"
 #include "utils/Log.h"
 #include "datastructures/SynchronizedQueue.h"
 #include <atomic>
@@ -12,6 +12,7 @@ namespace Mana {
 
 DWORD WINAPI ThreadFunction(LPVOID lpParam);
 
+// A cross-thread-safe Thread implementation.
 class Thread : public IThread {
  public:
   ~Thread() override {
@@ -24,13 +25,13 @@ class Thread : public IThread {
   bool Init(ThreadFunc pThreadFunc) override;
 
   void Start() override {
-    ScopedCriticalSection lock(lock_);
+    ScopedMutex lock(lock_);
     ResumeThread(hThread_);
   }
 
   void Stop() override {
     bStopping_ = true;
-    ScopedCriticalSection lock(lock_);
+    ScopedMutex lock(lock_);
     if (hWait_) {
       SetEvent(hWait_);
     }
@@ -47,14 +48,14 @@ class Thread : public IThread {
   }
 
   void EnqueueWorkItem(IWorkItem* pWorkItem) override {
-    ScopedCriticalSection lock(lock_);
+    ScopedMutex lock(lock_);
     list_.push_back(pWorkItem);
     queue_.Push(pWorkItem);
     SetEvent(hWait_);
   }
 
   bool IsAllItemsProcessed() override {
-    ScopedCriticalSection lock(lock_);
+    ScopedMutex lock(lock_);
 
     for (const auto& item : list_) {
       if (item->GetHandleIfDoneProcessing() == 0)
@@ -65,13 +66,13 @@ class Thread : public IThread {
   }
 
   void ClearProcessedItems() override {
-    ScopedCriticalSection lock(lock_);
+    ScopedMutex lock(lock_);
     list_.clear();
   }
 
  private:
   bool bInitialized_ = false;
-  CriticalSection lock_;
+  Mutex lock_;
   HANDLE hThread_ = nullptr;
   // TODO: shared_ptr<IWorkItem>
   std::vector<IWorkItem*> list_;
@@ -84,7 +85,7 @@ class Thread : public IThread {
 };
 
 bool Thread::Init(ThreadFunc pThreadFunc) {
-  ScopedCriticalSection lock(lock_);
+  ScopedMutex lock(lock_);
 
   if (bInitialized_)
     return false;

@@ -112,9 +112,6 @@
     <ClCompile Include="..\..\debugging\DebugWin.cpp">
       <Filter>src\debugging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\concurrency\LockWin.cpp">
-      <Filter>src\concurrency</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\events\EventManager.cpp">
       <Filter>src\events</Filter>
     </ClCompile>
@@ -123,6 +120,12 @@
     </ClCompile>
     <ClCompile Include="..\..\input\XInputWin.cpp">
       <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\concurrency\MutexWin.cpp">
+      <Filter>src\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\concurrency\NamedMutexWin.cpp">
+      <Filter>src\concurrency</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,9 +163,6 @@
       <Filter>src\concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h">
-      <Filter>src\concurrency</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\concurrency\Lock.h">
       <Filter>src\concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\config\ConfigManager.h">
@@ -230,6 +230,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\ManaGlobals.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\Mutex.h">
+      <Filter>src\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\NamedMutex.h">
+      <Filter>src\concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
