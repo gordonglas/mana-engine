@@ -5,32 +5,40 @@
 
 namespace Mana {
 
-NamedMutex::NamedMutex(const xstring& name) {
+ScopedNamedMutex::ScopedNamedMutex(xstring name) : name_(name) {
   assert(!name.empty());
-  mutex_ = ::CreateMutexW(nullptr,        // default security attributes
-                          FALSE,          // initially unlocked
-                          name.c_str());  // named mutex
-}
-
-NamedMutex::~NamedMutex() {
-  ::CloseHandle(mutex_);
-}
-
-void NamedMutex::Lock() {
-  DWORD dwWaitResult = ::WaitForSingleObject(mutex_, INFINITE);
-  assert(dwWaitResult == WAIT_OBJECT_0);
-}
-
-void NamedMutex::Unlock() {
-  ::ReleaseMutex(mutex_);
-}
-
-ScopedNamedMutex::ScopedNamedMutex(NamedMutex& mutex) : mutex_(mutex) {
-  mutex_.Lock();
 }
 
 ScopedNamedMutex::~ScopedNamedMutex() {
-  mutex_.Unlock();
+  Unlock();
+  Close();
+}
+
+bool ScopedNamedMutex::TryLock() {
+  mutex_ = ::CreateMutexW(nullptr,         // default security attributes
+                          TRUE,            // initially locked
+                          name_.c_str());  // named mutex
+
+  if (!mutex_ || GetLastError() == ERROR_ALREADY_EXISTS) {
+    Unlock();
+    Close();
+    return false;
+  }
+
+  return true;
+}
+
+void ScopedNamedMutex::Unlock() {
+  if (mutex_) {
+    ::ReleaseMutex(mutex_);
+  }
+}
+
+void ScopedNamedMutex::Close() {
+  if (mutex_) {
+    ::CloseHandle(mutex_);
+    mutex_ = nullptr;
+  }
 }
 
 }  // namespace Mana

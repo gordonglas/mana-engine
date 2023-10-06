@@ -5,34 +5,28 @@
 
 namespace Mana {
 
-// An named cross-process mutex.
-// If you need a cross-thread mutex, use Mutex instead.
-class NamedMutex {
- public:
-  NamedMutex(const xstring& name);
-  ~NamedMutex();
-  void Lock();
-  void Unlock();
-
-  NamedMutex(const NamedMutex&) = delete;
-  NamedMutex& operator=(const NamedMutex&) = delete;
-
- protected:
-#ifdef OS_WIN
-  HANDLE mutex_;
-#endif
-};
-
+// A named cross-process mutex.
+// If you only need a cross-thread mutex, use Mutex instead.
 class ScopedNamedMutex {
  public:
-  ScopedNamedMutex(NamedMutex& mutex);
+  // https://learn.microsoft.com/en-us/windows/win32/sync/object-names
+  ScopedNamedMutex(xstring name);
   ~ScopedNamedMutex();
+  // Doesn't block.
+  // returns true if this thread has ownership,
+  // returns false if some process/thread already has ownership.
+  bool TryLock();
 
   ScopedNamedMutex(const ScopedNamedMutex&) = delete;
   ScopedNamedMutex& operator=(const ScopedNamedMutex&) = delete;
 
- private:
-  NamedMutex& mutex_;
+ protected:
+  xstring name_;
+#ifdef OS_WIN
+  HANDLE mutex_ = nullptr;
+#endif
+  void Unlock();
+  void Close();
 };
 
 }  // namespace Mana
