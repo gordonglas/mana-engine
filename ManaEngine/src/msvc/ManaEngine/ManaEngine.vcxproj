@@ -318,6 +318,7 @@
     <ClInclude Include="..\..\..\inc\os\WindowWin.h" />
     <ClInclude Include="..\..\..\inc\target\OSDefines.h" />
     <ClInclude Include="..\..\..\inc\target\TargetOS.h" />
+    <ClInclude Include="..\..\..\inc\ui\SimpleMessageBox.h" />
     <ClInclude Include="..\..\..\inc\utils\CommandLine.h" />
     <ClInclude Include="..\..\..\inc\utils\Com.h" />
     <ClInclude Include="..\..\..\inc\utils\File.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="..\..\mainloop\ProcessManager.cpp" />
     <ClCompile Include="..\..\ManaGlobals.cpp" />
     <ClCompile Include="..\..\os\WindowWin.cpp" />
+    <ClCompile Include="..\..\ui\SimpleMessageBoxWin.cpp" />
     <ClCompile Include="..\..\utils\CommandLine.cpp" />
     <ClCompile Include="..\..\utils\ComWin.cpp" />
     <ClCompile Include="..\..\utils\FileWin.cpp" />

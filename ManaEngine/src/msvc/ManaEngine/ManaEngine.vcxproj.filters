@@ -38,6 +38,9 @@
     <Filter Include="src\target">
       <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{7ed3df38-58a9-439a-bffe-56e6dab1fcec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -126,6 +129,9 @@
     </ClCompile>
     <ClCompile Include="..\..\concurrency\NamedMutexWin.cpp">
       <Filter>src\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\SimpleMessageBoxWin.cpp">
+      <Filter>src\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\concurrency\NamedMutex.h">
       <Filter>src\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\ui\SimpleMessageBox.h">
+      <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
