@@ -70,8 +70,8 @@ bool WindowWin::CreateMainWindow(CommandLine& commandLine, xstring& title) {
   return true;
 }
 
-bool WindowWin::ShowWindow() {
-  ::ShowWindow(hWnd_, nCmdShow_);
+bool WindowWin::ShowWindow(int nCmdShow) {
+  ::ShowWindow(hWnd_, nCmdShow);
 
   if (!::UpdateWindow(hWnd_)) {
     error_ = L"::UpdateWindow failed";

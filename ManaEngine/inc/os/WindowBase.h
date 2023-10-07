@@ -14,7 +14,7 @@ class WindowBase {
 
   virtual bool CreateMainWindow(CommandLine& commandLine, xstring& title) = 0;
 
-  virtual bool ShowWindow() = 0;
+  virtual bool ShowWindow(int nCmdShow) = 0;
 
  protected:
   xstring error_;

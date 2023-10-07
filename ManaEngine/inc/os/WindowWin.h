@@ -16,7 +16,8 @@ class WindowWin : public WindowBase {
 
   bool CreateMainWindow(CommandLine& commandLine, xstring& title) final;
 
-  bool ShowWindow() final;
+  // TODO: x-platform values for nCmdShow
+  bool ShowWindow(int nCmdShow) final;
 
   HINSTANCE& GetHInstance() { return hInstance_; }
 
@@ -24,7 +25,8 @@ class WindowWin : public WindowBase {
 
  private:
   HINSTANCE hInstance_;
-  int nCmdShow_;
+  int nCmdShow_;  // the value passed from wWinMain (not currently used and
+                  // might not be needed?)
   HWND hWnd_;
   WNDPROC wndProc_;
 };
