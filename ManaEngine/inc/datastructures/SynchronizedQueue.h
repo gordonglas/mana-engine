@@ -44,7 +44,8 @@ template <typename T>
 bool SynchronizedQueue<T>::Empty_NoLock() {
   // Purposely not using a lock here, but an atomic<bool> instead.
   // This allows the game-loop thread to avoid locking when it doesn't need to.
-  return bEmpty_;
+  //return bEmpty_;
+  return bEmpty_.load(std::memory_order_acquire);
 }
 
 template <typename T>
@@ -57,14 +58,16 @@ template <typename T>
 void SynchronizedQueue<T>::Push(const T& value) {
   ScopedMutex lock(m_lock);
   m_queue.push(value);
-  bEmpty_ = false;
+  //bEmpty_ = false;
+  bEmpty_.store(false, std::memory_order_release);
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(T&& value) {
   ScopedMutex lock(m_lock);
   m_queue.push(std::move(value));
-  bEmpty_ = false;
+  //bEmpty_ = false;
+  bEmpty_.store(false, std::memory_order_release);
 }
 
 template <typename T>
@@ -89,8 +92,10 @@ std::optional<T> SynchronizedQueue<T>::Pop() {
   T front = m_queue.front();
   m_queue.pop();
 
-  if (m_queue.empty())
-    bEmpty_ = true;
+  if (m_queue.empty()) {
+    //bEmpty_ = true;
+    bEmpty_.store(true, std::memory_order_release);
+  }
 
   return front;
 }
@@ -106,7 +111,8 @@ std::vector<T> SynchronizedQueue<T>::PopAll() {
     popped.push_back(front);
   }
 
-  bEmpty_ = true;
+  //bEmpty_ = true;
+  bEmpty_.store(true, std::memory_order_release);
   return popped;
 }
 
