@@ -15,6 +15,9 @@ bool WindowWin::CreateMainWindow(CommandLine& commandLine, xstring& title) {
     return false;
   }
 
+  previousWindowPlacement_ = {sizeof(WINDOWPLACEMENT)};
+  switchingWindowedMode_ = false;
+
   WNDCLASSEXW wcex;
   wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -78,6 +81,37 @@ bool WindowWin::ShowWindow(int nCmdShow) {
     return false;
   }
 
+  return true;
+}
+
+bool WindowWin::ToggleFullscreenWindowed() {
+  if (switchingWindowedMode_) {
+    return false;
+  }
+  switchingWindowedMode_ = true;
+
+  HWND hwnd = GetHWnd();
+  DWORD dwStyle = GetWindowLongW(hwnd, GWL_STYLE);
+  if (dwStyle & WS_OVERLAPPEDWINDOW) {
+    MONITORINFO mi = {sizeof(mi)};
+    if (GetWindowPlacement(hwnd, &previousWindowPlacement_) &&
+        GetMonitorInfoW(MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY),
+                        &mi)) {
+      SetWindowLongW(hwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+      SetWindowPos(hwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
+                   mi.rcMonitor.right - mi.rcMonitor.left,
+                   mi.rcMonitor.bottom - mi.rcMonitor.top,
+                   SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+    }
+  } else {
+    SetWindowLongW(hwnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+    SetWindowPlacement(hwnd, &previousWindowPlacement_);
+    SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER |
+                     SWP_FRAMECHANGED);
+  }
+
+  switchingWindowedMode_ = false;
   return true;
 }
 

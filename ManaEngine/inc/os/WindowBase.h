@@ -16,8 +16,11 @@ class WindowBase {
 
   virtual bool ShowWindow(int nCmdShow) = 0;
 
+  virtual bool ToggleFullscreenWindowed() = 0;
+
  protected:
   xstring error_;
+  bool switchingWindowedMode_;
 };
 
 }  // namespace Mana

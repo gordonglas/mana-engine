@@ -19,6 +19,8 @@ class WindowWin : public WindowBase {
   // TODO: x-platform values for nCmdShow
   bool ShowWindow(int nCmdShow) final;
 
+  bool ToggleFullscreenWindowed() final;
+
   HINSTANCE& GetHInstance() { return hInstance_; }
 
   HWND& GetHWnd() { return hWnd_; }
@@ -29,6 +31,8 @@ class WindowWin : public WindowBase {
                   // might not be needed?)
   HWND hWnd_;
   WNDPROC wndProc_;
+
+  WINDOWPLACEMENT previousWindowPlacement_;
 };
 
 }  // namespace Mana
