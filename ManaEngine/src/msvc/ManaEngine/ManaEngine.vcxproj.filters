@@ -35,11 +35,11 @@
     <Filter Include="src\datastructures">
       <UniqueIdentifier>{a245580d-28f3-4ce0-80c6-ea2559481d39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\target">
-      <UniqueIdentifier>{4479fd0b-0b87-4f06-a187-a9af01f16945}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui">
       <UniqueIdentifier>{7ed3df38-58a9-439a-bffe-56e6dab1fcec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphics">
+      <UniqueIdentifier>{70e60d63-725d-4235-93cb-5a92f603c065}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,23 +70,11 @@
     <ClCompile Include="..\..\utils\FileWin.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils\LogWin.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\StringsWin.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\mainloop\MainGameBase.cpp">
       <Filter>src\mainloop</Filter>
     </ClCompile>
     <ClCompile Include="..\..\os\WindowWin.cpp">
       <Filter>src\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\Timer.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ManaGlobals.cpp">
-      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\audio\AudioFileWin.cpp">
       <Filter>src\audio</Filter>
@@ -124,25 +112,22 @@
     <ClCompile Include="..\..\input\XInputWin.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\concurrency\MutexWin.cpp">
-      <Filter>src\concurrency</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\concurrency\NamedMutexWin.cpp">
       <Filter>src\concurrency</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ui\SimpleMessageBoxWin.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\os\ModuleWin.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\graphics\GraphicsModule.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\target\OSDefines.h">
-      <Filter>src\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\target\TargetOS.h">
-      <Filter>src\target</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h">
       <Filter>src\datastructures</Filter>
@@ -219,32 +204,20 @@
     <ClInclude Include="..\..\..\inc\utils\File.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Log.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\Memory.h">
       <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Strings.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\StringTypes.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Timer.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\ManaGlobals.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\concurrency\Mutex.h">
-      <Filter>src\concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\concurrency\NamedMutex.h">
       <Filter>src\concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\ui\SimpleMessageBox.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\os\Module.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\graphics\GraphicsModule.h">
+      <Filter>src\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

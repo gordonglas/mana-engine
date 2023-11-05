@@ -299,12 +299,12 @@
     <ClInclude Include="..\..\..\inc\audio\WorkItemLoadAudio.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IThread.h" />
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
-    <ClInclude Include="..\..\..\inc\concurrency\Mutex.h" />
     <ClInclude Include="..\..\..\inc\concurrency\NamedMutex.h" />
     <ClInclude Include="..\..\..\inc\config\ConfigManager.h" />
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\debugging\DebugWin.h" />
     <ClInclude Include="..\..\..\inc\events\EventManager.h" />
+    <ClInclude Include="..\..\..\inc\graphics\GraphicsModule.h" />
     <ClInclude Include="..\..\..\inc\input\GamepadManager.h" />
     <ClInclude Include="..\..\..\inc\input\InputBase.h" />
     <ClInclude Include="..\..\..\inc\input\InputWin.h" />
@@ -313,20 +313,14 @@
     <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h" />
-    <ClInclude Include="..\..\..\inc\ManaGlobals.h" />
+    <ClInclude Include="..\..\..\inc\os\Module.h" />
     <ClInclude Include="..\..\..\inc\os\WindowBase.h" />
     <ClInclude Include="..\..\..\inc\os\WindowWin.h" />
-    <ClInclude Include="..\..\..\inc\target\OSDefines.h" />
-    <ClInclude Include="..\..\..\inc\target\TargetOS.h" />
     <ClInclude Include="..\..\..\inc\ui\SimpleMessageBox.h" />
     <ClInclude Include="..\..\..\inc\utils\CommandLine.h" />
     <ClInclude Include="..\..\..\inc\utils\Com.h" />
     <ClInclude Include="..\..\..\inc\utils\File.h" />
-    <ClInclude Include="..\..\..\inc\utils\Log.h" />
     <ClInclude Include="..\..\..\inc\utils\Memory.h" />
-    <ClInclude Include="..\..\..\inc\utils\Strings.h" />
-    <ClInclude Include="..\..\..\inc\utils\StringTypes.h" />
-    <ClInclude Include="..\..\..\inc\utils\Timer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -335,12 +329,12 @@
     <ClCompile Include="..\..\audio\AudioFileOggWin.cpp" />
     <ClCompile Include="..\..\audio\AudioFileWin.cpp" />
     <ClCompile Include="..\..\audio\AudioWin.cpp" />
-    <ClCompile Include="..\..\concurrency\MutexWin.cpp" />
     <ClCompile Include="..\..\concurrency\NamedMutexWin.cpp" />
     <ClCompile Include="..\..\concurrency\ThreadWin.cpp" />
     <ClCompile Include="..\..\config\ConfigManager.cpp" />
     <ClCompile Include="..\..\debugging\DebugWin.cpp" />
     <ClCompile Include="..\..\events\EventManager.cpp" />
+    <ClCompile Include="..\..\graphics\GraphicsModule.cpp" />
     <ClCompile Include="..\..\input\GamepadManagerWin.cpp" />
     <ClCompile Include="..\..\input\InputBase.cpp" />
     <ClCompile Include="..\..\input\InputWin.cpp" />
@@ -349,16 +343,13 @@
     <ClCompile Include="..\..\mainloop\MainGameBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessBase.cpp" />
     <ClCompile Include="..\..\mainloop\ProcessManager.cpp" />
-    <ClCompile Include="..\..\ManaGlobals.cpp" />
+    <ClCompile Include="..\..\os\ModuleWin.cpp" />
     <ClCompile Include="..\..\os\WindowWin.cpp" />
     <ClCompile Include="..\..\ui\SimpleMessageBoxWin.cpp" />
     <ClCompile Include="..\..\utils\CommandLine.cpp" />
     <ClCompile Include="..\..\utils\ComWin.cpp" />
     <ClCompile Include="..\..\utils\FileWin.cpp" />
-    <ClCompile Include="..\..\utils\LogWin.cpp" />
     <ClCompile Include="..\..\utils\Memory.cpp" />
-    <ClCompile Include="..\..\utils\StringsWin.cpp" />
-    <ClCompile Include="..\..\utils\Timer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>
