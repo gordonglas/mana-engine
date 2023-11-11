@@ -1,4 +1,4 @@
-# Custom additions:
+# Custom ignores:
 [Ll]ib/
 [Tt]emp/
 bash.exe.stackdump
@@ -365,3 +365,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+#########################################################
+# Custom unignores
+#
+# unignore some pre-built third party bin and lib folders
+# See: https://stackoverflow.com/a/5285539/341942
+!/ManaEngine/third-party/liboggvorbis/Dynamic/bin/
+!/ManaEngine/third-party/liboggvorbis/Dynamic/bin/**/*
+!/ManaEngine/third-party/liboggvorbis/Dynamic/lib/
+!/ManaEngine/third-party/liboggvorbis/Dynamic/lib/**/*
