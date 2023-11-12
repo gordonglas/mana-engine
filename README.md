@@ -1,4 +1,6 @@
-# ManaEngine - Simple hobby game engine for Windows 10 and up
+# Mana Engine
+
+Simple hobby game engine for Windows 10 and up
 
 This is a hobby project I'm slowly working on and there's still a lot of work needed for this engine to be usable, but if someone can learn from it, that's great. Audio and Input engines are "pretty much" done, but things will be refactored or added as I go. There are some big things still missing, such as graphics (next on my TODO list), scripting, and more. Currently supports Windows 10+ x64 only, but I've been coding in preparation to use it cross-platform.
 
@@ -43,8 +45,4 @@ j - play jump sound FX (can play three buffers simultaneously)
       Note that the Nuget package has `.targets` files that handle linking to the XAudio lib file,
       but only for Release and Debug configurations! So Profile configuration probably won't work with it.
       Be sure to check for updates to the nuget package from time to time and test it.
-    * Manual package install instructions: (NOT NEEDED/USED)
-        * Rename nuget package to `.zip` extension and extract files under `ManaEngine\third-party\xaudio2`.
-        * Add include folder to include search paths, above the Windows SDK, so it uses this version instead.
-        * Add Release lib folder for ALL configurations. The `.targets` file in the nuget package has a comment that says to do this, since the Debug version hasn't been well tested.
     * Known issues: Not all calls are compatible with Xbox One. Not compatible with UWP apps.
