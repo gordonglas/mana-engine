@@ -71,25 +71,25 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)..\..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)..\..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\..\ManaGame\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(LibraryPath)</LibraryPath>

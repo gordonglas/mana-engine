@@ -1,6 +1,7 @@
 # Custom ignores:
 [Ll]ib/
 [Tt]emp/
+[Gg]ame/
 bash.exe.stackdump
 
 ## Ignore Visual Studio temporary files, build results, and

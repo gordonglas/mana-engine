@@ -1,0 +1,13 @@
+// default config from which other configs derive
+{
+  "input": {
+    "keyboard": {
+      "scanCodes": {
+        "up":    "0x11", // w on qwerty
+        "left":  "0x1E", // a on qwerty
+        "down":  "0x1F", // s on qwerty
+        "right": "0x20"  // d on qwerty
+      }
+    }
+  }
+}
