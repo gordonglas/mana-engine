@@ -10,7 +10,6 @@
 #include "config/ConfigManager.h"
 #include "debugging/DebugWin.h"
 #include "events/EventManager.h"
-#include "graphics/GraphicsModule.h"
 #include "input/InputWin.h"
 #include "mainloop/ManaGameBase.h"
 #include "os/WindowWin.h"
@@ -173,7 +172,6 @@ class ManaGame : public ManaGameBase {
  private:
   HINSTANCE hInstance_;
   int nCmdShow_;
-  GraphicsModule graphicsModule;
 };
 
 bool ManaGame::OnInit() {
@@ -198,18 +196,6 @@ bool ManaGame::OnInit() {
   // init input engine
   g_pInputEngine = new InputWin(GetWindow()->GetHWnd());
   g_pInputEngine->Init();
-
-  // init graphics engine
-  // TODO: Need to move the loading of the initial audio stuff into the game loop,
-  //       because the graphics engine needs to run in the game loop,
-  //       and we want to show a loading animation while the game is loading.
-  // TODO: ~~Wrap this inside the GraphicsModule.Load function,~~
-  //       then also call a function that sets up all the exported DLL
-  //       function pointers,then call DLL function to create the d3d device and such.
-  if (graphicsModule.Load()) {
-    error_ = _X("Failed to load ") + graphicsModule.ModuleName();
-    return false;
-  }
 
   // init audio engine
   g_pAudioEngine = new AudioWin();
@@ -313,9 +299,6 @@ bool ManaGame::OnShutdown() {
   g_pAudioEngine->Uninit();
   delete g_pAudioEngine;
   g_pAudioEngine = nullptr;
-
-  // TODO: shutdown directx properly here
-  graphicsModule.Unload();
 
   g_pInputEngine->Uninit();
   delete g_pInputEngine;
