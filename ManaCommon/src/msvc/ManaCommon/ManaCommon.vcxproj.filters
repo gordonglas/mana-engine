@@ -9,60 +9,21 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>h;cpp</Extensions>
     </Filter>
-    <Filter Include="src\target">
-      <UniqueIdentifier>{d8b30d51-21ca-471a-aac0-dfc448ece330}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\utils">
-      <UniqueIdentifier>{7147f790-a299-4889-a93f-e1e46e2944b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\concurrency">
-      <UniqueIdentifier>{15d92ec0-7ce7-491b-9916-2e092c81b865}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\ManaGlobals.h">
+    <ClInclude Include="..\..\..\inc\ManaCommon.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\target\OSDefines.h">
-      <Filter>src\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\target\TargetOS.h">
-      <Filter>src\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\StringTypes.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Log.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Timer.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Strings.h">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\inc\concurrency\Mutex.h">
-      <Filter>src\concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils\LogWin.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\Timer.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\utils\StringsWin.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\concurrency\MutexWin.cpp">
-      <Filter>src\concurrency</Filter>
+    <ClCompile Include="..\..\ManaCommon.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

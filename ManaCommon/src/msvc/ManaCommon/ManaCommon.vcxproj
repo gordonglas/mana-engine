@@ -167,21 +167,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\inc\concurrency\Mutex.h" />
-    <ClInclude Include="..\..\..\inc\ManaGlobals.h" />
-    <ClInclude Include="..\..\..\inc\target\OSDefines.h" />
-    <ClInclude Include="..\..\..\inc\target\TargetOS.h" />
-    <ClInclude Include="..\..\..\inc\utils\Log.h" />
-    <ClInclude Include="..\..\..\inc\utils\Strings.h" />
-    <ClInclude Include="..\..\..\inc\utils\StringTypes.h" />
-    <ClInclude Include="..\..\..\inc\utils\Timer.h" />
+    <ClInclude Include="..\..\..\inc\ManaCommon.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\concurrency\MutexWin.cpp" />
-    <ClCompile Include="..\..\utils\LogWin.cpp" />
-    <ClCompile Include="..\..\utils\StringsWin.cpp" />
-    <ClCompile Include="..\..\utils\Timer.cpp" />
+    <ClCompile Include="..\..\ManaCommon.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
