@@ -100,43 +100,43 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\lib\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\..\ManaCommon\inc\;$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration)\;$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\..\..\inc\;$(ProjectDir)..\..\..\third-party\liboggvorbis\inc\;$(ProjectDir)..\..\..\third-party\nlohmann\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -160,7 +160,8 @@
       </IgnoreAllDefaultLibraries>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -185,7 +186,8 @@
       </IgnoreAllDefaultLibraries>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -214,7 +216,8 @@
       </IgnoreAllDefaultLibraries>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -237,7 +240,8 @@
     <Lib>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
@@ -260,7 +264,8 @@
     <Lib>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -287,7 +292,8 @@
     <Lib>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

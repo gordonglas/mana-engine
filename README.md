@@ -6,10 +6,8 @@ This is a hobby project I'm slowly working on and there's still a lot of work ne
 
 ## Basic architecture:
 
-* `ManaCommon` folder is a static lib that contains some of the engine code that's common to both `ManaEngine` and `ManaGraphics`.
-* `ManaEngine` folder is a static lib that contains the majority of the engine code. Depends on `ManaCommon`.
+* `ManaEngine` folder is a static lib that contains the the engine code.
 * `ManaGame` folder contains the sample game code. Depends on `ManaEngine`.
-* `ManaGraphics` folder contains dll code of the graphics engine loaded by `ManaEngine` at runtime. Depends on `ManaCommon`.
 
 The main thread handles the Windows message loop and sends messages to the game loop thread.  
 There's a separate thread to handle streaming audio.

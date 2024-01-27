@@ -6,15 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ManaGame", "ManaGame.vcxproj", "{CD15F17F-7243-4B06-902D-E1FA5523D08B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{53D2E0F9-D936-41E3-84A5-553FFB2F37D9} = {53D2E0F9-D936-41E3-84A5-553FFB2F37D9}
-		{80344641-FA94-4CE3-98F8-7F55D803E57B} = {80344641-FA94-4CE3-98F8-7F55D803E57B}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ManaEngine", "..\..\..\..\ManaEngine\src\msvc\ManaEngine\ManaEngine.vcxproj", "{53D2E0F9-D936-41E3-84A5-553FFB2F37D9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{80344641-FA94-4CE3-98F8-7F55D803E57B} = {80344641-FA94-4CE3-98F8-7F55D803E57B}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ManaCommon", "..\..\..\..\ManaCommon\src\msvc\ManaCommon\ManaCommon.vcxproj", "{80344641-FA94-4CE3-98F8-7F55D803E57B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,18 +44,6 @@ Global
 		{53D2E0F9-D936-41E3-84A5-553FFB2F37D9}.Release|x64.Build.0 = Release|x64
 		{53D2E0F9-D936-41E3-84A5-553FFB2F37D9}.Release|x86.ActiveCfg = Release|Win32
 		{53D2E0F9-D936-41E3-84A5-553FFB2F37D9}.Release|x86.Build.0 = Release|Win32
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Debug|x64.ActiveCfg = Debug|x64
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Debug|x64.Build.0 = Debug|x64
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Debug|x86.ActiveCfg = Debug|Win32
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Debug|x86.Build.0 = Debug|Win32
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Profile|x64.ActiveCfg = Debug|x64
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Profile|x64.Build.0 = Debug|x64
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Profile|x86.ActiveCfg = Debug|Win32
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Profile|x86.Build.0 = Debug|Win32
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Release|x64.ActiveCfg = Release|x64
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Release|x64.Build.0 = Release|x64
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Release|x86.ActiveCfg = Release|Win32
-		{80344641-FA94-4CE3-98F8-7F55D803E57B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

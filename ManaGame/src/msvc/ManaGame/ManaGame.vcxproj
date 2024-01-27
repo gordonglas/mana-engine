@@ -100,43 +100,43 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc;$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc;$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc;$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc;$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc;$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\..\bin\$(PlatformName)$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\..\ManaCommon\inc;$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\..\..\ManaCommon\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\..\..\ManaEngine\inc;$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\inc\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration);$(ProjectDir)..\..\..\..\ManaEngine\third-party\liboggvorbis\Dynamic\lib\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -151,7 +151,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib;ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -167,7 +167,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib;ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -187,7 +187,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib;ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(TargetPath)" "$(ProjectDir)..\..\..\game\"</Command>
@@ -206,7 +206,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib;ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
@@ -222,7 +222,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib;ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -242,7 +242,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\ManaEngine\lib\$(PlatformName)$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ManaCommon.lib;ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ManaEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>

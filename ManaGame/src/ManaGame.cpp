@@ -315,11 +315,6 @@ bool ManaGame::OnShutdown() {
 
 }  // namespace Mana
 
-// TODO: remove after doing the below test.
-typedef int (*PFN_GETGLOBALINT)(int*);
-PFN_GETGLOBALINT pfnGetGlobalInt;
-__declspec(dllexport) int* g_pInt = nullptr;
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                       _In_opt_ HINSTANCE hPrevInstance,
                       _In_ LPWSTR lpCmdLine,
@@ -339,20 +334,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   }
 
   //ManaLogInit("ManaLog.txt");
-
-  g_pInt = new int(42);
-  // TODO: load the dll and try to return the value of g_pInt to see if it can see it!
-  HMODULE hLib = ::LoadLibraryW(L"ManaDirectX11.dll");
-  if (!hLib) {
-    return 1;
-  }
-
-  pfnGetGlobalInt = (PFN_GETGLOBALINT)::GetProcAddress(hLib, "GetGlobalInt");
-  if (!pfnGetGlobalInt) {
-    return 1;
-  }
-  int val = pfnGetGlobalInt(g_pInt);
-  int val2 = *g_pInt;
 
   g_pGame = new Mana::ManaGame(hInstance, nCmdShow);
   if (!g_pGame->Run(0, nullptr, _X("Untitled Game"))) {
