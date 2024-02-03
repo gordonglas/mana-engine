@@ -41,6 +41,9 @@
     <Filter Include="src\ui">
       <UniqueIdentifier>{7ed3df38-58a9-439a-bffe-56e6dab1fcec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\graphics">
+      <UniqueIdentifier>{c7a90ab7-be7b-4ad6-9c2c-a5c207f62577}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -132,6 +135,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ui\SimpleMessageBoxWin.cpp">
       <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\graphics\GraphicsDirectX11Win.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\graphics\GraphicsDeviceDirectX11Win.cpp">
+      <Filter>src\graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +254,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\ui\SimpleMessageBox.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\graphics\GraphicsBase.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\graphics\GraphicsDeviceBase.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\graphics\GraphicsDirectX11Win.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\graphics\GraphicsDeviceDirectX11Win.h">
+      <Filter>src\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

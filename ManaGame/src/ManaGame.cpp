@@ -10,6 +10,7 @@
 #include "config/ConfigManager.h"
 #include "debugging/DebugWin.h"
 #include "events/EventManager.h"
+#include "graphics/GraphicsDirectX11Win.h"
 #include "input/InputWin.h"
 #include "mainloop/ManaGameBase.h"
 #include "os/WindowWin.h"
@@ -197,6 +198,11 @@ bool ManaGame::OnInit() {
   g_pInputEngine = new InputWin(GetWindow()->GetHWnd());
   g_pInputEngine->Init();
 
+  // init graphics engine
+  g_pGraphicsEngine = new GraphicsDirectX11Win();
+  g_pGraphicsEngine->Init();
+  g_pGraphicsEngine->EnumerateDevices();
+
   // init audio engine
   g_pAudioEngine = new AudioWin();
   g_pAudioEngine->Init();
@@ -299,6 +305,10 @@ bool ManaGame::OnShutdown() {
   g_pAudioEngine->Uninit();
   delete g_pAudioEngine;
   g_pAudioEngine = nullptr;
+
+  g_pGraphicsEngine->Uninit();
+  delete g_pGraphicsEngine;
+  g_pGraphicsEngine = nullptr;
 
   g_pInputEngine->Uninit();
   delete g_pInputEngine;
