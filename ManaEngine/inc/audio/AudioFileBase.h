@@ -3,7 +3,6 @@
 #pragma once
 
 #include "ManaGlobals.h"
-#include "target/TargetOS.h"
 
 namespace Mana {
 
@@ -37,7 +36,7 @@ class AudioFileBase {
   bool isPaused;
   bool isStopped;
   size_t fileSize;               // raw file size
-  BYTE* pDataBuffer;             // pcm buffer
+  uint8_t* pDataBuffer;          // pcm buffer
   size_t dataBufferSize;         // pcm buffer size
   size_t currentStreamBufIndex;  // 0 to (AudioStreamBufCount - 1)
   size_t totalPcmBytes;          // total size of pcm data in entire file
@@ -45,10 +44,10 @@ class AudioFileBase {
 
   bool lastBufferPlaying;
 
-  UINT32 loopCount;   // Number of times to repeat the entire sound,
-                      //  or AudioBase::LOOP_INFINITE to loop until stopped.
-                      // If > 0 and != AudioBase::LOOP_INFINITE,
-                      // gets decremented over time.
+  uint32_t loopCount;  // Number of times to repeat the entire sound,
+                       //  or AudioBase::LOOP_INFINITE to loop until stopped.
+                       // If > 0 and != AudioBase::LOOP_INFINITE,
+                       // gets decremented over time.
   int64_t loopBackPcmSamplePos; // pcm pos to loop back to, in samples.
                                 // Must be on a pcm frame boundary.
 

@@ -119,7 +119,7 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
 
     // decode all pcm data into memory
 
-    pDataBuffer = new BYTE[totalPcmBytes];
+    pDataBuffer = new uint8_t[totalPcmBytes];
     dataBufferSize = totalPcmBytes;
 
     int bytesPerSample = wfx.Format.wBitsPerSample / 8;
@@ -156,7 +156,7 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
                (int64_t)(totalPcmBytes - (AudioStreamBufCount * AudioStreamBufSize)) &&
            "loopBackPcmSamplePos cannot be so close to the end of the file");
 
-    pDataBuffer = new BYTE[AudioStreamBufSize * AudioStreamBufCount];
+    pDataBuffer = new uint8_t[AudioStreamBufSize * AudioStreamBufCount];
 
     //OutputDebugStringW(
     //    (std::wstring(L"Ogg Loaded for streaming: ") + strFilePath + L"\n")

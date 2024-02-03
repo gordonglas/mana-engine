@@ -9,7 +9,6 @@
 #include "ManaGlobals.h"
 #include "audio/AudioFileBase.h"
 #include "concurrency/IThread.h"
-#include "target/TargetOS.h"
 #include "utils/File.h"
 
 namespace Mana {
@@ -43,7 +42,7 @@ class AudioBase {
   virtual void Update() = 0;
 
   virtual bool Play(AudioFileHandle audioFileHandle,
-                    unsigned loopCount = 0) = 0;
+                    uint32_t loopCount = 0) = 0;
 
   virtual void Stop(AudioFileHandle audioFileHandle) = 0;
   void StopAll();
@@ -87,8 +86,6 @@ class AudioBase {
   // versions of the same sound
   const AudioFileHandle MAX_SOUNDS_LOADED = 500;
 
-  // IXAudio2* m_pXAudio2 = nullptr;
-  // IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
   std::map<AudioFileHandle, AudioFileBase*> m_fileMap;
 
   AudioFileHandle m_lastAudioFileHandle = 0;

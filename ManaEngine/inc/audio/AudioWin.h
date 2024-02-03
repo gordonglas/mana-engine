@@ -33,8 +33,7 @@ class AudioWin : public AudioBase {
 
   void Update() override;
 
-  bool Play(AudioFileHandle audioFileHandle,
-            unsigned loopCount = 0) override;
+  bool Play(AudioFileHandle audioFileHandle, uint32_t loopCount = 0) override;
 
   void Stop(AudioFileHandle audioFileHandle) override;
   void Pause(AudioFileHandle audioFileHandle) override;

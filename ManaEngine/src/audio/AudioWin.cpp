@@ -337,7 +337,7 @@ void AudioWin::Update() {
   }
 }
 
-bool AudioWin::Play(AudioFileHandle audioFileHandle, unsigned loopCount) {
+bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
   AudioFileWin* pFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
   if (!pFile) {
     return false;
