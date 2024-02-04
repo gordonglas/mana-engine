@@ -120,7 +120,7 @@ DWORD WINAPI GameLoopThreadFunction(LPVOID lpParam) {
       std::vector<SynchronizedEvent> syncEvents =
           g_pEventMan->GetSyncQueue().PopAll();
 
-      if (syncEvents.size() > 0) {
+      if (syncEvents.size() > 1) {
         OutputDebugStringW((std::wstring(L"game-loop syncEvents: ") +
                             std::to_wstring(syncEvents.size()) + L"\n")
                                .c_str());
