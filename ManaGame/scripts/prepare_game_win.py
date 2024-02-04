@@ -5,6 +5,7 @@
 import argparse
 import glob
 import os
+from pathlib import Path
 import shutil
 import sys
 
@@ -69,6 +70,9 @@ def main() -> int:
     game_bin_path = f'{script_path}/../bin/{get_config("game_config")}/'
     ogg_path = f'{third_party_path}/liboggvorbis/Dynamic/bin/{get_config("ogg_arch")}/{get_config("ogg_config")}/'
 
+    # create game folder if it doesn't exist
+    Path(game_path).mkdir(exist_ok=True)
+
     # clean the game folder
     print('Cleaning the game folder...')
     delete_files_and_folders_under_path(game_path, False)
@@ -96,8 +100,8 @@ def main() -> int:
         copy_files_glob(f'{game_bin_path}*.pdb', game_path)
 
     # TODO: For testing only. Remove before final build.
-    print('  non-versioned assets - REMOVE BEFORE FINAL BUILD')
-    shutil.copytree(f'{assets_path}non-versioned/', game_path, dirs_exist_ok=True)
+    #print('  non-versioned assets - REMOVE BEFORE FINAL BUILD')
+    #shutil.copytree(f'{assets_path}non-versioned/', game_path, dirs_exist_ok=True)
 
     return 0
 

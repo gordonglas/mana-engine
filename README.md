@@ -14,13 +14,15 @@ There's a separate thread to handle streaming audio.
 
 ## How to build:
 
-Will refine this soon, but for now, desktop C++ workload in Visual Studio 2022 "should" probably be enough?  
-You'll also need python3 so you can do a one-time prepare of the game folder:  
+* Install [Visual Studio 2022+](https://visualstudio.microsoft.com/vs/) with `Desktop developement with C++` and `Game development with C++` workloads.
+* Open `ManaGame/src/msvc/ManaGame/ManaGame.sln` and build the Debug x64 configuration in Visual Studio.
+* Install [python3](https://www.python.org/downloads/) so you can run a one-time prepare of the game folder:  
 `python ManaGame/scripts/prepare_game_win.py`
 
 ## Sample game controls
 
-The sample game currently has controls for testing a looping music file and playing a static sound FX file.
+The sample game currently has controls for testing a looping music file and playing a static sound FX file.  
+Run the game at `ManaGame/game/ManaGame.exe`
 ```
 Up arrow - start/resume music
 Down arrow - stop music
