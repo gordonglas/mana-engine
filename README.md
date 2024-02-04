@@ -15,7 +15,7 @@ There's a separate thread to handle streaming audio.
 ## How to build:
 
 * Install [Visual Studio 2022+](https://visualstudio.microsoft.com/vs/) with `Desktop developement with C++` and `Game development with C++` workloads.
-* Open `ManaGame/src/msvc/ManaGame/ManaGame.sln` and build the Debug x64 configuration in Visual Studio.
+* Open `ManaGame/src/msvc/ManaGame/ManaGame.sln` and build the `Debug x64` configuration in Visual Studio.
 * Install [python3](https://www.python.org/downloads/) so you can run a one-time prepare of the game folder:  
 `python ManaGame/scripts/prepare_game_win.py`
 
