@@ -18,6 +18,8 @@ There's a separate thread to handle streaming audio.
 * Open `ManaGame/src/msvc/ManaGame/ManaGame.sln` and build the `Debug x64` configuration in Visual Studio.
 * Install [python3](https://www.python.org/downloads/) so you can run a one-time prepare of the game folder:  
 `python ManaGame/scripts/prepare_game_win.py`
+* To be able to run the game from within Visual Studio, open ManaGame project properties. Under `Debugging`, set the `Working Directory` to:  
+`$(ProjectDir)..\..\..\Game\`
 
 ## Sample game controls
 
