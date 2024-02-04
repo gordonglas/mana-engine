@@ -22,7 +22,7 @@ There's a separate thread to handle streaming audio.
 ## Sample game controls
 
 The sample game currently has controls for testing a looping music file and playing a static sound FX file.  
-Run the game at `ManaGame/game/ManaGame.exe`
+Run the game at `ManaGame/game/ManaGame.exe` or from within Visual Studio.
 ```
 Up arrow - start/resume music
 Down arrow - stop music
