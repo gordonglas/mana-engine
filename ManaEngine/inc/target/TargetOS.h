@@ -8,6 +8,7 @@
 // to support before including SDKDDKVer.h.
 
 // Support Windows 10 and up
+#include <WinSDKVer.h>
 #define _WIN32_WINNT 0x0A00
 #include <SDKDDKVer.h>
 
