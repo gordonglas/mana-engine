@@ -13,8 +13,7 @@ class GraphicsDirectX11Win : public GraphicsBase {
   bool Init() override;
   void Uninit() override;
 
-  // Refreshes list of video devices that have outputs
-  bool EnumerateDevices() override;
+  bool EnumerateAdaptersAndFullScreenModes() override;
 };
 
 }  // namespace Mana

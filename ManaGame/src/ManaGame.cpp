@@ -201,7 +201,7 @@ bool ManaGame::OnInit() {
   // init graphics engine
   g_pGraphicsEngine = new GraphicsDirectX11Win();
   g_pGraphicsEngine->Init();
-  g_pGraphicsEngine->EnumerateDevices();
+  g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
 
   // init audio engine
   g_pAudioEngine = new AudioWin();
@@ -343,7 +343,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return 1;
   }
 
-  //ManaLogInit("ManaLog.txt");
+  ManaLogInit("ManaLog.txt");
 
   g_pGame = new Mana::ManaGame(hInstance, nCmdShow);
   if (!g_pGame->Run(0, nullptr, _X("Untitled Game"))) {
