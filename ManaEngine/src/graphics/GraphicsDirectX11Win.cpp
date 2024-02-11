@@ -12,6 +12,7 @@
 namespace Mana {
 
 GraphicsBase* g_pGraphicsEngine = nullptr;
+DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 bool GraphicsDirectX11Win::Init() {
   // TODO: Maybe move ManaGame's initial call to
@@ -41,10 +42,6 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
   //   This adapter corresponds with an index of zero.
   // - Adapters with outputs.
   // - Adapters without outputs.
-
-  // TODO: Use vAdapters before function exits.
-  //       Need to determine what this function will save.
-  //       (adaptors + devices?)
 
   for (IDXGIAdapter1* adapter : adapters) {
     DXGI_ADAPTER_DESC1 adapterDesc;
@@ -102,8 +99,11 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
       ManaLogLnInfo(Channel::Graphics, L"    AttachedToDesktop: %s",
                     outputDesc.AttachedToDesktop ? L"true" : L"false");
 
-      xstring rotation(L"Unspecified");
+      xstring rotation(L"UNHANDLED");
       switch (outputDesc.Rotation) {
+        case DXGI_MODE_ROTATION_UNSPECIFIED:
+          rotation = L"Unspecified";
+          break;
         case DXGI_MODE_ROTATION_IDENTITY:
           rotation = L"Identity";
           break;
@@ -116,15 +116,80 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
         case DXGI_MODE_ROTATION_ROTATE270:
           rotation = L"Rotate270";
           break;
-        default:
-          rotation = L"UNHANDLED";
-          break;
       }
       ManaLogLnInfo(Channel::Graphics, L"    Rotation: %s", rotation.c_str());
 
-      // TODO: get full-screen display modes for a common format
+      // Get display modes for the format this engine supports,
+      // which is guaranteed to be supported by the Direct11 hardware.
+      // See: https://learn.microsoft.com/en-us/windows/win32/direct3ddxgi/format-support-for-direct3d-11-0-feature-level-hardware#dxgi_format_r8g8b8a8_unormfcs-28
 
-      // TODO: store data into cross-platform objects. See GraphicsBase.h
+      // Get number of modes.
+      ManaLogLnInfo(Channel::Graphics,
+                  L"    Output modes for format DXGI_FORMAT_R8G8B8A8_UNORM:");
+      unsigned numModes = 0;
+      if (FAILED(
+              output->GetDisplayModeList(dxgiFormat, 0, &numModes, nullptr))) {
+        continue;
+      }
+
+      // We don't care about this adapter if it doesn't have any outputs.
+      if (numModes == 0) {
+        ManaLogLnInfo(Channel::Graphics, L"    Num output modes: %u", numModes);
+        continue;
+      }
+
+      // Get modes.
+      DXGI_MODE_DESC* pModes = new DXGI_MODE_DESC[numModes];
+      if (FAILED(
+              output->GetDisplayModeList(dxgiFormat, 0, &numModes, pModes))) {
+        continue;
+      }
+
+      for (unsigned m = 0; m < numModes; ++m) {
+        DXGI_MODE_DESC& mode = pModes[m];
+        ManaLogLnInfo(Channel::Graphics, L"    Mode: %d", m + 1);
+        ManaLogLnInfo(Channel::Graphics, L"      Width: %u", mode.Width);
+        ManaLogLnInfo(Channel::Graphics, L"      Height: %u", mode.Height);
+        ManaLogLnInfo(Channel::Graphics, L"      RefreshRate: %u / %u",
+                      mode.RefreshRate.Numerator, mode.RefreshRate.Denominator);
+
+        xstring scanlineOrder(L"UNHANDLED");
+        switch (mode.ScanlineOrdering) {
+          case DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED:
+            scanlineOrder = L"Unspecified";
+            break;
+          case DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE:
+            scanlineOrder = L"Progressive";
+            break;
+          case DXGI_MODE_SCANLINE_ORDER_UPPER_FIELD_FIRST:
+            scanlineOrder = L"Upper field first";
+            break;
+          case DXGI_MODE_SCANLINE_ORDER_LOWER_FIELD_FIRST:
+            scanlineOrder = L"Lower field first";
+            break;
+        }
+        ManaLogLnInfo(Channel::Graphics, L"      Scanline order: %s",
+                      scanlineOrder.c_str());
+
+        xstring scaling(L"UNHANDLED");
+        switch (mode.Scaling) {
+          case DXGI_MODE_SCALING_UNSPECIFIED:
+            scaling = L"Unspecified";
+            break;
+          case DXGI_MODE_SCALING_CENTERED:
+            scaling = L"Centered";
+            break;
+          case DXGI_MODE_SCALING_STRETCHED:
+            scaling = L"Stretched";
+            break;
+        }
+        ManaLogLnInfo(Channel::Graphics, L"      Scaling: %s", scaling.c_str());
+      }
+
+      // TODO: store data into cross-platform objects? See GraphicsBase.h
+
+      delete[] pModes;
+      pModes = nullptr;
     }
 
     for (IDXGIOutput* output : outputs) {
