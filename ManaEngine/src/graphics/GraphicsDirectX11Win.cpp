@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "graphics/GraphicsDirectX11Win.h"
 
-#include <dxgi.h>
+// dxgi1_4 was introduced in Windows 8.1
+// dxgi1_5 was introduced in Windows 10, version 1903 (10.0; Build 18362)
+// Since we're supporting Win10+, we'll use dxgi1_4.
+// dxgi1_4 adds the newer flip swap chain modes for better windowed-mode performance.
+// See: https://walbourn.github.io/care-and-feeding-of-modern-swapchains/
+#include <dxgi1_4.h>
 #pragma comment(lib, "dxgi.lib")
 
 //#include <D3D11.h>
@@ -15,8 +20,6 @@ GraphicsBase* g_pGraphicsEngine = nullptr;
 DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 bool GraphicsDirectX11Win::Init() {
-  // TODO: Maybe move ManaGame's initial call to
-  //       EnumerateAdaptersAndFullScreenModes here?
   return true;
 }
 
@@ -24,8 +27,9 @@ void GraphicsDirectX11Win::Uninit() {
 }
 
 bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
-  IDXGIFactory1* pFactory = nullptr;
-  if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory))) {
+  // https://stackoverflow.com/questions/42354369/idxgifactory-versions
+  IDXGIFactory4* pFactory = nullptr;
+  if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory))) {
     return false;
   }
 
