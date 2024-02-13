@@ -4,6 +4,8 @@
 
 namespace Mana {
 
+int ComInitilizer::initRefCount_ = 0;
+
 bool ComInitilizer::Init() {
   // uses COM STA
   // if (CoInitialize(nullptr) != S_OK)
@@ -13,11 +15,15 @@ bool ComInitilizer::Init() {
   if (CoInitializeEx(nullptr, COINIT_MULTITHREADED) != S_OK)
     return false;
 
+  ++initRefCount_;
   return true;
 }
 
 void ComInitilizer::Uninit() {
-  CoUninitialize();
+  if (initRefCount_ > 0) {
+    CoUninitialize();
+    --initRefCount_;
+  }
 }
 
 }  // namespace Mana

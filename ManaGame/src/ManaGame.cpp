@@ -19,6 +19,8 @@
 #include "utils/CommandLine.h"
 #include "utils/Strings.h"
 
+Mana::xstring title(_X("Unnamed ARPG"));
+
 #include "audio/AudioWin.h"
 float g_masterVolume = 1.0f;
 const float VolumeIncrement = 0.02f;
@@ -202,6 +204,12 @@ bool ManaGame::OnInit() {
   g_pGraphicsEngine = new GraphicsDirectX11Win();
   g_pGraphicsEngine->Init();
   g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
+  if (!((GraphicsDirectX11Win*)g_pGraphicsEngine)->HasDirectX11GPU()) {
+    Mana::SimpleMessageBox::Show(
+        title.c_str(),
+        _X("Sorry...\nA DirectX 11 GPU is required to play this game."));
+    return false;
+  }
 
   // init audio engine
   g_pAudioEngine = new AudioWin();
@@ -297,26 +305,36 @@ bool ManaGame::OnStartGameLoop() {
 bool ManaGame::OnShutdown() {
   // shutdown engine systems in reverse order to prevent deadlocks
 
-  g_pLoadThread->Stop();
-  g_pLoadThread->Join();
-  delete g_pLoadThread;
-  g_pLoadThread = nullptr;
+  if (g_pLoadThread) {
+    g_pLoadThread->Stop();
+    g_pLoadThread->Join();
+    delete g_pLoadThread;
+    g_pLoadThread = nullptr;
+  }
 
-  g_pAudioEngine->Uninit();
-  delete g_pAudioEngine;
-  g_pAudioEngine = nullptr;
+  if (g_pAudioEngine) {
+    g_pAudioEngine->Uninit();
+    delete g_pAudioEngine;
+    g_pAudioEngine = nullptr;
+  }
 
-  g_pGraphicsEngine->Uninit();
-  delete g_pGraphicsEngine;
-  g_pGraphicsEngine = nullptr;
+  if (g_pGraphicsEngine) {
+    g_pGraphicsEngine->Uninit();
+    delete g_pGraphicsEngine;
+    g_pGraphicsEngine = nullptr;
+  }
 
-  g_pInputEngine->Uninit();
-  delete g_pInputEngine;
-  g_pInputEngine = nullptr;
+  if (g_pInputEngine) {
+    g_pInputEngine->Uninit();
+    delete g_pInputEngine;
+    g_pInputEngine = nullptr;
+  }
 
-  g_pEventMan->Uninit();
-  delete g_pEventMan;
-  g_pEventMan = nullptr;
+  if (g_pEventMan) {
+    g_pEventMan->Uninit();
+    delete g_pEventMan;
+    g_pEventMan = nullptr;
+  }
 
   ComInitilizer::Uninit();
 
@@ -338,7 +356,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
       _X("Local\\overworldsoft_unnamed_arpg"));
   if (!singleInstance.TryLock()) {
     Mana::SimpleMessageBox::Show(
-        _X("Unnamed ARPG"),
+        title.c_str(),
         _X("Game is already running. This instance will close."));
     return 1;
   }

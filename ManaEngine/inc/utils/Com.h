@@ -9,6 +9,7 @@ class ComInitilizer {
   static void Uninit();
 
  private:
+  static int initRefCount_;
 };
 
 }  // namespace Mana

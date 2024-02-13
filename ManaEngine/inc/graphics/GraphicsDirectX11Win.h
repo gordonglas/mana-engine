@@ -14,6 +14,8 @@ class GraphicsDirectX11Win : public GraphicsBase {
   void Uninit() override;
 
   bool EnumerateAdaptersAndFullScreenModes() override;
+
+  bool HasDirectX11GPU();
 };
 
 }  // namespace Mana

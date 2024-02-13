@@ -9,8 +9,13 @@
 #include <dxgi1_4.h>
 #pragma comment(lib, "dxgi.lib")
 
-//#include <D3D11.h>
-//#pragma comment(lib, "d3d11.lib")
+// ComPtr<T> - See: https://github.com/Microsoft/DirectXTK/wiki/ComPtr
+#include <wrl/client.h>
+
+// Require DirectX 11.3 (Requires Windows 10+)
+// See: https://walbourn.github.io/anatomy-of-direct3d-11-create-device/
+#include <d3d11_3.h>
+#pragma comment(lib, "d3d11.lib")
 
 #include <vector>
 
@@ -210,11 +215,49 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
   // When you create a factory, the factory enumerates the set
   // of adapters that are available in the system. Therefore,
   // if you change the adapters in a system, you must destroy
-  // and recreate the IDXGIFactory1 object. The number of adapters
+  // and recreate the IDXGIFactory object. The number of adapters
   // in a system changes when you add or remove a display card,
   // or dock or undock a laptop.
   if (pFactory) {
     pFactory->Release();
+  }
+
+  return true;
+}
+
+bool GraphicsDirectX11Win::HasDirectX11GPU() {
+  D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_1,
+                                       D3D_FEATURE_LEVEL_11_0};
+
+  // TODO: don't just try the default GPU... loop through EnumDevices,
+  //       only allowing devices with an output
+  //       and filtering out software devices
+
+  // Set ppDevice and ppImmediateContext to NULL to determine which feature
+  // level is supported by looking at pFeatureLevel without creating a device.
+  D3D_FEATURE_LEVEL supportedFeatureLevel;
+  HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0,
+                                 featureLevels, _countof(featureLevels),
+                                 D3D11_SDK_VERSION,
+                                 /*ppDevice=*/nullptr, &supportedFeatureLevel,
+                                 /*ppImmediateContext=*/nullptr);
+
+  // If you provide a D3D_FEATURE_LEVEL array that contains
+  // D3D_FEATURE_LEVEL_11_1 on a computer that doesn't have
+  // the Direct3D 11.1 runtime installed, this function immediately fails with
+  // E_INVALIDARG...
+  if (hr == E_INVALIDARG) {
+    // ...so try D3D_FEATURE_LEVEL_11_0 next
+    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0,
+                           &featureLevels[1], _countof(featureLevels) - 1,
+                           D3D11_SDK_VERSION,
+                           /*ppDevice=*/nullptr, &supportedFeatureLevel,
+                           /*ppImmediateContext=*/nullptr);
+    if (FAILED(hr)) {
+      ManaLogLnError(Channel::Graphics,
+                     L"D3D11CreateDevice failed: HRESULT: %ld", hr);
+      return false;
+    }
   }
 
   return true;
