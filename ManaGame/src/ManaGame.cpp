@@ -204,7 +204,9 @@ bool ManaGame::OnInit() {
   g_pGraphicsEngine = new GraphicsDirectX11Win();
   g_pGraphicsEngine->Init();
   g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
-  if (!((GraphicsDirectX11Win*)g_pGraphicsEngine)->HasDirectX11GPU()) {
+  std::vector<DX11GPU> gpus =
+      ((GraphicsDirectX11Win*)g_pGraphicsEngine)->GetDirectX11GPUs();
+  if (gpus.size() == 0) {
     Mana::SimpleMessageBox::Show(
         title.c_str(),
         _X("Sorry...\nA DirectX 11 GPU is required to play this game."));

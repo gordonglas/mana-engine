@@ -1,22 +1,11 @@
 #include "pch.h"
 #include "graphics/GraphicsDirectX11Win.h"
 
-// dxgi1_4 was introduced in Windows 8.1
-// dxgi1_5 was introduced in Windows 10, version 1903 (10.0; Build 18362)
-// Since we're supporting Win10+, we'll use dxgi1_4.
-// dxgi1_4 adds the newer flip swap chain modes for better windowed-mode performance.
-// See: https://walbourn.github.io/care-and-feeding-of-modern-swapchains/
-#include <dxgi1_4.h>
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d11.lib")
 
 // ComPtr<T> - See: https://github.com/Microsoft/DirectXTK/wiki/ComPtr
 #include <wrl/client.h>
-
-// Require DirectX 11.3 (Requires Windows 10+)
-// See: https://walbourn.github.io/anatomy-of-direct3d-11-create-device/
-#include <d3d11_3.h>
-#pragma comment(lib, "d3d11.lib")
-
 #include <vector>
 
 namespace Mana {
@@ -32,7 +21,6 @@ void GraphicsDirectX11Win::Uninit() {
 }
 
 bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
-  // https://stackoverflow.com/questions/42354369/idxgifactory-versions
   IDXGIFactory4* pFactory = nullptr;
   if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory))) {
     return false;
@@ -70,9 +58,9 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
     ManaLogLnInfo(Channel::Graphics, L"  Shared system memory: %llu",
                   adapterDesc.SharedSystemMemory);
 
-    bool hasSoftwareRenderer = adapterDesc.Flags | DXGI_ADAPTER_FLAG_SOFTWARE;
-    ManaLogLnInfo(Channel::Graphics, L"  Has software renderer: %s",
-                  hasSoftwareRenderer ? L"true" : L"false");
+    bool isSoftwareRenderer = adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE;
+    ManaLogLnInfo(Channel::Graphics, L"  Is software renderer: %s",
+                  isSoftwareRenderer ? L"true" : L"false");
 
     // Info about "Microsoft Basic Render Driver":
     // https://learn.microsoft.com/en-us/windows/win32/direct3ddxgi/d3d10-graphics-programming-guide-dxgi#new-info-about-enumerating-adapters-for-windows-8
@@ -84,6 +72,8 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
       outputs.push_back(pOutput);
       ++i;
     }
+
+    ManaLogLnInfo(Channel::Graphics, L"  Num outputs: %llu", outputs.size());
 
     // EnumOutputs first returns the output on which the desktop primary
     // is displayed. This output corresponds with an index of zero.
@@ -225,42 +215,113 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
   return true;
 }
 
-bool GraphicsDirectX11Win::HasDirectX11GPU() {
+std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
+  std::vector<DX11GPU> gpus;
+
   D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_1,
                                        D3D_FEATURE_LEVEL_11_0};
 
-  // TODO: don't just try the default GPU... loop through EnumDevices,
-  //       only allowing devices with an output
-  //       and filtering out software devices
+  // Don't just try the default GPU... loop through EnumAdapters,
+  // only allowing devices with an output and filtering out software devices
 
-  // Set ppDevice and ppImmediateContext to NULL to determine which feature
-  // level is supported by looking at pFeatureLevel without creating a device.
-  D3D_FEATURE_LEVEL supportedFeatureLevel;
-  HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0,
-                                 featureLevels, _countof(featureLevels),
-                                 D3D11_SDK_VERSION,
-                                 /*ppDevice=*/nullptr, &supportedFeatureLevel,
-                                 /*ppImmediateContext=*/nullptr);
-
-  // If you provide a D3D_FEATURE_LEVEL array that contains
-  // D3D_FEATURE_LEVEL_11_1 on a computer that doesn't have
-  // the Direct3D 11.1 runtime installed, this function immediately fails with
-  // E_INVALIDARG...
-  if (hr == E_INVALIDARG) {
-    // ...so try D3D_FEATURE_LEVEL_11_0 next
-    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0,
-                           &featureLevels[1], _countof(featureLevels) - 1,
-                           D3D11_SDK_VERSION,
-                           /*ppDevice=*/nullptr, &supportedFeatureLevel,
-                           /*ppImmediateContext=*/nullptr);
-    if (FAILED(hr)) {
-      ManaLogLnError(Channel::Graphics,
-                     L"D3D11CreateDevice failed: HRESULT: %ld", hr);
-      return false;
-    }
+  // TODO: use CreateDXGIFactory2 with flag for optionally using it's debug mode
+  IDXGIFactory4* pFactory = nullptr;
+  if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory))) {
+    return gpus;
   }
 
-  return true;
+  UINT i = 0;
+  IDXGIAdapter1* pAdapter;
+  std::vector<IDXGIAdapter1*> adapters;
+  while (pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
+    adapters.push_back(pAdapter);
+    ++i;
+  }
+
+  // Order of adapters:
+  // - Adapter with the output on which the desktop primary is displayed.
+  //   This adapter corresponds with an index of zero.
+  // - Adapters with outputs.
+  // - Adapters without outputs.
+  int j = -1;
+  for (IDXGIAdapter1* adapter : adapters) {
+    ++j;
+    DXGI_ADAPTER_DESC1 adapterDesc;
+    if (FAILED(adapter->GetDesc1(&adapterDesc))) {
+      continue;
+    }
+
+    // Skip the "Microsoft Basic Render Driver"
+    if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) {
+      continue;
+    }
+
+    i = 0;
+    IDXGIOutput* pOutput;
+    std::vector<IDXGIOutput*> outputs;
+    while (adapter->EnumOutputs(i, &pOutput) != DXGI_ERROR_NOT_FOUND) {
+      outputs.push_back(pOutput);
+      ++i;
+    }
+
+    // Must have at least one output
+    if (outputs.size() == 0) {
+      continue;
+    }
+
+    // If you set the pAdapter parameter to a non-NULL value,
+    // you must also set the DriverType parameter to the
+    // D3D_DRIVER_TYPE_UNKNOWN value.
+
+    // Set ppDevice and ppImmediateContext to NULL to determine which feature
+    // level is supported by looking at pFeatureLevel without creating a device.
+    D3D_FEATURE_LEVEL supportedFeatureLevel;
+    HRESULT hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0,
+                                   featureLevels, _countof(featureLevels),
+                                   D3D11_SDK_VERSION,
+                                   /*ppDevice=*/nullptr, &supportedFeatureLevel,
+                                   /*ppImmediateContext=*/nullptr);
+
+    // If you provide a D3D_FEATURE_LEVEL array that contains
+    // D3D_FEATURE_LEVEL_11_1 on a computer that doesn't have
+    // the Direct3D 11.1 runtime installed, this function immediately fails with
+    // E_INVALIDARG...
+    if (hr == E_INVALIDARG) {
+      // ...so try D3D_FEATURE_LEVEL_11_0 next
+      hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0,
+                             &featureLevels[1], _countof(featureLevels) - 1,
+                             D3D11_SDK_VERSION,
+                             /*ppDevice=*/nullptr, &supportedFeatureLevel,
+                             /*ppImmediateContext=*/nullptr);
+      if (FAILED(hr)) {
+        ManaLogLnError(Channel::Graphics,
+                       L"D3D11CreateDevice failed: HRESULT: %ld", hr);
+        continue;
+      }
+    }
+
+    DX11GPU gpu;
+    gpu.adapter = adapter;
+    gpu.featureLevel = supportedFeatureLevel;
+
+    gpus.push_back(gpu);
+
+    ManaLogLnInfo(Channel::Graphics, L"DX11 GPU found (index %d): %s", j,
+                  adapterDesc.Description);
+    xstring featureLevel(L"UNHANDLED");
+    switch (gpu.featureLevel) {
+      case D3D_FEATURE_LEVEL_11_1:
+        featureLevel = L"D3D_FEATURE_LEVEL_11_1";
+        break;
+      case D3D_FEATURE_LEVEL_11_0:
+        featureLevel = L"D3D_FEATURE_LEVEL_11_0";
+        break;
+    }
+    ManaLogLnInfo(Channel::Graphics, L"  Feature level: %s",
+                  featureLevel.c_str());
+  }
+
+  return gpus;
 }
 
 }  // namespace Mana
