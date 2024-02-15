@@ -32,6 +32,7 @@ class GraphicsDirectX11Win : public GraphicsBase {
   void Uninit() override;
 
   bool EnumerateAdaptersAndFullScreenModes() override;
+  xstring GetNoSupportedGPUFoundMessage() override;
 
   std::vector<DX11GPU> GetDirectX11GPUs();
 };

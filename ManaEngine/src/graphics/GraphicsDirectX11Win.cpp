@@ -193,7 +193,7 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
 
     for (IDXGIOutput* output : outputs) {
       output->Release();
-    }    
+    }
 
     //devices_.push_back((GraphicsDeviceBase*)new GraphicsDeviceDirectX11Win());
   }
@@ -213,6 +213,10 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
   }
 
   return true;
+}
+
+xstring GraphicsDirectX11Win::GetNoSupportedGPUFoundMessage() {
+  return L"Sorry...\nA DirectX 11 GPU is required to play this game.";
 }
 
 std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
@@ -269,6 +273,10 @@ std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
       continue;
     }
 
+    for (IDXGIOutput* output : outputs) {
+      output->Release();
+    }
+
     // If you set the pAdapter parameter to a non-NULL value,
     // you must also set the DriverType parameter to the
     // D3D_DRIVER_TYPE_UNKNOWN value.
@@ -319,6 +327,25 @@ std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
     }
     ManaLogLnInfo(Channel::Graphics, L"  Feature level: %s",
                   featureLevel.c_str());
+  }
+
+  // Destroy adapters that aren't in the gpus vector
+  for (IDXGIAdapter1* adapter : adapters) {
+    bool found = false;
+    for (DX11GPU& gpuRef : gpus) {
+      if (adapter == gpuRef.adapter) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      adapter->Release();
+    }
+  }
+
+  if (pFactory) {
+    pFactory->Release();
   }
 
   return gpus;

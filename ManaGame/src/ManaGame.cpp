@@ -209,7 +209,7 @@ bool ManaGame::OnInit() {
   if (gpus.size() == 0) {
     Mana::SimpleMessageBox::Show(
         title.c_str(),
-        _X("Sorry...\nA DirectX 11 GPU is required to play this game."));
+        g_pGraphicsEngine->GetNoSupportedGPUFoundMessage().c_str());
     return false;
   }
 

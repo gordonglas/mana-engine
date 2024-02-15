@@ -60,6 +60,8 @@ class GraphicsBase {
   // and gets their supported fullscreen modes.
   virtual bool EnumerateAdaptersAndFullScreenModes() = 0;
 
+  virtual xstring GetNoSupportedGPUFoundMessage() = 0;
+
  protected:
   std::vector<GraphicsDeviceBase*> devices_;
 };
