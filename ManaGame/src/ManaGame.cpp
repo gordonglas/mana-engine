@@ -204,13 +204,20 @@ bool ManaGame::OnInit() {
   g_pGraphicsEngine = new GraphicsDirectX11Win();
   g_pGraphicsEngine->Init();
   g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
-  std::vector<DX11GPU> gpus =
-      ((GraphicsDirectX11Win*)g_pGraphicsEngine)->GetDirectX11GPUs();
+  std::vector<GraphicsDeviceBase*> gpus = g_pGraphicsEngine->GetSupportedGPUs();
   if (gpus.size() == 0) {
     Mana::SimpleMessageBox::Show(
         title.c_str(),
         g_pGraphicsEngine->GetNoSupportedGPUFoundMessage().c_str());
     return false;
+  }
+
+  // TODO: create device and device context
+
+  // TODO: Is it safe to Release the IDXGIAdapter1 that we passed to CreateDevice?
+  //       Might need to use ComPtr<T> to manage their lifetime.
+  for (GraphicsDeviceBase* gpu : gpus) {
+    delete gpu;
   }
 
   // init audio engine

@@ -194,8 +194,6 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
     for (IDXGIOutput* output : outputs) {
       output->Release();
     }
-
-    //devices_.push_back((GraphicsDeviceBase*)new GraphicsDeviceDirectX11Win());
   }
 
   for (IDXGIAdapter1* adapter : adapters) {
@@ -219,8 +217,8 @@ xstring GraphicsDirectX11Win::GetNoSupportedGPUFoundMessage() {
   return L"Sorry...\nA DirectX 11 GPU is required to play this game.";
 }
 
-std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
-  std::vector<DX11GPU> gpus;
+std::vector<GraphicsDeviceBase*> GraphicsDirectX11Win::GetSupportedGPUs() {
+  std::vector<GraphicsDeviceBase*> gpus;
 
   D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_1,
                                        D3D_FEATURE_LEVEL_11_0};
@@ -308,16 +306,17 @@ std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
       }
     }
 
-    DX11GPU gpu;
-    gpu.adapter = adapter;
-    gpu.featureLevel = supportedFeatureLevel;
+    GraphicsDeviceDirectX11Win* gpu = new GraphicsDeviceDirectX11Win();
+    gpu->name = adapterDesc.Description;
+    gpu->adapter = adapter;
+    gpu->featureLevel = supportedFeatureLevel;
 
     gpus.push_back(gpu);
 
     ManaLogLnInfo(Channel::Graphics, L"DX11 GPU found (index %d): %s", j,
                   adapterDesc.Description);
     xstring featureLevel(L"UNHANDLED");
-    switch (gpu.featureLevel) {
+    switch (gpu->featureLevel) {
       case D3D_FEATURE_LEVEL_11_1:
         featureLevel = L"D3D_FEATURE_LEVEL_11_1";
         break;
@@ -332,8 +331,8 @@ std::vector<DX11GPU> GraphicsDirectX11Win::GetDirectX11GPUs() {
   // Destroy adapters that aren't in the gpus vector
   for (IDXGIAdapter1* adapter : adapters) {
     bool found = false;
-    for (DX11GPU& gpuRef : gpus) {
-      if (adapter == gpuRef.adapter) {
+    for (GraphicsDeviceBase* gpuRef : gpus) {
+      if (adapter == ((GraphicsDeviceDirectX11Win*)gpuRef)->adapter) {
         found = true;
         break;
       }

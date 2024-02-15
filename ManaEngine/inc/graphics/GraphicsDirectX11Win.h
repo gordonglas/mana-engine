@@ -21,11 +21,6 @@
 
 namespace Mana {
 
-struct DX11GPU {
-  IDXGIAdapter1* adapter;
-  D3D_FEATURE_LEVEL featureLevel;
-};
-
 class GraphicsDirectX11Win : public GraphicsBase {
  public:
   bool Init() override;
@@ -34,7 +29,7 @@ class GraphicsDirectX11Win : public GraphicsBase {
   bool EnumerateAdaptersAndFullScreenModes() override;
   xstring GetNoSupportedGPUFoundMessage() override;
 
-  std::vector<DX11GPU> GetDirectX11GPUs();
+  std::vector<GraphicsDeviceBase*> GetSupportedGPUs() override;
 };
 
 }  // namespace Mana
