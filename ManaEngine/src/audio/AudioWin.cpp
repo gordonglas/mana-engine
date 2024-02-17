@@ -20,6 +20,7 @@ std::wstring GetDateTimeNow() {
 }
 
 // Requires call to CoInitialize. Call: utils/Com.h::Init.
+// TODO: call Com from here and make it safe to do so (with a reference count?)
 bool AudioWin::Init() {
   m_pXAudio2 = nullptr;
   m_pMasterVoice = nullptr;
@@ -179,9 +180,9 @@ void AudioWin::Unload(AudioFileHandle audioFileHandle) {
 void AudioWin::Update() {
   XAUDIO2_VOICE_STATE voiceState;
   XAUDIO2_BUFFER buffer;
-  std::vector<AudioFileBase*> streamingFiles = GetStreamingFiles();
 
-  for (AudioFileBase* pFileBase : streamingFiles) {
+  GetStreamingFiles();
+  for (AudioFileBase* pFileBase : streamingFiles_) {
     AudioFileWin* pFile = static_cast<AudioFileWin*>(pFileBase);
 
     if (pFile->isStopped)

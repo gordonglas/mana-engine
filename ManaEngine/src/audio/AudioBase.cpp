@@ -47,16 +47,13 @@ AudioFileHandle AudioBase::GetNextFreeAudioFileHandle() {
   return next;
 }
 
-std::vector<AudioFileBase*> AudioBase::GetStreamingFiles() {
-  std::vector<AudioFileBase*> streamingFiles;
-
+void AudioBase::GetStreamingFiles() {
+  streamingFiles_.clear();
   for (auto const& item : m_fileMap) {
     if (item.second->loadType == AudioLoadType::Streaming) {
-      streamingFiles.push_back(item.second);
+      streamingFiles_.push_back(item.second);
     }
   }
-
-  return streamingFiles;
 }
 
 AudioFileBase* AudioBase::GetAudioFile(AudioFileHandle audioFileHandle) {

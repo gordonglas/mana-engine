@@ -109,6 +109,8 @@ DWORD WINAPI GameLoopThreadFunction(LPVOID lpParam) {
   int numFrames = 0;
   uint64_t lastFPSCalculation = g_clock.GetMicroseconds();
 
+  std::vector<SynchronizedEvent> syncEvents;
+
   while (!pThread->bStopping_.load(std::memory_order_acquire)) {
     current = g_clock.GetMicroseconds();
     elapsed = current - previous;
@@ -119,8 +121,7 @@ DWORD WINAPI GameLoopThreadFunction(LPVOID lpParam) {
 
     // get raw input events from the main thread
     if (!g_pEventMan->GetSyncQueue().Empty_NoLock()) {
-      std::vector<SynchronizedEvent> syncEvents =
-          g_pEventMan->GetSyncQueue().PopAll();
+      g_pEventMan->GetSyncQueue().PopAll(syncEvents);
 
       if (syncEvents.size() > 1) {
         OutputDebugStringW((std::wstring(L"game-loop syncEvents: ") +
@@ -204,7 +205,11 @@ bool ManaGame::OnInit() {
   g_pGraphicsEngine = new GraphicsDirectX11Win();
   g_pGraphicsEngine->Init();
   g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
-  std::vector<GraphicsDeviceBase*> gpus = g_pGraphicsEngine->GetSupportedGPUs();
+  std::vector<GraphicsDeviceBase*> gpus;
+  if (!g_pGraphicsEngine->GetSupportedGPUs(gpus)) {
+    error_ = _X("GetSupportedGPUs failed");
+    return false;
+  }
   if (gpus.size() == 0) {
     Mana::SimpleMessageBox::Show(
         title.c_str(),

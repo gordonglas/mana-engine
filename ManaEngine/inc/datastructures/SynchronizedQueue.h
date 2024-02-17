@@ -27,9 +27,9 @@ class SynchronizedQueue {
 
   // Returns nullopt if empty, else returns front and pops it off.
   std::optional<T> Pop();
-  // Returns nullopt if empty, else returns all popped objects.
+  // Returns all popped objects.
   // This is more efficient than looping around Pop to grab all at once.
-  std::vector<T> PopAll();
+  void PopAll(std::vector<T>& popped);
 
   SynchronizedQueue(const SynchronizedQueue&) = delete;
   SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
@@ -101,8 +101,8 @@ std::optional<T> SynchronizedQueue<T>::Pop() {
 }
 
 template <typename T>
-std::vector<T> SynchronizedQueue<T>::PopAll() {
-  std::vector<T> popped;
+void SynchronizedQueue<T>::PopAll(std::vector<T>& popped) {
+  popped.clear();
 
   ScopedMutex lock(m_lock);
   while (!m_queue.empty()) {
@@ -113,7 +113,6 @@ std::vector<T> SynchronizedQueue<T>::PopAll() {
 
   //bEmpty_ = true;
   bEmpty_.store(true, std::memory_order_release);
-  return popped;
 }
 
 }  // namespace Mana

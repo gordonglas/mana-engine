@@ -29,7 +29,7 @@ class GraphicsDirectX11Win : public GraphicsBase {
   bool EnumerateAdaptersAndFullScreenModes() override;
   xstring GetNoSupportedGPUFoundMessage() override;
 
-  std::vector<GraphicsDeviceBase*> GetSupportedGPUs() override;
+  bool GetSupportedGPUs(std::vector<GraphicsDeviceBase*>& gpus) override;
 };
 
 }  // namespace Mana

@@ -217,8 +217,9 @@ xstring GraphicsDirectX11Win::GetNoSupportedGPUFoundMessage() {
   return L"Sorry...\nA DirectX 11 GPU is required to play this game.";
 }
 
-std::vector<GraphicsDeviceBase*> GraphicsDirectX11Win::GetSupportedGPUs() {
-  std::vector<GraphicsDeviceBase*> gpus;
+bool GraphicsDirectX11Win::GetSupportedGPUs(
+    std::vector<GraphicsDeviceBase*>& gpus) {
+  gpus.clear();
 
   D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_1,
                                        D3D_FEATURE_LEVEL_11_0};
@@ -229,7 +230,7 @@ std::vector<GraphicsDeviceBase*> GraphicsDirectX11Win::GetSupportedGPUs() {
   // TODO: use CreateDXGIFactory2 with flag for optionally using it's debug mode
   IDXGIFactory4* pFactory = nullptr;
   if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory))) {
-    return gpus;
+    return false;
   }
 
   UINT i = 0;
@@ -347,7 +348,7 @@ std::vector<GraphicsDeviceBase*> GraphicsDirectX11Win::GetSupportedGPUs() {
     pFactory->Release();
   }
 
-  return gpus;
+  return true;
 }
 
 }  // namespace Mana

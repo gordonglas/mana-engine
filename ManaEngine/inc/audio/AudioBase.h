@@ -79,8 +79,6 @@ class AudioBase {
   virtual bool IsPlaying(AudioFileHandle audioFileHandle) = 0;
   virtual bool IsPaused(AudioFileHandle audioFileHandle) = 0;
 
-  std::vector<AudioFileBase*> GetStreamingFiles();
-
  protected:
   // this does not include simultaneous
   // versions of the same sound
@@ -90,6 +88,9 @@ class AudioBase {
 
   AudioFileHandle m_lastAudioFileHandle = 0;
   AudioFileHandle GetNextFreeAudioFileHandle();
+
+  std::vector<AudioFileBase*> streamingFiles_;
+  void GetStreamingFiles();
 
   AudioFileBase* GetAudioFile(AudioFileHandle audioFileHandle);
   virtual void ClampVolume(float& volume) = 0;
