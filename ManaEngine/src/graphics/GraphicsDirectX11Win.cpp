@@ -351,4 +351,44 @@ bool GraphicsDirectX11Win::GetSupportedGPUs(
   return true;
 }
 
+bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
+  GraphicsDeviceDirectX11Win* gpu = (GraphicsDeviceDirectX11Win*)gpuBase;
+
+  D3D_FEATURE_LEVEL featureLevel[1] = {gpu->featureLevel};
+
+  ID3D11Device* pDevice;
+  ID3D11DeviceContext* pDeviceContext;
+  D3D_FEATURE_LEVEL supportedFeatureLevel;
+  HRESULT hr = D3D11CreateDevice(
+      gpu->adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0, featureLevel, 1,
+      D3D11_SDK_VERSION, &pDevice, &supportedFeatureLevel, &pDeviceContext);
+  if (FAILED(hr)) {
+    ManaLogLnInfo(Channel::Graphics, L"SelectGPU D3D11CreateDevice failed");
+    return false;
+  }
+
+  // update interfaces to Direct3D 11.3
+  ID3D11Device3* pDevice3 = nullptr;
+  hr = pDevice->QueryInterface(IID_PPV_ARGS(&pDevice3));
+  if (FAILED(hr) || !pDevice3) {
+    ManaLogLnInfo(Channel::Graphics,
+                  L"SelectGPU QueryInterface ID3D11Device3 failed");
+    return false;
+  }
+
+  gpu->device = pDevice3;
+
+  ID3D11DeviceContext3* pDeviceContext3 = nullptr;
+  hr = pDeviceContext->QueryInterface(IID_PPV_ARGS(&pDeviceContext3));
+  if (FAILED(hr) || !pDeviceContext3) {
+    ManaLogLnInfo(Channel::Graphics,
+                  L"SelectGPU QueryInterface ID3D11DeviceContext3 failed");
+    return false;
+  }
+
+  gpu->deviceContext = pDeviceContext3;
+
+  return true;
+}
+
 }  // namespace Mana

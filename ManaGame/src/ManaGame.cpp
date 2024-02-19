@@ -217,7 +217,12 @@ bool ManaGame::OnInit() {
     return false;
   }
 
-  // TODO: create device and device context
+  // create device and device context
+  if (!g_pGraphicsEngine->SelectGPU(gpus[0])) {
+    Mana::SimpleMessageBox::Show(
+        title.c_str(), L"Failed to create gpu device");
+    return false;
+  }
 
   // TODO: Is it safe to Release the IDXGIAdapter1 that we passed to CreateDevice?
   //       Might need to use ComPtr<T> to manage their lifetime.

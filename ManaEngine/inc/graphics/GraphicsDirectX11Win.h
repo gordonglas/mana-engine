@@ -30,6 +30,8 @@ class GraphicsDirectX11Win : public GraphicsBase {
   xstring GetNoSupportedGPUFoundMessage() override;
 
   bool GetSupportedGPUs(std::vector<GraphicsDeviceBase*>& gpus) override;
+
+  bool SelectGPU(GraphicsDeviceBase* gpu) override;
 };
 
 }  // namespace Mana

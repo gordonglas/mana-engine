@@ -63,6 +63,8 @@ class GraphicsBase {
   virtual xstring GetNoSupportedGPUFoundMessage() = 0;
 
   virtual bool GetSupportedGPUs(std::vector<GraphicsDeviceBase*>& gpus) = 0;
+
+  virtual bool SelectGPU(GraphicsDeviceBase* gpu) = 0;
 };
 
 }  // namespace Mana

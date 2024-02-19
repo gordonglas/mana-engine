@@ -18,6 +18,9 @@ class GraphicsDeviceDirectX11Win : public GraphicsDeviceBase {
 
   IDXGIAdapter1* adapter;
   D3D_FEATURE_LEVEL featureLevel;
+
+  ID3D11Device3* device;
+  ID3D11DeviceContext3* deviceContext;
 };
 
 }  // namespace Mana
