@@ -224,11 +224,16 @@ bool ManaGame::OnInit() {
     return false;
   }
 
+  std::vector<Mana::MultisampleLevel> msaaLevels;
+  if (!gpus[0]->GetSupportedMultisampleLevels(msaaLevels)) {
+    return false;
+  }
+
   // TODO: Is it safe to Release the IDXGIAdapter1 that we passed to CreateDevice?
   //       Might need to use ComPtr<T> to manage their lifetime.
-  for (GraphicsDeviceBase* gpu : gpus) {
-    delete gpu;
-  }
+  //for (GraphicsDeviceBase* gpu : gpus) {
+  //  delete gpu;
+  //}
 
   // init audio engine
   g_pAudioEngine = new AudioWin();

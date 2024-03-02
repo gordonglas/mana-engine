@@ -11,7 +11,6 @@
 namespace Mana {
 
 GraphicsBase* g_pGraphicsEngine = nullptr;
-DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 bool GraphicsDirectX11Win::Init() {
   return true;
@@ -126,8 +125,8 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
       ManaLogLnInfo(Channel::Graphics,
                   L"    Output modes for format DXGI_FORMAT_R8G8B8A8_UNORM:");
       unsigned numModes = 0;
-      if (FAILED(
-              output->GetDisplayModeList(dxgiFormat, 0, &numModes, nullptr))) {
+      if (FAILED(output->GetDisplayModeList(
+              GraphicsDeviceDirectX11Win::dxgiFormat, 0, &numModes, nullptr))) {
         continue;
       }
 
@@ -139,8 +138,8 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
 
       // Get modes.
       DXGI_MODE_DESC* pModes = new DXGI_MODE_DESC[numModes];
-      if (FAILED(
-              output->GetDisplayModeList(dxgiFormat, 0, &numModes, pModes))) {
+      if (FAILED(output->GetDisplayModeList(
+              GraphicsDeviceDirectX11Win::dxgiFormat, 0, &numModes, pModes))) {
         continue;
       }
 
