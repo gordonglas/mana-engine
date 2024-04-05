@@ -4,6 +4,9 @@
 
 #include <dxgi1_4.h>
 #include <d3d11_3.h>
+#ifdef _DEBUG
+#include <dxgidebug.h>
+#endif
 #include "graphics/GraphicsDeviceBase.h"
 
 namespace Mana {

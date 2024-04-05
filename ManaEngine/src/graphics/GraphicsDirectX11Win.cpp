@@ -3,14 +3,53 @@
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxguid.lib")
 
 // ComPtr<T> - See: https://github.com/Microsoft/DirectXTK/wiki/ComPtr
 #include <wrl/client.h>
 #include <vector>
 
+// TODO: Correctly handle lifetimes of all IDXGI interface pointers.
+//       Use ComPtr<T>
+
+namespace {
+
+#ifdef _DEBUG
+// Checks for SDK Layers support (AKA, the DirectX Debug layer)
+// https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-devices-layers#debug-layer
+// For Windows 10, to create a device that supports the debug layer,
+// enable the "Graphics Tools" optional feature. Go to the Settings panel,
+// under System, Apps & features, Manage optional Features, Add a feature,
+// and then look for "Graphics Tools".
+bool SdkLayersAvailable() noexcept {
+  HRESULT hr = D3D11CreateDevice(
+      nullptr,
+      D3D_DRIVER_TYPE_NULL,  // No need to create a real hardware device.
+      nullptr,
+      D3D11_CREATE_DEVICE_DEBUG,  // Check for SDK layers support.
+      nullptr,                    // Feature level doesn't matter.
+      0, D3D11_SDK_VERSION,
+      nullptr,  // Don't need the D3D device.
+      nullptr,  // Don't need the feature level.
+      nullptr   // Don't need the D3D device context.
+  );
+
+  return SUCCEEDED(hr);
+}
+#endif  // DEBUG
+
+}  // namespace
+
 namespace Mana {
 
 GraphicsBase* g_pGraphicsEngine = nullptr;
+
+GraphicsDirectX11Win::GraphicsDirectX11Win()
+#ifdef _DEBUG
+    : debug_(nullptr)
+#endif
+{
+}
 
 bool GraphicsDirectX11Win::Init() {
   return true;
@@ -20,15 +59,27 @@ void GraphicsDirectX11Win::Uninit() {
 }
 
 bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
-  IDXGIFactory4* pFactory = nullptr;
-  if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory))) {
+  IDXGIFactory1* pFactory1 = nullptr;
+  if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory1)))) {
+    ManaLogLnError(
+        Channel::Graphics,
+        L"EnumerateAdaptersAndFullScreenModes: CreateDXGIFactory1 failed");
+    return false;
+  }
+
+  IDXGIFactory4* pFactory4 = nullptr;
+  if (FAILED(pFactory1->QueryInterface(IID_PPV_ARGS(&pFactory4)))) {
+    ManaLogLnError(Channel::Graphics,
+                   L"EnumerateAdaptersAndFullScreenModes: Failed to "
+                   L"QueryInterface IDXGIFactory4");
+    pFactory1->Release();
     return false;
   }
 
   UINT i = 0;
   IDXGIAdapter1* pAdapter;
   std::vector<IDXGIAdapter1*> adapters;
-  while (pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
+  while (pFactory4->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
     adapters.push_back(pAdapter);
     ++i;
   }
@@ -44,9 +95,6 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
     if (FAILED(adapter->GetDesc1(&adapterDesc))) {
       continue;
     }
-
-    // TODO: determine if we want to keep this adapter or not.
-    //       at least, it must have an output.
 
     ManaLogLnInfo(Channel::Graphics, L"Adaptor: %s",
                   adapterDesc.Description);
@@ -205,8 +253,11 @@ bool GraphicsDirectX11Win::EnumerateAdaptersAndFullScreenModes() {
   // and recreate the IDXGIFactory object. The number of adapters
   // in a system changes when you add or remove a display card,
   // or dock or undock a laptop.
-  if (pFactory) {
-    pFactory->Release();
+  if (pFactory4) {
+    pFactory4->Release();
+  }
+  if (pFactory1) {
+    pFactory1->Release();
   }
 
   return true;
@@ -226,16 +277,25 @@ bool GraphicsDirectX11Win::GetSupportedGPUs(
   // Don't just try the default GPU... loop through EnumAdapters,
   // only allowing devices with an output and filtering out software devices
 
-  // TODO: use CreateDXGIFactory2 with flag for optionally using it's debug mode
-  IDXGIFactory4* pFactory = nullptr;
-  if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory))) {
+  IDXGIFactory1* pFactory1 = nullptr;
+  if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory1)))) {
+    ManaLogLnError(Channel::Graphics,
+                   L"GetSupportedGPUs: CreateDXGIFactory1 failed");
+    return false;
+  }
+
+  IDXGIFactory4* pFactory4 = nullptr;
+  if (FAILED(pFactory1->QueryInterface(IID_PPV_ARGS(&pFactory4)))) {
+    ManaLogLnError(Channel::Graphics,
+                   L"GetSupportedGPUs: Failed to QueryInterface IDXGIFactory4");
+    pFactory1->Release();
     return false;
   }
 
   UINT i = 0;
   IDXGIAdapter1* pAdapter;
   std::vector<IDXGIAdapter1*> adapters;
-  while (pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
+  while (pFactory4->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
     adapters.push_back(pAdapter);
     ++i;
   }
@@ -309,6 +369,7 @@ bool GraphicsDirectX11Win::GetSupportedGPUs(
     GraphicsDeviceDirectX11Win* gpu = new GraphicsDeviceDirectX11Win();
     gpu->name = adapterDesc.Description;
     gpu->adapter = adapter;
+    gpu->adapter->AddRef();
     gpu->featureLevel = supportedFeatureLevel;
 
     gpus.push_back(gpu);
@@ -328,45 +389,65 @@ bool GraphicsDirectX11Win::GetSupportedGPUs(
                   featureLevel.c_str());
   }
 
-  // Destroy adapters that aren't in the gpus vector
   for (IDXGIAdapter1* adapter : adapters) {
-    bool found = false;
-    for (GraphicsDeviceBase* gpuRef : gpus) {
-      if (adapter == ((GraphicsDeviceDirectX11Win*)gpuRef)->adapter) {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      adapter->Release();
-    }
+    adapter->Release();
   }
 
-  if (pFactory) {
-    pFactory->Release();
+  if (pFactory4) {
+    pFactory4->Release();
+  }
+  if (pFactory1) {
+    pFactory1->Release();
   }
 
   return true;
 }
 
+// TODO: handle cases when calling SelectGPU multiple times - Release/recreate objects.
 bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
   GraphicsDeviceDirectX11Win* gpu = (GraphicsDeviceDirectX11Win*)gpuBase;
 
   D3D_FEATURE_LEVEL featureLevel[1] = {gpu->featureLevel};
 
+  U32 creationFlags = 0;
+#ifdef _DEBUG
+  if (SdkLayersAvailable()) {
+    creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+  } else {
+    ManaLogLnWarning(Channel::Graphics, L"D3D11 Debug Device is not available");
+  }
+#endif
+
   ID3D11Device* pDevice;
   ID3D11DeviceContext* pDeviceContext;
   D3D_FEATURE_LEVEL supportedFeatureLevel;
-  HRESULT hr = D3D11CreateDevice(
-      gpu->adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0, featureLevel, 1,
-      D3D11_SDK_VERSION, &pDevice, &supportedFeatureLevel, &pDeviceContext);
+  HRESULT hr =
+      D3D11CreateDevice(gpu->adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+                        creationFlags, featureLevel, 1, D3D11_SDK_VERSION,
+                        &pDevice, &supportedFeatureLevel, &pDeviceContext);
   if (FAILED(hr)) {
     ManaLogLnInfo(Channel::Graphics, L"SelectGPU D3D11CreateDevice failed");
     return false;
   }
 
+#ifdef _DEBUG
+  // if using debug layer, get debug interface so we can call ReportLiveObjects
+  if (creationFlags & D3D11_CREATE_DEVICE_DEBUG) {
+    IDXGIDebug1* debug = nullptr;
+    HRESULT dbgHr = DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug));
+    if (SUCCEEDED(dbgHr)) {
+      debug_ = debug;
+      // Success means calling this->Debug_ReportLiveObjects() later on
+      // will report all the live DirectX interface objects in debug builds
+      // at that moment.
+    } else {
+      ManaLogLnWarning(Channel::Graphics, L"DXGIGetDebugInterface1 failed");
+    }
+  }
+#endif  // DEBUG
+
   // update interfaces to Direct3D 11.3
+  // https://github.com/walbourn/directx-sdk-samples/blob/main/DXUT/Core/DXUT.cpp#L2634
   ID3D11Device3* pDevice3 = nullptr;
   hr = pDevice->QueryInterface(IID_PPV_ARGS(&pDevice3));
   if (FAILED(hr) || !pDevice3) {
@@ -389,5 +470,18 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
 
   return true;
 }
+
+#ifdef _DEBUG
+void GraphicsDirectX11Win::Debug_ReportLiveObjects() {
+  if (!debug_) {
+    return;
+  }
+
+  HRESULT hr = debug_->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+  if (FAILED(hr)) {
+    ManaLogLnWarning(Channel::Graphics, L"ReportLiveObjects failed");
+  }
+}
+#endif
 
 }  // namespace Mana
