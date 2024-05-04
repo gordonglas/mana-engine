@@ -2,11 +2,9 @@
 
 #pragma once
 
-#include <dxgi1_4.h>
-#include <d3d11_3.h>
-#ifdef _DEBUG
-#include <dxgidebug.h>
-#endif
+#include "graphics/DirectX11Common.h"
+// TODO: HERE!!! move debug layer stuff into....
+#include "graphics/DirectX11DebugLayer.h"
 #include "graphics/GraphicsDeviceBase.h"
 
 namespace Mana {

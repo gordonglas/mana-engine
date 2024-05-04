@@ -1,12 +1,6 @@
 #include "pch.h"
 #include "graphics/GraphicsDirectX11Win.h"
 
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxguid.lib")
-
-// ComPtr<T> - See: https://github.com/Microsoft/DirectXTK/wiki/ComPtr
-#include <wrl/client.h>
 #include <vector>
 
 // TODO: Correctly handle lifetimes of all IDXGI interface pointers.

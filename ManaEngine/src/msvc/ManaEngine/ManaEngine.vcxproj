@@ -311,6 +311,8 @@
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\debugging\DebugWin.h" />
     <ClInclude Include="..\..\..\inc\events\EventManager.h" />
+    <ClInclude Include="..\..\..\inc\graphics\DirectX11DebugLayer.h" />
+    <ClInclude Include="..\..\..\inc\graphics\DirectX11Common.h" />
     <ClInclude Include="..\..\..\inc\graphics\GraphicsBase.h" />
     <ClInclude Include="..\..\..\inc\graphics\GraphicsDeviceBase.h" />
     <ClInclude Include="..\..\..\inc\graphics\GraphicsDeviceDirectX11Win.h" />
@@ -340,6 +342,8 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\inc\graphics\DirectX11DebugLayer.cpp" />
+    <ClCompile Include="..\..\..\inc\graphics\DirectX11Common.cpp" />
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
     <ClCompile Include="..\..\audio\AudioFileBase.cpp" />
     <ClCompile Include="..\..\audio\AudioFileOggWin.cpp" />
