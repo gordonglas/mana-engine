@@ -3,8 +3,6 @@
 #pragma once
 
 #include "graphics/DirectX11Common.h"
-// TODO: HERE!!! move debug layer stuff into....
-#include "graphics/DirectX11DebugLayer.h"
 #include "graphics/GraphicsDeviceBase.h"
 
 namespace Mana {

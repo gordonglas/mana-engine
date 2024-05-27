@@ -1,38 +1,11 @@
 #include "pch.h"
 #include "graphics/GraphicsDirectX11Win.h"
 
+#include <cassert>
 #include <vector>
 
 // TODO: Correctly handle lifetimes of all IDXGI interface pointers.
 //       Use ComPtr<T>
-
-namespace {
-
-#ifdef _DEBUG
-// Checks for SDK Layers support (AKA, the DirectX Debug layer)
-// https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-devices-layers#debug-layer
-// For Windows 10, to create a device that supports the debug layer,
-// enable the "Graphics Tools" optional feature. Go to the Settings panel,
-// under System, Apps & features, Manage optional Features, Add a feature,
-// and then look for "Graphics Tools".
-bool SdkLayersAvailable() noexcept {
-  HRESULT hr = D3D11CreateDevice(
-      nullptr,
-      D3D_DRIVER_TYPE_NULL,  // No need to create a real hardware device.
-      nullptr,
-      D3D11_CREATE_DEVICE_DEBUG,  // Check for SDK layers support.
-      nullptr,                    // Feature level doesn't matter.
-      0, D3D11_SDK_VERSION,
-      nullptr,  // Don't need the D3D device.
-      nullptr,  // Don't need the feature level.
-      nullptr   // Don't need the D3D device context.
-  );
-
-  return SUCCEEDED(hr);
-}
-#endif  // DEBUG
-
-}  // namespace
 
 namespace Mana {
 
@@ -46,6 +19,9 @@ GraphicsDirectX11Win::GraphicsDirectX11Win()
 }
 
 bool GraphicsDirectX11Win::Init() {
+#ifdef _DEBUG
+  debug_ = new DirectX11DebugLayer();
+#endif
   return true;
 }
 
@@ -405,7 +381,7 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
 
   U32 creationFlags = 0;
 #ifdef _DEBUG
-  if (SdkLayersAvailable()) {
+  if (debug_->SdkLayersAvailable()) {
     creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
   } else {
     ManaLogLnWarning(Channel::Graphics, L"D3D11 Debug Device is not available");
@@ -427,18 +403,11 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
 #ifdef _DEBUG
   // if using debug layer, get debug interface so we can call ReportLiveObjects
   if (creationFlags & D3D11_CREATE_DEVICE_DEBUG) {
-    IDXGIDebug1* debug = nullptr;
-    HRESULT dbgHr = DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug));
-    if (SUCCEEDED(dbgHr)) {
-      debug_ = debug;
-      // Success means calling this->Debug_ReportLiveObjects() later on
-      // will report all the live DirectX interface objects in debug builds
-      // at that moment.
-    } else {
-      ManaLogLnWarning(Channel::Graphics, L"DXGIGetDebugInterface1 failed");
-    }
+    debug_->PrepareDebugInterface();
   }
-#endif  // DEBUG
+#endif
+
+  DXDBG_REPORT_LIVE_OBJECTS(this);
 
   // update interfaces to Direct3D 11.3
   // https://github.com/walbourn/directx-sdk-samples/blob/main/DXUT/Core/DXUT.cpp#L2634
@@ -466,15 +435,9 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
 }
 
 #ifdef _DEBUG
-void GraphicsDirectX11Win::Debug_ReportLiveObjects() {
-  if (!debug_) {
-    return;
-  }
-
-  HRESULT hr = debug_->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-  if (FAILED(hr)) {
-    ManaLogLnWarning(Channel::Graphics, L"ReportLiveObjects failed");
-  }
+void GraphicsDirectX11Win::ReportLiveObjects() {
+  assert(debug_);
+  debug_->ReportLiveObjects();
 }
 #endif
 

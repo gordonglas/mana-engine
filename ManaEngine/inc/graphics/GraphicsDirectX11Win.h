@@ -4,10 +4,18 @@
 
 #include <vector>
 #include "graphics/DirectX11Common.h"
-// TODO: HERE!!! move debug layer stuff into....
-#include "graphics/DirectX11DebugLayer.h"
 #include "graphics/GraphicsBase.h"
 #include "graphics/GraphicsDeviceDirectX11Win.h"
+
+#ifdef _DEBUG
+// A macro to make it easier to call ReportLiveObjects
+#define DXDBG_REPORT_LIVE_OBJECTS(dx11) \
+  do {                                     \
+    dx11->ReportLiveObjects();             \
+  } while (0)
+#else
+#define DXDBG_REPORT_LIVE_OBJECTS(dx11)
+#endif
 
 namespace Mana {
 
@@ -26,13 +34,12 @@ class GraphicsDirectX11Win : public GraphicsBase {
   bool SelectGPU(GraphicsDeviceBase* gpu) override;
 
 #ifdef _DEBUG
-  // Prints live DirectX interface object info to the IDE Output window.
-  // See https://web.archive.org/web/20170606112607/http://seanmiddleditch.com/direct3d-11-debug-api-tricks/
-  void Debug_ReportLiveObjects();
+  void ReportLiveObjects();
 #endif
 
+ private:
 #ifdef _DEBUG
-  IDXGIDebug1* debug_;
+  DirectX11DebugLayer* debug_;
 #endif
 };
 
