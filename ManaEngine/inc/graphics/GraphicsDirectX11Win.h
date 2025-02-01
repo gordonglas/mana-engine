@@ -8,10 +8,10 @@
 #include "graphics/GraphicsDeviceDirectX11Win.h"
 
 #ifdef _DEBUG
-// A macro to make it easier to call ReportLiveObjects
+// A macro to make it easier to call ReportLiveObjects.
 #define DXDBG_REPORT_LIVE_OBJECTS(dx11) \
-  do {                                     \
-    dx11->ReportLiveObjects();             \
+  do {                                  \
+    static_cast<Mana::GraphicsDirectX11Win*>(dx11)->ReportLiveObjects(); \
   } while (0)
 #else
 #define DXDBG_REPORT_LIVE_OBJECTS(dx11)
@@ -34,6 +34,7 @@ class GraphicsDirectX11Win : public GraphicsBase {
   bool SelectGPU(GraphicsDeviceBase* gpu) override;
 
 #ifdef _DEBUG
+  // Use DXDBG_REPORT_LIVE_OBJECTS instead of calling this directly
   void ReportLiveObjects();
 #endif
 

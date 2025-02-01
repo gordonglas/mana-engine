@@ -400,6 +400,8 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
     return false;
   }
 
+  SET_DXDBG_OBJ_NAME(pDeviceContext, "ID3D11DeviceContext");
+
 #ifdef _DEBUG
   // if using debug layer, get debug interface so we can call ReportLiveObjects
   if (creationFlags & D3D11_CREATE_DEVICE_DEBUG) {
@@ -428,6 +430,8 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
                   L"SelectGPU QueryInterface ID3D11DeviceContext3 failed");
     return false;
   }
+
+  SET_DXDBG_OBJ_NAME(pDeviceContext3, "ID3D11DeviceContext3");
 
   gpu->deviceContext = pDeviceContext3;
 

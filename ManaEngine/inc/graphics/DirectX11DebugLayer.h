@@ -8,11 +8,15 @@
 #ifdef _DEBUG
 
 #include <dxgidebug.h>
+#include <string>
 
 namespace Mana {
 
 class DirectX11DebugLayer {
  public:
+  // Use SET_DXDBG_OBJ_NAME macro instead of calling this directly
+  static void SetDataName(ID3D11DeviceChild* context, const std::string& name);
+
   DirectX11DebugLayer();
   ~DirectX11DebugLayer();
 
@@ -39,5 +43,14 @@ class DirectX11DebugLayer {
 };
 
 }  // namespace Mana
+
+#define SET_DXDBG_OBJ_NAME(d3dobj, name) \
+  do { \
+    DirectX11DebugLayer::SetDataName(d3dobj, name); \
+  } while (0)
+
+#else
+
+#define SET_DXDBG_OBJ_NAME(d3dobj, name)
 
 #endif  // _DEBUG

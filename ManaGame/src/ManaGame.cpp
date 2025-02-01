@@ -520,6 +520,9 @@ LRESULT CALLBACK WndProc(HWND hWnd,
         float pan = Mana::g_pAudioEngine->GetPan(jumpSFX);
         pan += PanIncrement;
         Mana::g_pAudioEngine->SetPan(jumpSFX, pan);
+      } else if (chr == L'd')  // debug: dx11 ReportLiveObjects
+      {
+        DXDBG_REPORT_LIVE_OBJECTS(Mana::g_pGraphicsEngine);
       }
     } break;
     case WM_CLOSE: {

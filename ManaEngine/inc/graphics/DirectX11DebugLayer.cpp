@@ -9,6 +9,15 @@
 
 namespace Mana {
 
+// static
+void DirectX11DebugLayer::SetDataName(ID3D11DeviceChild* d3dobj,
+    const std::string& name) {
+  assert(d3dobj);
+  assert(!name.empty());
+  d3dobj->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.size(),
+                         name.c_str());
+}
+
 DirectX11DebugLayer::DirectX11DebugLayer() : debug_(nullptr) {}
 DirectX11DebugLayer::~DirectX11DebugLayer() {
   if (debug_) {
