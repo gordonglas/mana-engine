@@ -27,29 +27,32 @@ class AudioFileBase {
   // The Audio engine handles this.
   virtual ~AudioFileBase();
 
-  AudioFileHandle audioFileHandle;
-  xstring filePath;
-  AudioCategory category;
-  AudioLoadType loadType;
-  AudioFormat format;
-  float pan;
-  bool isPaused;
-  bool isStopped;
-  size_t fileSize;               // raw file size
-  uint8_t* pDataBuffer;          // pcm buffer
-  size_t dataBufferSize;         // pcm buffer size
-  size_t currentStreamBufIndex;  // 0 to (AudioStreamBufCount - 1)
-  size_t totalPcmBytes;          // total size of pcm data in entire file
-  size_t currentTotalPcmPos;     // current position within totalPcmBytes
+  AudioFileBase(const AudioFileBase&) = delete;
+  AudioFileBase& operator=(const AudioFileBase&) = delete;
 
-  bool lastBufferPlaying;
+  AudioFileHandle audioFileHandle_;
+  xstring filePath_;
+  AudioCategory category_;
+  AudioLoadType loadType_;
+  AudioFormat format_;
+  float pan_;
+  bool isPaused_;
+  bool isStopped_;
+  size_t fileSize_;               // raw file size
+  uint8_t* pDataBuffer_;          // pcm buffer
+  size_t dataBufferSize_;         // pcm buffer size
+  size_t currentStreamBufIndex_;  // 0 to (AudioStreamBufCount - 1)
+  size_t totalPcmBytes_;          // total size of pcm data in entire file
+  size_t currentTotalPcmPos_;     // current position within totalPcmBytes
 
-  uint32_t loopCount;  // Number of times to repeat the entire sound,
-                       //  or AudioBase::LOOP_INFINITE to loop until stopped.
-                       // If > 0 and != AudioBase::LOOP_INFINITE,
-                       // gets decremented over time.
-  int64_t loopBackPcmSamplePos; // pcm pos to loop back to, in samples.
-                                // Must be on a pcm frame boundary.
+  bool lastBufferPlaying_;
+
+  uint32_t loopCount_;  // Number of times to repeat the entire sound,
+                        // or AudioBase::LOOP_INFINITE to loop until stopped.
+                        // If > 0 and != AudioBase::LOOP_INFINITE,
+                        // gets decremented over time.
+  int64_t loopBackPcmSamplePos_; // pcm pos to loop back to, in samples.
+                                 // Must be on a pcm frame boundary.
 
   virtual bool Load(const xstring& strFilePath) = 0;
   virtual void Unload() = 0;

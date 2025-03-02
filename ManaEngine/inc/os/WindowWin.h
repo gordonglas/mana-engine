@@ -11,10 +11,14 @@ class WindowWin : public WindowBase {
       : hInstance_(hInstance),
         nCmdShow_(nCmdShow),
         hWnd_(nullptr),
-        wndProc_(wndProc) {}
-  ~WindowWin() final {}
+        wndProc_(wndProc),
+        previousWindowPlacement_({}) {}
+  ~WindowWin() final = default;
 
-  bool CreateMainWindow(CommandLine& commandLine, xstring& title) final;
+  WindowWin(const WindowWin&) = delete;
+  WindowWin& operator=(const WindowWin&) = delete;
+
+  bool CreateMainWindow(CommandLine& commandLine, const xstring& title) final;
 
   // TODO: x-platform values for nCmdShow
   bool ShowWindow(int nCmdShow) final;

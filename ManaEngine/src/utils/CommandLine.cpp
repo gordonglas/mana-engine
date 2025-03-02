@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "target/TargetOS.h"
 #include "utils/CommandLine.h"
+#include <utility>
 #ifdef OS_WIN
 #include <shellapi.h>
 #endif
@@ -11,7 +12,7 @@ constexpr size_t MAX_ARG_VAL_LEN = 100;
 namespace Mana {
 
 bool CommandLine::Parse(int argc, char* argv[]) {
-  map.clear();
+  map_.clear();
 
   std::vector<std::string> args;
 
@@ -63,7 +64,7 @@ bool CommandLine::Parse(int argc, char* argv[]) {
 
       if (i + 1 >= args.size()) {
         // key is a bool (no corresponding value)
-        map[key] = "";
+        map_[key] = "";
         break;
       }
 
@@ -73,7 +74,7 @@ bool CommandLine::Parse(int argc, char* argv[]) {
       isKey = len > 2 && arg[0] == '-' && arg[1] == '-';
       if (isKey) {
         // previous key is a bool (no corresponding value)
-        map[key] = "";
+        map_[key] = "";
         --i;
         continue;
       }
@@ -82,7 +83,7 @@ bool CommandLine::Parse(int argc, char* argv[]) {
         return false;
       }
 
-      map[key] = val;
+      map_[key] = val;
     } else {
       // invalid args
       return false;
@@ -92,24 +93,25 @@ bool CommandLine::Parse(int argc, char* argv[]) {
   return true;
 }
 
-std::vector<std::string> CommandLine::GetAll() {
-  std::vector<std::string> tmp;
+//std::vector<std::string> CommandLine::GetAll() {
+//  std::vector<std::string> tmp;
+//
+//  return tmp;
+//}
 
-  return tmp;
+bool CommandLine::HasKey(const std::string& key) {
+  return map_.find(key) != map_.end();
 }
 
-bool CommandLine::HasKey(std::string& key) {
-  return map.find(key) != map.end();
-}
-
-std::string CommandLine::Get(std::string& key) {
+// TODO: maybe return const string& instead?
+std::string CommandLine::Get(const std::string& key) {
   std::string value;
 
   if (HasKey(key)) {
-    value = map.find(key)->second;
+    value = map_.find(key)->second;
   }
 
-  return value;
+  return std::move(value);
 }
 
 }  // namespace Mana

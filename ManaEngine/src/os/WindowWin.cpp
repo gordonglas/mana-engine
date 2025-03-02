@@ -7,7 +7,8 @@ namespace Mana {
 constexpr size_t MAX_LEN_TITLE = 100;
 std::wstring windowClassName;
 
-bool WindowWin::CreateMainWindow(CommandLine& commandLine, xstring& title) {
+bool WindowWin::CreateMainWindow(CommandLine& commandLine,
+                                 const xstring& title) {
   UNREFERENCED_PARAMETER(commandLine);
 
   if (title.size() > MAX_LEN_TITLE) {

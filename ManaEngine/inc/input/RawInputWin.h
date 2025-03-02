@@ -12,7 +12,10 @@ namespace Mana {
 class RawInputWin {
  public:
   RawInputWin(HWND hwndTarget);
-  ~RawInputWin();
+  virtual ~RawInputWin() = default;
+
+  RawInputWin(const RawInputWin&) = delete;
+  RawInputWin& operator=(const RawInputWin&) = delete;
 
   bool Init();
   bool Uninit();

@@ -11,8 +11,11 @@ struct MultisampleLevel {
 
 class GraphicsDeviceBase {
  public:
-  GraphicsDeviceBase() {}
-  virtual ~GraphicsDeviceBase() {}
+  GraphicsDeviceBase() = default;
+  virtual ~GraphicsDeviceBase() = default;
+
+  GraphicsDeviceBase(const GraphicsDeviceBase&) = delete;
+  GraphicsDeviceBase& operator=(const GraphicsDeviceBase&) = delete;
 
   virtual bool Init() = 0;
   virtual void Uninit() = 0;
@@ -20,7 +23,7 @@ class GraphicsDeviceBase {
   virtual bool GetSupportedMultisampleLevels(
       std::vector<MultisampleLevel>& levels) = 0;
 
-  xstring name;
+  xstring name_;
 };
 
 }  // namespace Mana

@@ -9,7 +9,7 @@ namespace Mana {
 class InputWin : public InputBase {
  public:
   InputWin(HWND hwnd);
-  ~InputWin() override;
+  virtual ~InputWin() = default;
 
   bool Init() override;
   void Uninit() override;
@@ -24,4 +24,4 @@ class InputWin : public InputBase {
   RawInputWin* pRawInput_;
 };
 
-}
+}  // namespace Mana

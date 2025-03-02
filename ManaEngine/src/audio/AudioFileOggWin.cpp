@@ -31,8 +31,8 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
   if (!pCompressedOggFile_) {
     return false;
   }
-  fileSize = pCompressedOggFile_->ReadAllBytes(strFilePath.c_str());
-  if (fileSize == 0) {
+  fileSize_ = pCompressedOggFile_->ReadAllBytes(strFilePath.c_str());
+  if (fileSize_ == 0) {
     delete pCompressedOggFile_;
     pCompressedOggFile_ = nullptr;
     return false;
@@ -57,25 +57,24 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
   vorbis_info* vi = ::ov_info(&oggVorbisFile_, -1);
   assert(vi != nullptr);
 
-  ::memset(&wfx, 0, sizeof(wfx));
-  wfx.Format.wFormatTag = WAVE_FORMAT_PCM;
-  wfx.Format.nChannels = (WORD)vi->channels;
-  wfx.Format.nSamplesPerSec = vi->rate;
-  wfx.Format.wBitsPerSample = 16; // ogg vorbis is always 16 bit
-  wfx.Format.nBlockAlign =
-      wfx.Format.nChannels * (wfx.Format.wBitsPerSample / 8);
-  wfx.Format.nAvgBytesPerSec =
-      wfx.Format.nSamplesPerSec * wfx.Format.nBlockAlign;
-  wfx.Format.cbSize = 0;
+  ::memset(&wfx_, 0, sizeof(wfx_));
+  wfx_.Format.wFormatTag = WAVE_FORMAT_PCM;
+  wfx_.Format.nChannels = (WORD)vi->channels;
+  wfx_.Format.nSamplesPerSec = vi->rate;
+  wfx_.Format.wBitsPerSample = 16; // ogg vorbis is always 16 bit
+  wfx_.Format.nBlockAlign =
+      wfx_.Format.nChannels * (wfx_.Format.wBitsPerSample / 8);
+  wfx_.Format.nAvgBytesPerSec =
+      wfx_.Format.nSamplesPerSec * wfx_.Format.nBlockAlign;
+  wfx_.Format.cbSize = 0;
 
-  assert((loopBackPcmSamplePos * (wfx.Format.wBitsPerSample / 8)) %
-                 wfx.Format.nBlockAlign ==
-             0 &&
+  assert((loopBackPcmSamplePos_ * (wfx_.Format.wBitsPerSample / 8)) %
+         wfx_.Format.nBlockAlign == 0 &&
          "pcmSamples is not on a pcm frame boundary!");
 
   // must seek back to the start after calling ov_open_callbacks
   // and before calling ov_pcm_total!
-  currentStreamBufIndex = 0;
+  currentStreamBufIndex_ = 0;
   StreamSeek(0);
 
   // Get the size of the ogg file in pcm bytes.
@@ -99,30 +98,30 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
   //                       .c_str());
 
   assert(totalPcmSamples > 0);
-  long nTotalPcmBytes =
-      totalPcmSamples * (wfx.Format.wBitsPerSample / 8) * wfx.Format.nChannels;
+  long totalPcmBytes = totalPcmSamples * (wfx_.Format.wBitsPerSample / 8) *
+                        wfx_.Format.nChannels;
   //OutputDebugStringW((std::wstring(L"ogg file Load: totalPcmBytes: ") +
-  //                    std::to_wstring(nTotalPcmBytes) + L"\n")
+  //                    std::to_wstring(totalPcmBytes) + L"\n")
   //                       .c_str());
-  //assert((nTotalPcmBytes > AudioStreamBufCount * AudioStreamBufSize) &&
+  //assert((totalPcmBytes > AudioStreamBufCount * AudioStreamBufSize) &&
   //       "ogg file's pcm data must be larger than the streaming buffers "
   //       "total size! Use a static wav file instead.");
-  totalPcmBytes = nTotalPcmBytes;
+  totalPcmBytes_ = totalPcmBytes;
 
   // TODO: might also be useful to get the total time so it can be
   //       displayed in an in-game music player along with ability to seek.
   // lenMillis = 1000.f * ov_time_total(&oggVorbisFile_, -1);
   // Also see "ov_time_tell" to get current time offset.
 
-  if (totalPcmBytes <= AudioStreamBufCount * AudioStreamBufSize) {
-    loadType = AudioLoadType::Static;
+  if (totalPcmBytes_ <= AudioStreamBufCount * AudioStreamBufSize) {
+    loadType_ = AudioLoadType::Static;
 
     // decode all pcm data into memory
 
-    pDataBuffer = new uint8_t[totalPcmBytes];
-    dataBufferSize = totalPcmBytes;
+    pDataBuffer_ = new uint8_t[totalPcmBytes_];
+    dataBufferSize_ = totalPcmBytes_;
 
-    int bytesPerSample = wfx.Format.wBitsPerSample / 8;
+    int bytesPerSample = wfx_.Format.wBitsPerSample / 8;
     int readBufLen = AudioStreamBufSize;  // multiple of 4
     unsigned currentBytesRead = 0;
     long actualBytesRead = 1;
@@ -131,7 +130,7 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
     // read until EOF (ov_read returns 0)
     while (1) {
       actualBytesRead =
-          ::ov_read(&oggVorbisFile_, (char*)&pDataBuffer[currentBytesRead],
+          ::ov_read(&oggVorbisFile_, (char*)&pDataBuffer_[currentBytesRead],
                     readBufLen, 0, bytesPerSample, 1, &ovBitstream);
       //OutputDebugStringW(
       //    (std::wstring(L"Ogg Load static: ov_read actualBytesRead: ") +
@@ -150,13 +149,14 @@ bool AudioFileOggWin::Load(const xstring& strFilePath) {
     //OutputDebugStringW(
     //    (std::wstring(L"Ogg Loaded statically: ") + strFilePath + L"\n").c_str());
   } else {
-    loadType = AudioLoadType::Streaming;
+    loadType_ = AudioLoadType::Streaming;
 
-    assert(loopBackPcmSamplePos * (wfx.Format.wBitsPerSample / 8) <
-               (int64_t)(totalPcmBytes - (AudioStreamBufCount * AudioStreamBufSize)) &&
-           "loopBackPcmSamplePos cannot be so close to the end of the file");
+    assert(loopBackPcmSamplePos_ * (wfx_.Format.wBitsPerSample / 8) <
+               (int64_t)(totalPcmBytes_ -
+                         (AudioStreamBufCount * AudioStreamBufSize)) &&
+           "loopBackPcmSamplePos_ cannot be so close to the end of the file");
 
-    pDataBuffer = new uint8_t[AudioStreamBufSize * AudioStreamBufCount];
+    pDataBuffer_ = new uint8_t[AudioStreamBufSize * AudioStreamBufCount];
 
     //OutputDebugStringW(
     //    (std::wstring(L"Ogg Loaded for streaming: ") + strFilePath + L"\n")
@@ -179,10 +179,12 @@ void AudioFileOggWin::Unload() {
 }
 
 bool AudioFileOggWin::StreamSeek(int64_t pcmSamples) {
-  assert((pcmSamples * (wfx.Format.wBitsPerSample / 8)) % wfx.Format.nBlockAlign == 0 &&
+  assert((pcmSamples * (wfx_.Format.wBitsPerSample / 8)) %
+                 wfx_.Format.nBlockAlign ==
+             0 &&
          "pcmSamples is not on a pcm frame boundary!");
 
-  currentTotalPcmPos = pcmSamples * (wfx.Format.wBitsPerSample / 8);
+  currentTotalPcmPos_ = pcmSamples * (wfx_.Format.wBitsPerSample / 8);
 
   int seekRet = ::ov_pcm_seek(&oggVorbisFile_, pcmSamples);
   //OutputDebugStringW((std::wstring(L"AudioFileOggWin: ov_pcm_seek returned: ") +

@@ -21,21 +21,24 @@ class AudioBase {
   static const unsigned MAX_LOOP_COUNT = 254;
   static const unsigned LOOP_INFINITE = 255;
 
-  AudioBase() {}
+  AudioBase() = default;
   // TODO: maybe in debug build, assert if there are still files loaded?
-  virtual ~AudioBase() {}
+  virtual ~AudioBase() = default;
+
+  AudioBase(const AudioBase&) = delete;
+  AudioBase& operator=(const AudioBase&) = delete;
 
   virtual bool Init() = 0;
   virtual void Uninit() = 0;
 
   // Returns non-zero for success.
-  virtual AudioFileHandle Load(xstring filePath,
+  virtual AudioFileHandle Load(const xstring& filePath,
                                AudioCategory category,
                                AudioFormat format,
                                int64_t loopBackPcmSamplePos = 0,
                                int simultaneousSounds = 1) = 0;
   // stops and destroys all voices and the buffer
-  // and removes from m_fileMap
+  // and removes from fileMap_
   virtual void Unload(AudioFileHandle audioFileHandle) = 0;
 
   // fills/queues streaming buffers, if needed
@@ -84,9 +87,9 @@ class AudioBase {
   // versions of the same sound
   const AudioFileHandle MAX_SOUNDS_LOADED = 500;
 
-  std::map<AudioFileHandle, AudioFileBase*> m_fileMap;
+  std::map<AudioFileHandle, AudioFileBase*> fileMap_;
 
-  AudioFileHandle m_lastAudioFileHandle = 0;
+  AudioFileHandle lastAudioFileHandle_ = 0;
   AudioFileHandle GetNextFreeAudioFileHandle();
 
   std::vector<AudioFileBase*> streamingFiles_;

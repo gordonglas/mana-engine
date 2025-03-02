@@ -18,7 +18,7 @@ class DirectX11DebugLayer {
   static void SetDataName(ID3D11DeviceChild* context, const std::string& name);
 
   DirectX11DebugLayer();
-  ~DirectX11DebugLayer();
+  virtual ~DirectX11DebugLayer();
 
   DirectX11DebugLayer(const DirectX11DebugLayer&) = delete;
   DirectX11DebugLayer& operator=(const DirectX11DebugLayer&) = delete;

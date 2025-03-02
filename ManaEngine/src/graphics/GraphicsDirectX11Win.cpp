@@ -20,6 +20,7 @@ GraphicsDirectX11Win::GraphicsDirectX11Win()
 
 bool GraphicsDirectX11Win::Init() {
 #ifdef _DEBUG
+  // TODO: should this be purposely leaked?
   debug_ = new DirectX11DebugLayer();
 #endif
   return true;
@@ -337,17 +338,17 @@ bool GraphicsDirectX11Win::GetSupportedGPUs(
     }
 
     GraphicsDeviceDirectX11Win* gpu = new GraphicsDeviceDirectX11Win();
-    gpu->name = adapterDesc.Description;
-    gpu->adapter = adapter;
-    gpu->adapter->AddRef();
-    gpu->featureLevel = supportedFeatureLevel;
+    gpu->name_ = adapterDesc.Description;
+    gpu->adapter_ = adapter;
+    gpu->adapter_->AddRef();
+    gpu->featureLevel_ = supportedFeatureLevel;
 
     gpus.push_back(gpu);
 
     ManaLogLnInfo(Channel::Graphics, L"DX11 GPU found (index %d): %s", j,
                   adapterDesc.Description);
     xstring featureLevel(L"UNHANDLED");
-    switch (gpu->featureLevel) {
+    switch (gpu->featureLevel_) {
       case D3D_FEATURE_LEVEL_11_1:
         featureLevel = L"D3D_FEATURE_LEVEL_11_1";
         break;
@@ -377,7 +378,7 @@ bool GraphicsDirectX11Win::GetSupportedGPUs(
 bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
   GraphicsDeviceDirectX11Win* gpu = (GraphicsDeviceDirectX11Win*)gpuBase;
 
-  D3D_FEATURE_LEVEL featureLevel[1] = {gpu->featureLevel};
+  D3D_FEATURE_LEVEL featureLevel[1] = {gpu->featureLevel_};
 
   U32 creationFlags = 0;
 #ifdef _DEBUG
@@ -392,7 +393,7 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
   ID3D11DeviceContext* pDeviceContext;
   D3D_FEATURE_LEVEL supportedFeatureLevel;
   HRESULT hr =
-      D3D11CreateDevice(gpu->adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+      D3D11CreateDevice(gpu->adapter_, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
                         creationFlags, featureLevel, 1, D3D11_SDK_VERSION,
                         &pDevice, &supportedFeatureLevel, &pDeviceContext);
   if (FAILED(hr)) {
@@ -421,7 +422,7 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
     return false;
   }
 
-  gpu->device = pDevice3;
+  gpu->device_ = pDevice3;
 
   ID3D11DeviceContext3* pDeviceContext3 = nullptr;
   hr = pDeviceContext->QueryInterface(IID_PPV_ARGS(&pDeviceContext3));
@@ -433,7 +434,7 @@ bool GraphicsDirectX11Win::SelectGPU(GraphicsDeviceBase* gpuBase) {
 
   SET_DXDBG_OBJ_NAME(pDeviceContext3, "ID3D11DeviceContext3");
 
-  gpu->deviceContext = pDeviceContext3;
+  gpu->deviceContext_ = pDeviceContext3;
 
   return true;
 }

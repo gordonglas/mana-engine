@@ -8,7 +8,6 @@ namespace Mana {
 InputBase* g_pInputEngine = nullptr;
 
 InputWin::InputWin(HWND hwnd) : hwnd_(hwnd), pRawInput_(nullptr) {}
-InputWin::~InputWin() {}
 
 bool InputWin::Init() {
   pRawInput_ = new RawInputWin(hwnd_);

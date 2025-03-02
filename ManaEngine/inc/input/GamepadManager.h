@@ -41,7 +41,10 @@ struct GAMEPAD_STATE {
 class GamepadManager {
  public:
   GamepadManager();
-  ~GamepadManager();
+  virtual ~GamepadManager() = default;
+
+  GamepadManager(const GamepadManager&) = delete;
+  GamepadManager& operator=(const GamepadManager&) = delete;
 
   bool Init();
   void Uninit();
@@ -54,4 +57,4 @@ class GamepadManager {
   GAMEPAD_STATE* state_;
 };
 
-}
+}  // namespace Mana

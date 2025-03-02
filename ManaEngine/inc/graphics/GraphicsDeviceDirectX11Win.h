@@ -13,7 +13,11 @@ class GraphicsDeviceDirectX11Win : public GraphicsDeviceBase {
   static const DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
   GraphicsDeviceDirectX11Win();
-  virtual ~GraphicsDeviceDirectX11Win() override;
+  virtual ~GraphicsDeviceDirectX11Win();
+
+  GraphicsDeviceDirectX11Win(const GraphicsDeviceDirectX11Win&) = delete;
+  GraphicsDeviceDirectX11Win& operator=(const GraphicsDeviceDirectX11Win&) =
+      delete;
 
   bool Init() override;
   void Uninit() override;
@@ -21,11 +25,11 @@ class GraphicsDeviceDirectX11Win : public GraphicsDeviceBase {
   bool GetSupportedMultisampleLevels(
       std::vector<MultisampleLevel>& levels) override;
 
-  IDXGIAdapter1* adapter;
-  D3D_FEATURE_LEVEL featureLevel;
+  IDXGIAdapter1* adapter_;
+  D3D_FEATURE_LEVEL featureLevel_;
 
-  ID3D11Device3* device;
-  ID3D11DeviceContext3* deviceContext;
+  ID3D11Device3* device_;
+  ID3D11DeviceContext3* deviceContext_;
 };
 
 }  // namespace Mana

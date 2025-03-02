@@ -14,13 +14,16 @@ class AudioFileWin : public AudioFileBase {
   AudioFileWin();
   // dtor doesn't stop sounds or destroy xaudio2 buffers.
   // The Audio engine handles this.
-  virtual ~AudioFileWin();
+  virtual ~AudioFileWin() = default;
 
-  WAVEFORMATEXTENSIBLE wfx;
-  std::vector<IXAudio2SourceVoice*> sourceVoices;
-  size_t sourceVoicePos;
+  AudioFileWin(const AudioFileWin&) = delete;
+  AudioFileWin& operator=(const AudioFileWin&) = delete;
 
-  // XAUDIO2_BUFFER buffer;
+  WAVEFORMATEXTENSIBLE wfx_;
+  std::vector<IXAudio2SourceVoice*> sourceVoices_;
+  size_t sourceVoicePos_;
+
+  //XAUDIO2_BUFFER buffer_;
 
   virtual bool Load(const xstring& strFilePath) override = 0;
   virtual void Unload() override = 0;

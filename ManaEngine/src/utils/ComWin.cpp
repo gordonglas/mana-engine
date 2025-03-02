@@ -4,9 +4,11 @@
 
 namespace Mana {
 
-int ComInitilizer::initRefCount_ = 0;
+// static
+int ComInitializer::initRefCount_ = 0;
 
-bool ComInitilizer::Init() {
+// static
+bool ComInitializer::Init() {
   // uses COM STA
   // if (CoInitialize(nullptr) != S_OK)
   //    return false;
@@ -19,7 +21,8 @@ bool ComInitilizer::Init() {
   return true;
 }
 
-void ComInitilizer::Uninit() {
+// static
+void ComInitializer::Uninit() {
   if (initRefCount_ > 0) {
     CoUninitialize();
     --initRefCount_;

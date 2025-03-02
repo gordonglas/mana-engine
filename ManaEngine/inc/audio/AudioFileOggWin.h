@@ -19,6 +19,9 @@ class AudioFileOggWin : public AudioFileWin {
   // The Audio engine handles this.
   virtual ~AudioFileOggWin();
 
+  AudioFileOggWin(const AudioFileOggWin&) = delete;
+  AudioFileOggWin& operator=(const AudioFileOggWin&) = delete;
+
   bool Load(const xstring& strFilePath) override;
   void Unload() override;
 

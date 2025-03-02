@@ -4,9 +4,9 @@
 namespace Mana {
 
 File::~File() {
-  if (m_pBuf) {
-    delete[] m_pBuf;
-    m_pBuf = nullptr;
+  if (pBuf_) {
+    delete[] pBuf_;
+    pBuf_ = nullptr;
   }
 
   Close();
@@ -15,21 +15,21 @@ File::~File() {
 bool File::Open(const xchar* fileName, const xchar* mode) {
   // TODO: this seems to have issues reading from the file after file is not
   // properly closed or something?
-  _wfopen_s(&m_pFile, fileName, mode);
-  if (!m_pFile) {
+  _wfopen_s(&pFile_, fileName, mode);
+  if (!pFile_) {
     return false;
   }
 
-  m_fileName = fileName;
+  fileName_ = fileName;
   return true;
 }
 
 size_t File::Read(void* buf, size_t size, size_t count) {
-  if (!m_pFile) {
+  if (!pFile_) {
     return 0;
   }
 
-  return fread(buf, size, count, m_pFile);
+  return fread(buf, size, count, pFile_);
 }
 
 size_t File::ReadAllBytes(const xchar* fileName) {
@@ -38,8 +38,8 @@ size_t File::ReadAllBytes(const xchar* fileName) {
     return 0;
   }
 
-  m_pBuf = new unsigned char[fileSize];
-  if (!m_pBuf) {
+  pBuf_ = new unsigned char[fileSize];
+  if (!pBuf_) {
     return 0;
   }
 
@@ -53,17 +53,17 @@ size_t File::ReadAllBytes(const xchar* fileName) {
   size_t bytesAttempt = 0;
   while (true) {
     bytesAttempt = bytesLeft > 65535 ? 65535 : bytesLeft;
-    bytesRead = Read(&m_pBuf[pos], 1, bytesAttempt);
+    bytesRead = Read(&pBuf_[pos], 1, bytesAttempt);
     pos += bytesRead;
     bytesLeft -= bytesRead;
-    if (bytesLeft == 0 || (bytesRead < bytesAttempt && feof(m_pFile) == 0)) {
+    if (bytesLeft == 0 || (bytesRead < bytesAttempt && feof(pFile_) == 0)) {
       // end of file
       break;
     } else if (bytesLeft > 0 && bytesRead < bytesAttempt) {
       // error
       fileSize = 0;
-      delete[] m_pBuf;
-      m_pBuf = nullptr;
+      delete[] pBuf_;
+      pBuf_ = nullptr;
       break;
     }
   }
@@ -75,12 +75,12 @@ size_t File::ReadAllBytes(const xchar* fileName) {
 }
 
 void File::Close() {
-  if (!m_pFile) {
+  if (!pFile_) {
     return;
   }
 
-  fclose(m_pFile);
-  m_pFile = nullptr;
+  fclose(pFile_);
+  pFile_ = nullptr;
 }
 
 // static
@@ -92,7 +92,7 @@ size_t File::GetFileSize(const xchar* fileName) {
     return 0;
   }
 
-  return (size_t)buf.st_size;
+  return static_cast<size_t>(buf.st_size);
 }
 
 }  // namespace Mana

@@ -9,7 +9,6 @@ namespace Mana {
 XInput* xinput = nullptr;
 
 GamepadManager::GamepadManager() : state_(nullptr) {}
-GamepadManager::~GamepadManager() {}
 
 bool GamepadManager::Init() {
   // XInput's gamepad ids are from 0 to 3 inclusive,

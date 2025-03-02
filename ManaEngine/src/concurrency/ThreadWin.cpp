@@ -93,10 +93,10 @@ bool Thread::Init(ThreadFunc pThreadFunc) {
   pThreadFunc_ = pThreadFunc;
 
   hThread_ = ::CreateThread(nullptr,  // default security attributes
-                             0,       // use default stack size
-                             ThreadFunction, this,
-                             CREATE_SUSPENDED,  // user must call Thread::Start
-                             nullptr);
+                            0,        // use default stack size
+                            ThreadFunction, this,
+                            CREATE_SUSPENDED,  // user must call Thread::Start
+                            nullptr);
 
   if (!hThread_) {
     ManaLogLnError(Channel::Init, _X("CreateThread failed"));

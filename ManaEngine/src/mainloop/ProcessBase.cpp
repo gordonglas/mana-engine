@@ -3,23 +3,21 @@
 
 namespace Mana {
 
-ProcessBase::ProcessBase() {
-  m_state = State::UNINITIALIZED;
-}
+ProcessBase::ProcessBase() : state_(State::UNINITIALIZED) {}
 
 ProcessBase::~ProcessBase() {
-  if (m_pChild)
-    m_pChild->VOnAbort();
+  if (pChild_)
+    pChild_->VOnAbort();
 }
 
 // Removes the child from this process.
 // This releases ownership of the child to the caller
 // and completely removes it from the process chain.
 StrongProcessPtr ProcessBase::RemoveChild() {
-  if (m_pChild) {
+  if (pChild_) {
     // this keeps the child from getting destroyed when we clear it
-    StrongProcessPtr pChild = m_pChild;
-    m_pChild.reset();
+    StrongProcessPtr pChild = pChild_;
+    pChild_.reset();
     return pChild;
   }
 

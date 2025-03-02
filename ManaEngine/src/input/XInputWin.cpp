@@ -14,8 +14,6 @@ XInput::XInput() {
   }
 }
 
-XInput::~XInput() {}
-
 DWORD XInput::GetGamepadState(U8 id, XINPUT_STATE* state) {
   assert(id >= 0 && id < 4);
 

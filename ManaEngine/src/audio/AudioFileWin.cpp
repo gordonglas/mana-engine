@@ -3,10 +3,7 @@
 
 namespace Mana {
 
-AudioFileWin::AudioFileWin() : wfx({0}), sourceVoicePos(0) {
-}
-
-AudioFileWin::~AudioFileWin() {
+AudioFileWin::AudioFileWin() : wfx_({0}), sourceVoicePos_(0) {
 }
 
 }  // namespace Mana

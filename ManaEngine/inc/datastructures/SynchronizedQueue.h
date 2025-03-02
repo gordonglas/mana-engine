@@ -13,8 +13,11 @@ namespace Mana {
 template <typename T>
 class SynchronizedQueue {
  public:
-  SynchronizedQueue() : bEmpty_(true) {}
-  ~SynchronizedQueue() {}
+  SynchronizedQueue() : bEmpty_(true) {};
+  virtual ~SynchronizedQueue() = default;
+
+  SynchronizedQueue(const SynchronizedQueue&) = delete;
+  SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
 
   bool Empty_NoLock();
   const size_t Size();
@@ -31,13 +34,10 @@ class SynchronizedQueue {
   // This is more efficient than looping around Pop to grab all at once.
   void PopAll(std::vector<T>& popped);
 
-  SynchronizedQueue(const SynchronizedQueue&) = delete;
-  SynchronizedQueue& operator=(const SynchronizedQueue&) = delete;
-
  private:
   std::atomic<bool> bEmpty_;
-  Mutex m_lock;
-  std::queue<T> m_queue;
+  Mutex lock_;
+  std::queue<T> queue_;
 };
 
 template <typename T>
@@ -50,49 +50,49 @@ bool SynchronizedQueue<T>::Empty_NoLock() {
 
 template <typename T>
 const size_t SynchronizedQueue<T>::Size() {
-  ScopedMutex lock(m_lock);
-  return (size_t)m_queue.size();
+  ScopedMutex lock(lock_);
+  return (size_t)queue_.size();
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(const T& value) {
-  ScopedMutex lock(m_lock);
-  m_queue.push(value);
+  ScopedMutex lock(lock_);
+  queue_.push(value);
   //bEmpty_ = false;
   bEmpty_.store(false, std::memory_order_release);
 }
 
 template <typename T>
 void SynchronizedQueue<T>::Push(T&& value) {
-  ScopedMutex lock(m_lock);
-  m_queue.push(std::move(value));
+  ScopedMutex lock(lock_);
+  queue_.push(std::move(value));
   //bEmpty_ = false;
   bEmpty_.store(false, std::memory_order_release);
 }
 
 template <typename T>
 std::optional<T> SynchronizedQueue<T>::PeekFront() {
-  ScopedMutex lock(m_lock);
-  if (m_queue.empty()) {
+  ScopedMutex lock(lock_);
+  if (queue_.empty()) {
     return std::nullopt;
   }
-  return m_queue.front();
+  return queue_.front();
 }
 
 template <typename T>
 std::optional<T> SynchronizedQueue<T>::Pop() {
-  ScopedMutex lock(m_lock);
-  if (m_queue.empty()) {
+  ScopedMutex lock(lock_);
+  if (queue_.empty()) {
     return std::nullopt;
   }
   // This can still cause a problem if the object's copy constructor
   // throws an exception. But purposely not using a shared_ptr here
   // for performance reasons.
   // See "Listing 3.5" in book "C++ Concurrency in Action" for details.
-  T front = m_queue.front();
-  m_queue.pop();
+  T front = queue_.front();
+  queue_.pop();
 
-  if (m_queue.empty()) {
+  if (queue_.empty()) {
     //bEmpty_ = true;
     bEmpty_.store(true, std::memory_order_release);
   }
@@ -104,10 +104,10 @@ template <typename T>
 void SynchronizedQueue<T>::PopAll(std::vector<T>& popped) {
   popped.clear();
 
-  ScopedMutex lock(m_lock);
-  while (!m_queue.empty()) {
-    T front = m_queue.front();
-    m_queue.pop();
+  ScopedMutex lock(lock_);
+  while (!queue_.empty()) {
+    T front = queue_.front();
+    queue_.pop();
     popped.push_back(front);
   }
 

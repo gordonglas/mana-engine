@@ -15,8 +15,8 @@ unsigned int ProcessManager::UpdateProcesses(unsigned long deltaMs) {
   unsigned short int successCount = 0;
   unsigned short int failCount = 0;
 
-  ProcessList::iterator it = m_processList.begin();
-  while (it != m_processList.end()) {
+  ProcessList::iterator it = processList_.begin();
+  while (it != processList_.end()) {
     // grab the next process
     StrongProcessPtr pCurrProcess = (*it);
 
@@ -61,7 +61,7 @@ unsigned int ProcessManager::UpdateProcesses(unsigned long deltaMs) {
       }
 
       // remove the process and destroy it
-      m_processList.erase(thisIt);
+      processList_.erase(thisIt);
     }
   }
 
@@ -70,21 +70,21 @@ unsigned int ProcessManager::UpdateProcesses(unsigned long deltaMs) {
 
 // Attaches the process to the process list so it can be run on the next update.
 WeakProcessPtr ProcessManager::AttachProcess(StrongProcessPtr pProcess) {
-  m_processList.push_front(pProcess);
+  processList_.push_front(pProcess);
   return WeakProcessPtr(pProcess);
 }
 
 // Clears all processes (and DOESN'T run any exit code)
 void ProcessManager::ClearAllProcesses() {
-  m_processList.clear();
+  processList_.clear();
 }
 
 // Aborts all processes.
 // If immediate == true, it immediately calls each ones
 // OnAbort() function and destroys all the processes.
 void ProcessManager::AbortAllProcesses(bool immediate) {
-  ProcessList::iterator it = m_processList.begin();
-  while (it != m_processList.end()) {
+  ProcessList::iterator it = processList_.begin();
+  while (it != processList_.end()) {
     ProcessList::iterator tempIt = it;
     ++it;
 
@@ -93,7 +93,7 @@ void ProcessManager::AbortAllProcesses(bool immediate) {
       pProcess->SetState(ProcessBase::State::ABORTED);
       if (immediate) {
         pProcess->VOnAbort();
-        m_processList.erase(tempIt);
+        processList_.erase(tempIt);
       }
     }
   }

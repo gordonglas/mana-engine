@@ -22,9 +22,15 @@ class AudioWin : public AudioBase {
   static const unsigned MAX_LOOP_COUNT = XAUDIO2_MAX_LOOP_COUNT;
   static const unsigned LOOP_INFINITE = XAUDIO2_LOOP_INFINITE;
 
+  AudioWin() = default;
+  virtual ~AudioWin() = default;
+
+  AudioWin(const AudioWin&) = delete;
+  AudioWin& operator=(const AudioWin&) = delete;
+
   bool Init() override;
   void Uninit() override;
-  AudioFileHandle Load(xstring filePath,
+  AudioFileHandle Load(const xstring& filePath,
                        AudioCategory category,
                        AudioFormat format,
                        int64_t loopBackPcmSamplePos = 0,
@@ -62,8 +68,8 @@ class AudioWin : public AudioBase {
   // See: https://stackoverflow.com/a/40223133
   const float AUDIO_MAX_VOLUME = 1.0f;
 
-  IXAudio2* m_pXAudio2 = nullptr;
-  IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
+  IXAudio2* pXAudio2_ = nullptr;
+  IXAudio2MasteringVoice* pMasterVoice_ = nullptr;
 
   void ClampVolume(float& volume) override;
 };

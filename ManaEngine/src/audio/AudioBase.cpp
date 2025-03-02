@@ -4,32 +4,32 @@
 namespace Mana {
 
 void AudioBase::StopAll() {
-  for (const auto& pair : m_fileMap) {
+  for (const auto& pair : fileMap_) {
     Stop(pair.first);
   }
 }
 
 void AudioBase::PauseAll() {
-  for (const auto& pair : m_fileMap) {
+  for (const auto& pair : fileMap_) {
     Pause(pair.first);
   }
 }
 
 void AudioBase::ResumeAll() {
-  for (const auto& pair : m_fileMap) {
+  for (const auto& pair : fileMap_) {
     Resume(pair.first);
   }
 }
 
 AudioFileHandle AudioBase::GetNextFreeAudioFileHandle() {
-  AudioFileHandle next = m_lastAudioFileHandle + 1;
+  AudioFileHandle next = lastAudioFileHandle_ + 1;
   if (next > MAX_SOUNDS_LOADED)
     next = 1;  // wrap around
 
   // make sure next value isn't in use
   bool firstPass = true;
   while (true) {
-    if (m_fileMap.find(next) == m_fileMap.end())
+    if (fileMap_.find(next) == fileMap_.end())
       break;
 
     next++;
@@ -43,22 +43,22 @@ AudioFileHandle AudioBase::GetNextFreeAudioFileHandle() {
     }
   }
 
-  m_lastAudioFileHandle = next;
+  lastAudioFileHandle_ = next;
   return next;
 }
 
 void AudioBase::GetStreamingFiles() {
   streamingFiles_.clear();
-  for (auto const& item : m_fileMap) {
-    if (item.second->loadType == AudioLoadType::Streaming) {
+  for (auto const& item : fileMap_) {
+    if (item.second->loadType_ == AudioLoadType::Streaming) {
       streamingFiles_.push_back(item.second);
     }
   }
 }
 
 AudioFileBase* AudioBase::GetAudioFile(AudioFileHandle audioFileHandle) {
-  auto search = m_fileMap.find(audioFileHandle);
-  if (search == m_fileMap.end()) {
+  auto search = fileMap_.find(audioFileHandle);
+  if (search == fileMap_.end()) {
     return nullptr;
   }
 

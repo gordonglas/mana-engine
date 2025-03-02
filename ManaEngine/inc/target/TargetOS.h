@@ -17,4 +17,4 @@
 // Windows Header Files
 #include <windows.h>
 
-#endif
+#endif  // #if _WIN32 || _WIN64

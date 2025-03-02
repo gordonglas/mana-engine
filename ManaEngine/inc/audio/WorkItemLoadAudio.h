@@ -10,56 +10,59 @@ namespace Mana {
 class WorkItemLoadAudio : public IWorkItem {
  public:
   WorkItemLoadAudio(AudioBase* audioEngine,
-                    xstring file,
+                    const xstring& file,
                     AudioCategory audioCategory,
                     AudioFormat audioFormat,
                     int64_t loopBackPcmSamplePos = 0,
                     int simultaneousSounds = 1) {
-    m_pAudioEngine = audioEngine;
-    m_file = file;
-    m_audioCategory = audioCategory;
-    m_audioFormat = audioFormat;
-    m_loopBackPcmSamplePos = loopBackPcmSamplePos;
-    m_simultaneousSounds = simultaneousSounds;
-    m_handle = 0u;
-    m_doneProcessing = false;
+    pAudioEngine_ = audioEngine;
+    file_ = file;
+    audioCategory_ = audioCategory;
+    audioFormat_ = audioFormat;
+    loopBackPcmSamplePos_ = loopBackPcmSamplePos;
+    simultaneousSounds_ = simultaneousSounds;
+    handle_ = 0u;
+    doneProcessing_ = false;
   }
 
-  ~WorkItemLoadAudio() override {}
+  virtual ~WorkItemLoadAudio() = default;
+
+  WorkItemLoadAudio(const WorkItemLoadAudio&) = delete;
+  WorkItemLoadAudio& operator=(const WorkItemLoadAudio&) = delete;
 
   WorkItemType GetType() override { return WorkItemType::LoadAudio; }
 
   void Process() override {
     size_t handle =
-        m_pAudioEngine->Load(m_file, m_audioCategory, m_audioFormat,
-                             m_loopBackPcmSamplePos, m_simultaneousSounds);
+        pAudioEngine_->Load(file_, audioCategory_, audioFormat_,
+                            loopBackPcmSamplePos_, simultaneousSounds_);
 
     {
-      ScopedMutex lock(m_lock);
-      m_handle = handle;
-      m_doneProcessing = true;
+      ScopedMutex lock(lock_);
+      handle_ = handle;
+      doneProcessing_ = true;
     }
   }
 
   size_t GetHandleIfDoneProcessing() override {
-    ScopedMutex lock(m_lock);
-    if (m_doneProcessing) {
-      return m_handle;
+    ScopedMutex lock(lock_);
+    if (doneProcessing_) {
+      return handle_;
     } else {
       return 0u;
     }
   }
 
  private:
-  Mutex m_lock;
-  AudioBase* m_pAudioEngine;
-  xstring m_file;
-  AudioCategory m_audioCategory;
-  AudioFormat m_audioFormat;
-  int64_t m_loopBackPcmSamplePos;
-  int m_simultaneousSounds;
-  size_t m_handle;
-  bool m_doneProcessing;
+  Mutex lock_;
+  AudioBase* pAudioEngine_;
+  xstring file_;
+  AudioCategory audioCategory_;
+  AudioFormat audioFormat_;
+  int64_t loopBackPcmSamplePos_;
+  int simultaneousSounds_;
+  size_t handle_;
+  bool doneProcessing_;
 };
 
 }  // namespace Mana

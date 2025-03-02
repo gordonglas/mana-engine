@@ -5,10 +5,10 @@
 namespace Mana {
 
 GraphicsDeviceDirectX11Win::GraphicsDeviceDirectX11Win()
-    : adapter(nullptr),
-      featureLevel(D3D_FEATURE_LEVEL_1_0_CORE),
-      device(nullptr),
-      deviceContext(nullptr) {}
+    : adapter_(nullptr),
+      featureLevel_(D3D_FEATURE_LEVEL_1_0_CORE),
+      device_(nullptr),
+      deviceContext_(nullptr) {}
 
 GraphicsDeviceDirectX11Win::~GraphicsDeviceDirectX11Win() {
   Uninit();
@@ -19,9 +19,9 @@ bool GraphicsDeviceDirectX11Win::Init() {
 }
 
 void GraphicsDeviceDirectX11Win::Uninit() {
-  if (adapter) {
-    adapter->Release();
-    adapter = nullptr;
+  if (adapter_) {
+    adapter_->Release();
+    adapter_ = nullptr;
   }
 }
 
@@ -35,7 +35,7 @@ bool GraphicsDeviceDirectX11Win::GetSupportedMultisampleLevels(
   ManaLogLnInfo(Channel::Graphics, L"Supported multisample levels:");
   U32 qualityLevels;
   while (sampleCount <= maxSampleCount) {
-    HRESULT hr = device->CheckMultisampleQualityLevels(
+    HRESULT hr = device_->CheckMultisampleQualityLevels(
         GraphicsDeviceDirectX11Win::dxgiFormat, sampleCount, &qualityLevels);
     if (SUCCEEDED(hr) && qualityLevels > 0) {
       MultisampleLevel level = {};

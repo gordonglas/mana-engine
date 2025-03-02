@@ -4,28 +4,28 @@
 namespace Mana {
 
 AudioFileBase::AudioFileBase()
-    : audioFileHandle(0),
-      category(AudioCategory::Sound),
-      loadType(AudioLoadType::Static),
-      format(AudioFormat::Wav),
-      pan(0.0f),
-      isPaused(false),
-      isStopped(true),
-      pDataBuffer(nullptr),
-      dataBufferSize(0),
-      loopCount(0),
-      loopBackPcmSamplePos(0),
-      currentStreamBufIndex(0),
-      fileSize(0),
-      totalPcmBytes(0),
-      currentTotalPcmPos(0),
-      lastBufferPlaying(false) {
+    : audioFileHandle_(0),
+      category_(AudioCategory::Sound),
+      loadType_(AudioLoadType::Static),
+      format_(AudioFormat::Wav),
+      pan_(0.0f),
+      isPaused_(false),
+      isStopped_(true),
+      fileSize_(0),
+      pDataBuffer_(nullptr),
+      dataBufferSize_(0),
+      currentStreamBufIndex_(0),
+      totalPcmBytes_(0),
+      currentTotalPcmPos_(0),
+      lastBufferPlaying_(false),
+      loopCount_(0),
+      loopBackPcmSamplePos_(0) {
 }
 
 AudioFileBase::~AudioFileBase() {
-  if (pDataBuffer) {
-    delete[] pDataBuffer;
-    pDataBuffer = nullptr;
+  if (pDataBuffer_) {
+    delete[] pDataBuffer_;
+    pDataBuffer_ = nullptr;
   }
 }
 

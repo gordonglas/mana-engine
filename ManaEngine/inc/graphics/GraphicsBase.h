@@ -50,8 +50,11 @@ struct GraphicsAdaptor {
 
 class GraphicsBase {
  public:
-  GraphicsBase() {}
-  virtual ~GraphicsBase() {}
+  GraphicsBase() = default;
+  virtual ~GraphicsBase() = default;
+
+  GraphicsBase(const GraphicsBase&) = delete;
+  GraphicsBase& operator=(const GraphicsBase&) = delete;
 
   virtual bool Init() = 0;
   virtual void Uninit() = 0;

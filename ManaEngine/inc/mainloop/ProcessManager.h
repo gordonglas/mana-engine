@@ -11,7 +11,11 @@ class ProcessManager {
   typedef std::list<StrongProcessPtr> ProcessList;
 
  public:
-  ~ProcessManager();
+  ProcessManager() = default;
+  virtual ~ProcessManager();
+
+  ProcessManager(const ProcessManager&) = delete;
+  ProcessManager& operator=(const ProcessManager&) = delete;
 
   // interface
   unsigned int UpdateProcesses(unsigned long deltaMs);
@@ -19,10 +23,10 @@ class ProcessManager {
   void AbortAllProcesses(bool immediate);
 
   // accessors
-  unsigned int GetProcessCount() const { return (int)m_processList.size(); }
+  unsigned int GetProcessCount() const { return (int)processList_.size(); }
 
  private:
-  ProcessList m_processList;
+  ProcessList processList_;
 
   void ClearAllProcesses();  // should only be called by destructor
 };

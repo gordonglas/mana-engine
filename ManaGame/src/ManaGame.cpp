@@ -189,7 +189,7 @@ bool ManaGame::OnInit() {
     return false;
   }
 
-  if (!ComInitilizer::Init()) {
+  if (!ComInitializer::Init()) {
     return false;
   }
 
@@ -360,7 +360,7 @@ bool ManaGame::OnShutdown() {
     g_pEventMan = nullptr;
   }
 
-  ComInitilizer::Uninit();
+  ComInitializer::Uninit();
 
   return true;
 }

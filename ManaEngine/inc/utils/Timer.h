@@ -10,6 +10,11 @@ typedef std::chrono::high_resolution_clock clock_type;
 class Timer {
  public:
   Timer();
+  virtual ~Timer() = default;
+
+  Timer(const Timer&) = delete;
+  Timer& operator=(const Timer&) = delete;
+
   void Reset();
   // milliseconds since init or last reset
   uint64_t GetMilliseconds();

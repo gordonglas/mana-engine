@@ -16,8 +16,11 @@ enum class InputDeviceChangeType {
 
 class InputBase {
  public:
-  InputBase();
-  virtual ~InputBase();
+  InputBase() = default;
+  virtual ~InputBase() = default;
+
+  InputBase(const InputBase&) = delete;
+  InputBase& operator=(const InputBase&) = delete;
 
   virtual bool Init() = 0;
   virtual void Uninit() = 0;
@@ -68,4 +71,4 @@ struct InputAction {
   U8 deviceChangeType;
 };
 
-}
+}  // namespace Mana

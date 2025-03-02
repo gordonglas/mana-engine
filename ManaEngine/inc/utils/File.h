@@ -12,8 +12,11 @@ namespace Mana {
 
 class File {
  public:
-  File() {}
-  ~File();
+  File() = default;
+  virtual ~File();
+
+  File(const File&) = delete;
+  File& operator=(const File&) = delete;
 
   bool Open(const xchar* fileName, const xchar* mode);
   // allows you to manage your own buffer
@@ -24,15 +27,15 @@ class File {
   // and synchronously calls Read until all bytes
   // are read into an internal buffer.
   size_t ReadAllBytes(const xchar* fileName);
-  unsigned char* GetBuffer() { return m_pBuf; }
+  unsigned char* GetBuffer() { return pBuf_; }
   size_t GetFileSize() const { return fileSize_; };
 
   static size_t GetFileSize(const xchar* fileName);
 
  private:
-  xstring m_fileName;
-  FILE* m_pFile = nullptr;
-  unsigned char* m_pBuf = nullptr;
+  xstring fileName_;
+  FILE* pFile_ = nullptr;
+  unsigned char* pBuf_ = nullptr;
   size_t fileSize_ = 0;
 };
 

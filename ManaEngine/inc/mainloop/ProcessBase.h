@@ -32,16 +32,9 @@ class ProcessBase {
   ProcessBase();
   virtual ~ProcessBase();
 
- protected:
-  // interface;
-  // these functions should be overridden by the subclass as needed
-  virtual void VOnInit(void) { m_state = State::RUNNING; }
-  virtual void VOnUpdate(unsigned long deltaMs) = 0;
-  virtual void VOnSuccess(void) {}
-  virtual void VOnFail(void) {}
-  virtual void VOnAbort(void) {}
+  ProcessBase(const ProcessBase&) = delete;
+  ProcessBase& operator=(const ProcessBase&) = delete;
 
- public:
   // Functions for ending the process.
   inline void Succeed(void);
   inline void Fail(void);
@@ -51,30 +44,38 @@ class ProcessBase {
   inline void UnPause(void);
 
   // accessors
-  State GetState(void) const { return m_state; }
+  State GetState(void) const { return state_; }
   bool IsAlive(void) const {
-    return (m_state == State::RUNNING || m_state == State::PAUSED);
+    return (state_ == State::RUNNING || state_ == State::PAUSED);
   }
   bool IsDead(void) const {
-    return (m_state == State::SUCCEEDED || m_state == State::FAILED ||
-            m_state == State::ABORTED);
+    return (state_ == State::SUCCEEDED || state_ == State::FAILED ||
+            state_ == State::ABORTED);
   }
-  bool IsRemoved(void) const { return (m_state == State::REMOVED); }
-  bool IsPaused(void) const { return m_state == State::PAUSED; }
+  bool IsRemoved(void) const { return (state_ == State::REMOVED); }
+  bool IsPaused(void) const { return state_ == State::PAUSED; }
 
   // child functions
   inline void AttachChild(StrongProcessPtr pChild);
   StrongProcessPtr RemoveChild(void);  // releases ownership of the child
   StrongProcessPtr PeekChild(void) {
-    return m_pChild;
-  }  // doesn’t release
-     // ownership of child
+    return pChild_;
+  }  // doesn’t release ownership of child
+
+ protected:
+  // interface;
+  // these functions should be overridden by the subclass as needed
+  virtual void VOnInit(void) { state_ = State::RUNNING; }
+  virtual void VOnUpdate(unsigned long deltaMs) = 0;
+  virtual void VOnSuccess(void) {}
+  virtual void VOnFail(void) {}
+  virtual void VOnAbort(void) {}
 
  private:
-  State m_state;
-  StrongProcessPtr m_pChild;  // child process is optional
+  State state_;
+  StrongProcessPtr pChild_;  // child process is optional
 
-  void SetState(State newState) { m_state = newState; }
+  void SetState(State newState) { state_ = newState; }
 
   friend class ProcessManager;
 };
@@ -82,44 +83,42 @@ class ProcessBase {
 // inline function definitions --------------------------------------------
 
 inline void ProcessBase::Succeed() {
-  // GCC_ASSERT(m_state == RUNNING || m_state == PAUSED);
-  m_state = State::SUCCEEDED;
+  //GCC_ASSERT(state_ == RUNNING || state_ == PAUSED);
+  state_ = State::SUCCEEDED;
 }
 
 inline void ProcessBase::Fail() {
-  // GCC_ASSERT(m_state == RUNNING || m_state == PAUSED);
-  m_state = State::FAILED;
+  //GCC_ASSERT(state_ == RUNNING || state_ == PAUSED);
+  state_ = State::FAILED;
 }
 
 inline void ProcessBase::AttachChild(StrongProcessPtr pChild) {
-  if (m_pChild)
-    m_pChild->AttachChild(pChild);
+  if (pChild_)
+    pChild_->AttachChild(pChild);
   else
-    m_pChild = pChild;
+    pChild_ = pChild;
 }
 
 inline void ProcessBase::Pause() {
-  if (m_state == State::RUNNING)
-    m_state = State::PAUSED;
-  // else
-  //	GCC_WARNING("Attempting to pause a process that isn't running");
+  if (state_ == State::RUNNING)
+    state_ = State::PAUSED;
+  //else
+  //  GCC_WARNING("Attempting to pause a process that isn't running");
 }
 
 inline void ProcessBase::UnPause() {
-  if (m_state == State::PAUSED)
-    m_state = State::RUNNING;
-  // else
-  //	GCC_WARNING("Attempting to unpause a process that isn't paused");
+  if (state_ == State::PAUSED)
+    state_ = State::RUNNING;
+  //else
+  //  GCC_WARNING("Attempting to unpause a process that isn't paused");
 }
 
-/*
-inline StrongProcessPtr ProcessBase::GetTopLevelProcess()
-{
-        if (m_pParent)
-                return m_pParent->GetTopLevelProcess();
-        else
-                return this;
-}
-*/
+//inline StrongProcessPtr ProcessBase::GetTopLevelProcess()
+//{
+//  if (m_pParent)
+//    return m_pParent->GetTopLevelProcess();
+//  else
+//    return this;
+//}
 
 }  // namespace Mana

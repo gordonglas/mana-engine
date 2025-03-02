@@ -8,10 +8,13 @@ namespace Mana {
 
 class ManaGameBase {
  public:
-  ManaGameBase() {}
-  virtual ~ManaGameBase() {}
+  ManaGameBase();
+  virtual ~ManaGameBase() = default;
 
-  bool Run(int argc, char** argv, xstring title);
+  ManaGameBase(const ManaGameBase&) = delete;
+  ManaGameBase& operator=(const ManaGameBase&) = delete;
+
+  bool Run(int argc, char** argv, const xstring& title);
 
   xstring& GetLastError() { return error_; }
 

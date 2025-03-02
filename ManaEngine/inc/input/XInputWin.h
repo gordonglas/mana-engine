@@ -25,7 +25,10 @@ struct GamepadTimer {
 class XInput {
  public:
   XInput();
-  ~XInput();
+  virtual ~XInput() = default;
+
+  XInput(const XInput&) = delete;
+  XInput& operator=(const XInput&) = delete;
 
   XINPUT_STATE state_[4] = {};
 

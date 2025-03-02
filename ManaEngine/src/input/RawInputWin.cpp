@@ -13,7 +13,6 @@ namespace Mana {
 RawInputWin::RawInputWin(HWND hwndTarget)
     : hwndTarget_(hwndTarget),
       pRawInput_(nullptr), rawInputSizeBytes_(80) {}
-RawInputWin::~RawInputWin() {}
 
 bool RawInputWin::Init() {
   // allocate dynamic memory for RAWINPUT type used at run-time.
@@ -153,8 +152,8 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
 
 // NOTE: Some devices don't work well with Raw Input API OnInputDeviceChange
 // notifications, such as Nintendo Switch Pro controllers, so we can only
-// really use OnInputDeviceChange for keyboards. We use JoyShockLibrary and
-// XInput for gamepads anyway, so it's not a problem.
+// really use OnInputDeviceChange for keyboards. We use XInput for gamepads
+// anyway, so it's not a problem.
 bool RawInputWin::OnInputDeviceChange(InputDeviceChangeType deviceChangeType,
                                       U64 deviceId) {
   assert(deviceId > 0 && "null deviceId!!!");

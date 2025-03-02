@@ -28,6 +28,12 @@ extern EventManager* g_pEventMan;
 
 class EventManager {
  public:
+  EventManager() = default;
+  virtual ~EventManager() = default;
+
+  EventManager(const EventManager&) = delete;
+  EventManager& operator=(const EventManager&) = delete;
+
   bool Init() { return true; }
   void Uninit() {}
 
@@ -39,4 +45,4 @@ class EventManager {
   SynchronizedQueue<SynchronizedEvent> syncQueue_;
 };
 
-}
+}  // namespace Mana

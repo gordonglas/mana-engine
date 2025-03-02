@@ -22,17 +22,17 @@ std::wstring GetDateTimeNow() {
 // Requires call to CoInitialize. Call: utils/Com.h::Init.
 // TODO: call Com from here and make it safe to do so (with a reference count?)
 bool AudioWin::Init() {
-  m_pXAudio2 = nullptr;
-  m_pMasterVoice = nullptr;
+  pXAudio2_ = nullptr;
+  pMasterVoice_ = nullptr;
 
   HRESULT hr;
-  if (FAILED(hr = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_USE_DEFAULT_PROCESSOR)))
+  if (FAILED(hr = XAudio2Create(&pXAudio2_, 0, XAUDIO2_USE_DEFAULT_PROCESSOR)))
     return false;
 
-  if (FAILED(hr = m_pXAudio2->CreateMasteringVoice(&m_pMasterVoice)))
+  if (FAILED(hr = pXAudio2_->CreateMasteringVoice(&pMasterVoice_)))
     return false;
 
-  m_lastAudioFileHandle = 0;
+  lastAudioFileHandle_ = 0;
 
   return true;
 }
@@ -40,36 +40,36 @@ bool AudioWin::Init() {
 void AudioWin::Uninit() {
   // stop and destroy all voices and buffers by calling Unload on all AudioFiles
 
-  if (m_pXAudio2) {
-    m_pXAudio2->StopEngine();
+  if (pXAudio2_) {
+    pXAudio2_->StopEngine();
   }
 
-  // since Unload calls "m_fileMap.erase",
+  // since Unload calls "fileMap_.erase",
   // and therefore alters the foreach iterator,
   // first form a list of audio handles,
   // then use those to call Unload.
   std::vector<AudioFileHandle> fileHandleList;
-  for (auto it = m_fileMap.begin(); it != m_fileMap.end(); ++it) {
+  for (auto it = fileMap_.begin(); it != fileMap_.end(); ++it) {
     AudioFileBase* pAudioFile = it->second;
-    fileHandleList.push_back(pAudioFile->audioFileHandle);
+    fileHandleList.push_back(pAudioFile->audioFileHandle_);
   }
 
   for (size_t i = 0; i < fileHandleList.size(); ++i) {
     Unload(fileHandleList[i]);
   }
 
-  if (m_pMasterVoice) {
-    m_pMasterVoice->DestroyVoice();
-    m_pMasterVoice = nullptr;
+  if (pMasterVoice_) {
+    pMasterVoice_->DestroyVoice();
+    pMasterVoice_ = nullptr;
   }
 
-  if (m_pXAudio2) {
-    m_pXAudio2->Release();
-    m_pXAudio2 = nullptr;
+  if (pXAudio2_) {
+    pXAudio2_->Release();
+    pXAudio2_ = nullptr;
   }
 }
 
-AudioFileHandle AudioWin::Load(xstring filePath,
+AudioFileHandle AudioWin::Load(const xstring& filePath,
                                AudioCategory category,
                                AudioFormat format,
                                int64_t loopBackPcmSamplePos,
@@ -87,17 +87,17 @@ AudioFileHandle AudioWin::Load(xstring filePath,
   if (!pFile)
     return 0;
 
-  pFile->filePath = filePath;
-  pFile->category = category;
-  pFile->format = format;
-  pFile->loopBackPcmSamplePos = loopBackPcmSamplePos;
+  pFile->filePath_ = filePath;
+  pFile->category_ = category;
+  pFile->format_ = format;
+  pFile->loopBackPcmSamplePos_ = loopBackPcmSamplePos;
 
   if (!pFile->Load(filePath)) {
     delete pFile;
     return 0;
   }
 
-  if (simultaneousSounds > 1 && pFile->loadType == AudioLoadType::Streaming) {
+  if (simultaneousSounds > 1 && pFile->loadType_ == AudioLoadType::Streaming) {
     assert(false &&
            "Audio file is too big to support multiple simultaneous sounds");
     delete pFile;
@@ -110,9 +110,9 @@ AudioFileHandle AudioWin::Load(xstring filePath,
     return 0;
   }
 
-  pFile->audioFileHandle = audioFileHandle;
+  pFile->audioFileHandle_ = audioFileHandle;
 
-  m_fileMap.insert(std::map<AudioFileHandle, AudioFileBase*>::value_type(
+  fileMap_.insert(std::map<AudioFileHandle, AudioFileBase*>::value_type(
       audioFileHandle, pFile));
 
   int numSounds = simultaneousSounds;
@@ -120,30 +120,30 @@ AudioFileHandle AudioWin::Load(xstring filePath,
     IXAudio2SourceVoice* pSourceVoice = nullptr;
 
     //if (pFile->loadType == AudioLoadType::Streaming) {
-    //  if (FAILED(m_pXAudio2->CreateSourceVoice(
-    //          &pSourceVoice, (WAVEFORMATEX*)&pFile->wfx, 0u, 2.0f,
+    //  if (FAILED(pXAudio2_->CreateSourceVoice(
+    //          &pSourceVoice, (WAVEFORMATEX*)&pFile->wfx_, 0u, 2.0f,
     //          (IXAudio2VoiceCallback*)&voiceCallback))) {
     //    OutputDebugStringW(L"ERROR: CreateSourceVoice streaming failed\n");
     //    delete pFile;
     //    return 0;
     //  }
     //} else {
-      if (FAILED(m_pXAudio2->CreateSourceVoice(&pSourceVoice,
-                                               (WAVEFORMATEX*)&pFile->wfx))) {
+      if (FAILED(pXAudio2_->CreateSourceVoice(&pSourceVoice,
+                                               (WAVEFORMATEX*)&pFile->wfx_))) {
         OutputDebugStringW(L"ERROR: CreateSourceVoice failed\n");
         delete pFile;
         return 0;
       }
     //}
 
-    pFile->sourceVoices.push_back(pSourceVoice);
+    pFile->sourceVoices_.push_back(pSourceVoice);
     numSounds--;
   }
 
   // set defaults
-  pFile->sourceVoicePos = 0;
-  pFile->isPaused = false;
-  pFile->pan = 0.0f;
+  pFile->sourceVoicePos_ = 0;
+  pFile->isPaused_ = false;
+  pFile->pan_ = 0.0f;
 
   return audioFileHandle;
 }
@@ -154,8 +154,8 @@ void AudioWin::Unload(AudioFileHandle audioFileHandle) {
     return;
   }
 
-  for (size_t i = 0; i < pAudioFile->sourceVoices.size(); ++i) {
-    auto* pSourceVoice = pAudioFile->sourceVoices[i];
+  for (size_t i = 0; i < pAudioFile->sourceVoices_.size(); ++i) {
+    auto* pSourceVoice = pAudioFile->sourceVoices_[i];
 
     // DestroyVoice waits for the XAudio2 audio processing thread to be
     // idle, so it can take a little while (typically no more than a
@@ -167,9 +167,9 @@ void AudioWin::Unload(AudioFileHandle audioFileHandle) {
     pSourceVoice = nullptr;
   }
 
-  m_fileMap.erase(pAudioFile->audioFileHandle);
+  fileMap_.erase(pAudioFile->audioFileHandle_);
 
-  pAudioFile->sourceVoices.clear();
+  pAudioFile->sourceVoices_.clear();
 
   pAudioFile->Unload();
 
@@ -185,15 +185,15 @@ void AudioWin::Update() {
   for (AudioFileBase* pFileBase : streamingFiles_) {
     AudioFileWin* pFile = static_cast<AudioFileWin*>(pFileBase);
 
-    if (pFile->isStopped)
+    if (pFile->isStopped_)
       continue;
 
-    if (pFile->lastBufferPlaying) {
+    if (pFile->lastBufferPlaying_) {
       // last buffer just finished playing.
       //OutputDebugStringW(L"file done playing\n");
-      pFile->currentStreamBufIndex = 0;
+      pFile->currentStreamBufIndex_ = 0;
       pFile->StreamSeek(0);
-      pFile->isStopped = true;
+      pFile->isStopped_ = true;
       continue;
     }
 
@@ -201,10 +201,10 @@ void AudioWin::Update() {
     // we still want to fill it's buffers and queue them on it's
     // XAudio2-voice. They just won't play until the sound is resumed.
 
-    int bytesPerSample = pFile->wfx.Format.wBitsPerSample / 8;
+    int bytesPerSample = pFile->wfx_.Format.wBitsPerSample / 8;
 
     // get number of buffers currently in the XAudio2-Voice queue
-    pFile->sourceVoices[0]->GetState(&voiceState,
+    pFile->sourceVoices_[0]->GetState(&voiceState,
                                      XAUDIO2_VOICE_NOSAMPLESPLAYED);
 
     while (voiceState.BuffersQueued < AudioStreamBufCount) {
@@ -214,25 +214,24 @@ void AudioWin::Update() {
       //assert(voiceState.BuffersQueued > 0 && "BuffersQueued == 0!");
 
       // init next buffer with silence
-      memset(
-          &pFile
-               ->pDataBuffer[pFile->currentStreamBufIndex * AudioStreamBufSize],
-          0, AudioStreamBufSize);
+      memset(&pFile->pDataBuffer_[pFile->currentStreamBufIndex_ *
+                                  AudioStreamBufSize],
+             0, AudioStreamBufSize);
 
       buffer = {0};
 
       int readBufLen = AudioStreamBufSize;  // multiple of 4
 
-      size_t destBufPos = pFile->currentStreamBufIndex * AudioStreamBufSize;
+      size_t destBufPos = pFile->currentStreamBufIndex_ * AudioStreamBufSize;
       unsigned currentBytesRead = 0;
       long actualBytesRead = 1;
       int ovBitstream = 0;
 
       int bytesToPcmEOF =
-          (int)(pFile->totalPcmBytes - pFile->currentTotalPcmPos);
-      // OutputDebugStringW((std::wstring(L"Audio Update: bytesToPcmEOF: ") +
-      //                     std::to_wstring(bytesToPcmEOF) + L"\n")
-      //                        .c_str());
+          (int)(pFile->totalPcmBytes_ - pFile->currentTotalPcmPos_);
+      //OutputDebugStringW((std::wstring(L"Audio Update: bytesToPcmEOF: ") +
+      //                    std::to_wstring(bytesToPcmEOF) + L"\n")
+      //                       .c_str());
       bool reachedEOF = false;
       if (bytesToPcmEOF < readBufLen) {
         readBufLen = bytesToPcmEOF;
@@ -246,7 +245,7 @@ void AudioWin::Update() {
 
       while (actualBytesRead && currentBytesRead < maxBytesToRead) {
         actualBytesRead = ::ov_read(
-            &pOggFile->oggVorbisFile_, (char*)&pFile->pDataBuffer[destBufPos],
+            &pOggFile->oggVorbisFile_, (char*)&pFile->pDataBuffer_[destBufPos],
             readBufLen, 0, bytesPerSample, 1, &ovBitstream);
         //OutputDebugStringW(
         //    (std::wstring(L"Audio Update: ov_read actualBytesRead: ") +
@@ -255,29 +254,29 @@ void AudioWin::Update() {
         assert(actualBytesRead >= 0 && "ov_read failed");
         destBufPos += actualBytesRead;
         currentBytesRead += actualBytesRead;
-        pFile->currentTotalPcmPos += actualBytesRead;
+        pFile->currentTotalPcmPos_ += actualBytesRead;
         //OutputDebugStringW((std::wstring(L"Audio Update: ov_read pcmPos: ") +
-        //                    std::to_wstring(pFile->currentTotalPcmPos) + L"\n")
+        //                    std::to_wstring(pFile->currentTotalPcmPos_) + L"\n")
         //                       .c_str());
         if (maxBytesToRead - currentBytesRead < (unsigned)readBufLen) {
           readBufLen = (int)maxBytesToRead - currentBytesRead;
         }
       }
 
-      // bool onLastLoop = false;
-      if (reachedEOF && pFile->loopCount > 0 &&
-          pFile->loopCount != AudioBase::LOOP_INFINITE) {
-        pFile->loopCount--;
-        // if (pFile->loopCount == 0) {
-        //   onLastLoop = true;
-        // }
+      //bool onLastLoop = false;
+      if (reachedEOF && pFile->loopCount_ > 0 &&
+          pFile->loopCount_ != AudioBase::LOOP_INFINITE) {
+        pFile->loopCount_--;
+        //if (pFile->loopCount_ == 0) {
+        //  onLastLoop = true;
+        //}
       }
 
       // if reached the end of file and still looping,
       // reset position to start of the file,
       // and fill the rest of the destination buffer.
-      if (reachedEOF && pFile->loopCount > 0) {
-        pFile->StreamSeek(pFile->loopBackPcmSamplePos);
+      if (reachedEOF && pFile->loopCount_ > 0) {
+        pFile->StreamSeek(pFile->loopBackPcmSamplePos_);
 
         if (currentBytesRead < AudioStreamBufSize) {
           // fill the rest of the destination buffer
@@ -286,8 +285,8 @@ void AudioWin::Update() {
           while (actualBytesRead && currentBytesRead < AudioStreamBufSize) {
             actualBytesRead =
                 ::ov_read(&pOggFile->oggVorbisFile_,
-                          (char*)&pFile->pDataBuffer[destBufPos], readBufLen, 0,
-                          bytesPerSample, 1, &ovBitstream);
+                          (char*)&pFile->pDataBuffer_[destBufPos], readBufLen,
+                          0, bytesPerSample, 1, &ovBitstream);
             //OutputDebugStringW(
             //    (std::wstring(L"Audio Update: ov_read actualBytesRead: ") +
             //     std::to_wstring(actualBytesRead) + L"\n")
@@ -295,7 +294,7 @@ void AudioWin::Update() {
             assert(actualBytesRead >= 0 && "ov_read failed");
             destBufPos += actualBytesRead;
             currentBytesRead += actualBytesRead;
-            pFile->currentTotalPcmPos += actualBytesRead;
+            pFile->currentTotalPcmPos_ += actualBytesRead;
             if (AudioStreamBufSize - currentBytesRead < readBufLen) {
               readBufLen = AudioStreamBufSize - currentBytesRead;
             }
@@ -303,36 +302,35 @@ void AudioWin::Update() {
         }
       } else {  // not looping (or on last loop)
         if (reachedEOF) {
-          pFile->lastBufferPlaying = true;
-          //OutputDebugStringW(L"Audio Update: set lastBufferPlaying true\n");
+          pFile->lastBufferPlaying_ = true;
+          //OutputDebugStringW(L"Audio Update: set lastBufferPlaying_ true\n");
         }
       }
 
       buffer.AudioBytes = currentBytesRead;
-      buffer.pAudioData =
-          &pFile
-               ->pDataBuffer[pFile->currentStreamBufIndex * AudioStreamBufSize];
-      if (pFile->lastBufferPlaying) {
+      buffer.pAudioData = &pFile->pDataBuffer_[pFile->currentStreamBufIndex_ *
+                                               AudioStreamBufSize];
+      if (pFile->lastBufferPlaying_) {
         buffer.Flags = XAUDIO2_END_OF_STREAM;
       }
 
-      pFile->currentStreamBufIndex++;
-      if (pFile->currentStreamBufIndex == AudioStreamBufCount) {
-        pFile->currentStreamBufIndex = 0;
+      pFile->currentStreamBufIndex_++;
+      if (pFile->currentStreamBufIndex_ == AudioStreamBufCount) {
+        pFile->currentStreamBufIndex_ = 0;
       }
 
       HRESULT hr;
-      if (FAILED(hr = pFile->sourceVoices[0]->SubmitSourceBuffer(&buffer))) {
+      if (FAILED(hr = pFile->sourceVoices_[0]->SubmitSourceBuffer(&buffer))) {
         OutputDebugStringW(L"Audio Update: SubmitSourceBuffer failed\n");
         assert(false && "Audio Update: SubmitSourceBuffer failed");
         return;
       }
 
-      if (pFile->lastBufferPlaying) {
+      if (pFile->lastBufferPlaying_) {
         break;
       }
 
-      pFile->sourceVoices[0]->GetState(&voiceState,
+      pFile->sourceVoices_[0]->GetState(&voiceState,
                                        XAUDIO2_VOICE_NOSAMPLESPLAYED);
     }
   }
@@ -345,30 +343,30 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
   }
 
   // if paused, resume
-  if (pFile->isPaused) {
+  if (pFile->isPaused_) {
     Resume(audioFileHandle);
     return true;
   }
 
   // if streaming sound is already playing, do nothing.
-  if (pFile->loadType == AudioLoadType::Streaming && !pFile->isPaused &&
+  if (pFile->loadType_ == AudioLoadType::Streaming && !pFile->isPaused_ &&
       IsPlaying(audioFileHandle)) {
     return true;
   }
 
   IXAudio2SourceVoice* pSourceVoice =
-      pFile->sourceVoices[pFile->sourceVoicePos];
+      pFile->sourceVoices_[pFile->sourceVoicePos_];
 
-  if (pFile->sourceVoicePos == pFile->sourceVoices.size() - 1) {
-    pFile->sourceVoicePos = 0;
+  if (pFile->sourceVoicePos_ == pFile->sourceVoices_.size() - 1) {
+    pFile->sourceVoicePos_ = 0;
   } else {
-    pFile->sourceVoicePos++;
+    pFile->sourceVoicePos_++;
   }
 
   assert(loopCount <= AudioBase::LOOP_INFINITE && "invalid loopCount");
-  pFile->loopCount = loopCount;
+  pFile->loopCount_ = loopCount;
 
-  if (pFile->loadType == AudioLoadType::Static) {
+  if (pFile->loadType_ == AudioLoadType::Static) {
     // It's ok for XAUDIO2_BUFFER objects to only be used temporarily.
     // Per docs here:
     // https://docs.microsoft.com/en-us/windows/win32/api/xaudio2/ns-xaudio2-xaudio2_buffer
@@ -377,13 +375,13 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
     //  can be freed as soon as the IXAudio2SourceVoice::SubmitSourceBuffer call
     //  it is passed to returns." (except for the underlying data buffer,
     //  which we need for streaming anyway, which is
-    //  "AudioFileBase::pDataBuffer")
+    //  "AudioFileBase::pDataBuffer_")
     XAUDIO2_BUFFER buffer = {0};
     buffer.AudioBytes =
-        (UINT32)pFile->dataBufferSize;  // size of the audio buffer in bytes
-    buffer.pAudioData = pFile->pDataBuffer;  // buffer containing audio data
-    buffer.Flags = XAUDIO2_END_OF_STREAM;    // tell the source voice not to
-                                           // expect any data after this buffer
+        (UINT32)pFile->dataBufferSize_;  // Size of the audio buffer in bytes.
+    buffer.pAudioData = pFile->pDataBuffer_;  // Buffer containing audio data.
+    buffer.Flags = XAUDIO2_END_OF_STREAM;     // Tell the source voice not to
+                                           // expect any data after this buffer.
 
     if (FAILED(pSourceVoice->SubmitSourceBuffer(&buffer))) {
       OutputDebugStringW(L"ERROR: Play SubmitSourceBuffer failed!\n");
@@ -398,15 +396,15 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
     // more than 1 buffer to prevent a short silence when the first buffer
     // finishes playing. We will submit all |AudioStreamBufCount| buffers.
 
-    pFile->currentStreamBufIndex = 0;
+    pFile->currentStreamBufIndex_ = 0;
     pFile->StreamSeek(0);
-    pFile->lastBufferPlaying = false;
+    pFile->lastBufferPlaying_ = false;
 
-    int bytesPerSample = pFile->wfx.Format.wBitsPerSample / 8;
+    int bytesPerSample = pFile->wfx_.Format.wBitsPerSample / 8;
 
     size_t bufIndex = 0;
     while (bufIndex < AudioStreamBufCount) {
-      memset(&pFile->pDataBuffer[bufIndex * AudioStreamBufSize], 0,
+      memset(&pFile->pDataBuffer_[bufIndex * AudioStreamBufSize], 0,
              AudioStreamBufSize);
 
       // per "ov_read" docs,
@@ -426,7 +424,7 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
         //   interleaved channel order is listed in the docs for other numbers
         //   of channels. https://xiph.org/vorbis/doc/vorbisfile/ov_read.html
         actualBytesRead = ::ov_read(
-            &pOggFile->oggVorbisFile_, (char*)&pFile->pDataBuffer[destBufPos],
+            &pOggFile->oggVorbisFile_, (char*)&pFile->pDataBuffer_[destBufPos],
             readBufLen, 0, bytesPerSample, 1, &ovBitstream);
         //OutputDebugStringW(
         //    (std::wstring(L"ogg file Play: ov_read actualBytesRead: ") +
@@ -435,10 +433,10 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
         assert(actualBytesRead >= 0 && "ov_read failed");
         destBufPos += actualBytesRead;
         currentBytesRead += actualBytesRead;
-        pFile->currentTotalPcmPos += actualBytesRead;
+        pFile->currentTotalPcmPos_ += actualBytesRead;
         //OutputDebugStringW(
         //    (std::wstring(L"ogg file Play: ov_read pcmPos: ") +
-        //     std::to_wstring(pFile->currentTotalPcmPos) + L"\n")
+        //     std::to_wstring(pFile->currentTotalPcmPos_) + L"\n")
         //        .c_str());
         if (AudioStreamBufSize - currentBytesRead < readBufLen) {
           readBufLen = AudioStreamBufSize - currentBytesRead;
@@ -447,12 +445,12 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
 
       XAUDIO2_BUFFER buffer = {0};
       buffer.AudioBytes = (UINT32)currentBytesRead;
-      buffer.pAudioData = &pFile->pDataBuffer[bufIndex * AudioStreamBufSize];
+      buffer.pAudioData = &pFile->pDataBuffer_[bufIndex * AudioStreamBufSize];
       buffer.Flags = 0;
 
-      pFile->currentStreamBufIndex++;
-      if (pFile->currentStreamBufIndex == AudioStreamBufCount) {
-        pFile->currentStreamBufIndex = 0;
+      pFile->currentStreamBufIndex_++;
+      if (pFile->currentStreamBufIndex_ == AudioStreamBufCount) {
+        pFile->currentStreamBufIndex_ = 0;
       }
 
       if (FAILED(pSourceVoice->SubmitSourceBuffer(&buffer))) {
@@ -469,19 +467,19 @@ bool AudioWin::Play(AudioFileHandle audioFileHandle, uint32_t loopCount) {
     return false;
   }
 
-  pFile->isPaused = false;
-  pFile->isStopped = false;
+  pFile->isPaused_ = false;
+  pFile->isStopped_ = false;
 
   return true;
 }
 
 void AudioWin::Stop(AudioFileHandle audioFileHandle) {
   AudioFileWin* pAudioFile = (AudioFileWin*)GetAudioFile(audioFileHandle);
-  if (!pAudioFile || pAudioFile->isStopped) {
+  if (!pAudioFile || pAudioFile->isStopped_) {
     return;
   }
 
-  for (const auto& pSourceVoice : pAudioFile->sourceVoices) {
+  for (const auto& pSourceVoice : pAudioFile->sourceVoices_) {
     // Flags = XAUDIO2_PLAY_TAILS (if using this, don't call FlushSourceBuffers)
     if (FAILED(pSourceVoice->Stop())) {
       OutputDebugStringW(L"ERROR: Stop failed!\n");
@@ -494,11 +492,11 @@ void AudioWin::Stop(AudioFileHandle audioFileHandle) {
     }
   }
 
-  pAudioFile->isPaused = false;
-  pAudioFile->isStopped = true;
+  pAudioFile->isPaused_ = false;
+  pAudioFile->isStopped_ = true;
 
-  if (pAudioFile->loadType == AudioLoadType::Streaming) {
-    pAudioFile->currentStreamBufIndex = 0;
+  if (pAudioFile->loadType_ == AudioLoadType::Streaming) {
+    pAudioFile->currentStreamBufIndex_ = 0;
     pAudioFile->StreamSeek(0);
   }
 }
@@ -509,7 +507,7 @@ void AudioWin::Pause(AudioFileHandle audioFileHandle) {
     return;
   }
 
-  if (pAudioFile->isPaused) {
+  if (pAudioFile->isPaused_) {
     return;
   }
 
@@ -517,7 +515,7 @@ void AudioWin::Pause(AudioFileHandle audioFileHandle) {
   // (doesn't make sense otherwise)
   // TODO: or does it?? We probably want ability to pause all sounds
   //       (like when pausing the game)
-  if (pAudioFile->sourceVoices.size() > 1) {
+  if (pAudioFile->sourceVoices_.size() > 1) {
     return;
   }
 
@@ -525,7 +523,7 @@ void AudioWin::Pause(AudioFileHandle audioFileHandle) {
     return;
   }
 
-  for (const auto& pSourceVoice : pAudioFile->sourceVoices) {
+  for (const auto& pSourceVoice : pAudioFile->sourceVoices_) {
     // Flags = XAUDIO2_PLAY_TAILS (if using this, don't call FlushSourceBuffers)
     if (FAILED(pSourceVoice->Stop())) {
       OutputDebugStringW(L"ERROR: Stop failed!\n");
@@ -533,7 +531,7 @@ void AudioWin::Pause(AudioFileHandle audioFileHandle) {
     }
   }
 
-  pAudioFile->isPaused = true;
+  pAudioFile->isPaused_ = true;
 }
 
 void AudioWin::Resume(AudioFileHandle audioFileHandle) {
@@ -542,24 +540,24 @@ void AudioWin::Resume(AudioFileHandle audioFileHandle) {
     return;
   }
 
-  if (!pAudioFile->isPaused) {
+  if (!pAudioFile->isPaused_) {
     return;
   }
 
   // TODO: this is kind of a weird restriction and won't allow MUTE to work! Remove it!!
   // Pause (and Resume) only works for files that only have 1 simultaneous sound
   // (doesn't make sense otherwise)
-  if (pAudioFile->sourceVoices.size() > 1) {
+  if (pAudioFile->sourceVoices_.size() > 1) {
     return;
   }
 
-  if (FAILED(pAudioFile->sourceVoices[0]->Start())) {
+  if (FAILED(pAudioFile->sourceVoices_[0]->Start())) {
     OutputDebugStringW(L"ERROR: Resume: Start failed!\n");
     return;
   }
 
-  pAudioFile->isPaused = false;
-  pAudioFile->isStopped = false;
+  pAudioFile->isPaused_ = false;
+  pAudioFile->isStopped_ = false;
 }
 
 float AudioWin::GetVolume(AudioFileHandle audioFileHandle) {
@@ -570,9 +568,9 @@ float AudioWin::GetVolume(AudioFileHandle audioFileHandle) {
 
   // all voices should be at same volume,
   // so return first one.
-  if (pAudioFile->sourceVoices.size() > 0) {
+  if (pAudioFile->sourceVoices_.size() > 0) {
     float volume;
-    pAudioFile->sourceVoices[0]->GetVolume(&volume);
+    pAudioFile->sourceVoices_[0]->GetVolume(&volume);
     return volume;
   }
 
@@ -580,7 +578,7 @@ float AudioWin::GetVolume(AudioFileHandle audioFileHandle) {
 
   // leaving this here for now, for debugging
   // std::vector<float> volumes;
-  // for (const auto& pSourceVoice : pAudioFile->sourceVoices)
+  // for (const auto& pSourceVoice : pAudioFile->sourceVoices_)
   //{
   //    float volume;
   //    pSourceVoice->GetVolume(&volume);
@@ -597,13 +595,13 @@ float AudioWin::GetVolume(AudioCategory category) {
   float avg = 0.0f;
   int x = 1;
   float volume;
-  for (const auto& pair : m_fileMap) {
-    if (pair.second->category == category) {
+  for (const auto& pair : fileMap_) {
+    if (pair.second->category_ == category) {
       AudioFileWin* pFile = (AudioFileWin*)pair.second;
 
       // we assume all voices of a sound have the same volume
-      if (pFile->sourceVoices.size() > 0) {
-        pFile->sourceVoices[0]->GetVolume(&volume);
+      if (pFile->sourceVoices_.size() > 0) {
+        pFile->sourceVoices_[0]->GetVolume(&volume);
 
         avg += (volume - avg) / x;
         ++x;
@@ -615,11 +613,11 @@ float AudioWin::GetVolume(AudioCategory category) {
 }
 
 float AudioWin::GetMasterVolume() {
-  if (!m_pMasterVoice)
+  if (!pMasterVoice_)
     return 1.0f;
 
   float volume;
-  m_pMasterVoice->GetVolume(&volume);
+  pMasterVoice_->GetVolume(&volume);
   return volume;
 }
 
@@ -631,7 +629,7 @@ void AudioWin::SetVolume(AudioFileHandle audioFileHandle, float volume) {
 
   ClampVolume(volume);
 
-  for (const auto& pSourceVoice : pAudioFile->sourceVoices) {
+  for (const auto& pSourceVoice : pAudioFile->sourceVoices_) {
     if (FAILED(pSourceVoice->SetVolume(volume))) {
       OutputDebugStringW(L"ERROR: SetVolume AudioFileHandle: SetVolume failed");
       return;
@@ -642,11 +640,11 @@ void AudioWin::SetVolume(AudioFileHandle audioFileHandle, float volume) {
 void AudioWin::SetVolume(AudioCategory category, float volume) {
   ClampVolume(volume);
 
-  for (const auto& pair : m_fileMap) {
-    if (pair.second->category == category) {
+  for (const auto& pair : fileMap_) {
+    if (pair.second->category_ == category) {
       AudioFileWin* pFile = (AudioFileWin*)pair.second;
 
-      for (const auto& pSourceVoice : pFile->sourceVoices) {
+      for (const auto& pSourceVoice : pFile->sourceVoices_) {
         if (FAILED(pSourceVoice->SetVolume(volume))) {
           OutputDebugStringW(
               L"ERROR: SetVolume AudioCategory: SetVolume failed");
@@ -658,12 +656,12 @@ void AudioWin::SetVolume(AudioCategory category, float volume) {
 }
 
 void AudioWin::SetMasterVolume(float& volume) {
-  if (!m_pMasterVoice)
+  if (!pMasterVoice_)
     return;
 
   ClampVolume(volume);
 
-  if (FAILED(m_pMasterVoice->SetVolume(volume))) {
+  if (FAILED(pMasterVoice_->SetVolume(volume))) {
     OutputDebugStringW(L"ERROR: SetMasterVolume: SetVolume failed");
     return;
   }
@@ -684,7 +682,7 @@ void AudioWin::SetPan(AudioFileHandle audioFileHandle, float pan) {
 
   // get speaker config
   DWORD dwChannelMask;
-  if (FAILED(m_pMasterVoice->GetChannelMask(&dwChannelMask))) {
+  if (FAILED(pMasterVoice_->GetChannelMask(&dwChannelMask))) {
     OutputDebugStringW(L"ERROR: SetPan GetChannelMask failed");
     return;
   }
@@ -736,10 +734,10 @@ void AudioWin::SetPan(AudioFileHandle audioFileHandle, float pan) {
   // Apply the output matrix to the originating voice
 
   XAUDIO2_VOICE_DETAILS masterVoiceDetails;
-  m_pMasterVoice->GetVoiceDetails(&masterVoiceDetails);
+  pMasterVoice_->GetVoiceDetails(&masterVoiceDetails);
 
   XAUDIO2_VOICE_DETAILS voiceDetails;
-  for (const auto& pSourceVoice : pAudioFile->sourceVoices) {
+  for (const auto& pSourceVoice : pAudioFile->sourceVoices_) {
     pSourceVoice->GetVoiceDetails(&voiceDetails);
 
     if (FAILED(pSourceVoice->SetOutputMatrix(
@@ -750,7 +748,7 @@ void AudioWin::SetPan(AudioFileHandle audioFileHandle, float pan) {
     }
   }
 
-  pAudioFile->pan = pan;
+  pAudioFile->pan_ = pan;
 }
 
 float AudioWin::GetPan(AudioFileHandle audioFileHandle) {
@@ -760,7 +758,7 @@ float AudioWin::GetPan(AudioFileHandle audioFileHandle) {
     return 0.0f;
   }
 
-  return pAudioFile->pan;
+  return pAudioFile->pan_;
 }
 
 bool AudioWin::IsPlaying(AudioFileHandle audioFileHandle) {
@@ -770,13 +768,13 @@ bool AudioWin::IsPlaying(AudioFileHandle audioFileHandle) {
     return false;
   }
 
-  if (pAudioFile->isPaused)
+  if (pAudioFile->isPaused_)
     return false;
 
   // returns true if at least one voice of this sound is queued up within
   // XAudio2.
   XAUDIO2_VOICE_STATE state;
-  for (const auto& pSourceVoice : pAudioFile->sourceVoices) {
+  for (const auto& pSourceVoice : pAudioFile->sourceVoices_) {
     pSourceVoice->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
     // BuffersQueued is the number of audio buffers currently queued
     // on the voice, including the one that is processed currently.
@@ -794,7 +792,7 @@ bool AudioWin::IsPaused(AudioFileHandle audioFileHandle) {
     return false;
   }
 
-  return pAudioFile->isPaused;
+  return pAudioFile->isPaused_;
 }
 
 void AudioWin::ClampVolume(float& volume) {

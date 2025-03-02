@@ -20,6 +20,9 @@ class IThread {
   IThread() {}
   virtual ~IThread() {}
 
+  IThread(const IThread&) = delete;
+  IThread& operator=(const IThread&) = delete;
+
   // TODO: maybe hide init somehow? make private with friend?
   virtual bool Init(ThreadFunc pThreadFunc) = 0;
   virtual void Start() = 0;

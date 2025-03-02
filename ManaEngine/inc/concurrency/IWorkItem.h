@@ -8,8 +8,11 @@ enum class WorkItemType { LoadAudio };
 
 class IWorkItem {
  public:
-  IWorkItem() {}
-  virtual ~IWorkItem() {}
+  IWorkItem() = default;
+  virtual ~IWorkItem() = default;
+
+  IWorkItem(const IWorkItem&) = delete;
+  IWorkItem& operator=(const IWorkItem&) = delete;
 
   virtual WorkItemType GetType() = 0;
   virtual void Process() = 0;

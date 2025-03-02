@@ -22,6 +22,10 @@ namespace Mana {
 class GraphicsDirectX11Win : public GraphicsBase {
  public:
   GraphicsDirectX11Win();
+  virtual ~GraphicsDirectX11Win() = default;
+
+  GraphicsDirectX11Win(const GraphicsDirectX11Win&) = delete;
+  GraphicsDirectX11Win& operator=(const GraphicsDirectX11Win&) = delete;
 
   bool Init() override;
   void Uninit() override;

@@ -3,8 +3,10 @@
 namespace Mana {
 
 // use in main thread
-class ComInitilizer {
+class ComInitializer {
  public:
+  ComInitializer() = delete;
+
   static bool Init();
   static void Uninit();
 
