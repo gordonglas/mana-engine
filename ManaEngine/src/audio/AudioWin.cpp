@@ -9,16 +9,6 @@ namespace Mana {
 
 AudioBase* g_pAudioEngine = nullptr;
 
-// TODO: move this somewhere else. (into logger?)
-std::wstring GetDateTimeNow() {
-  SYSTEMTIME st;
-  GetSystemTime(&st);
-  char currentTime[84] = "";
-  sprintf_s(currentTime, "%.4d%.2d%.2d%.2d%.2d%.2d%.4d", st.wYear, st.wMonth,
-            st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
-  return std::wstring(Utf8ToUtf16(currentTime));
-}
-
 // Requires call to CoInitialize. Call: utils/Com.h::Init.
 // TODO: call Com from here and make it safe to do so (with a reference count?)
 bool AudioWin::Init() {

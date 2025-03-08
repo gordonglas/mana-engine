@@ -20,7 +20,6 @@ static void Log(Verbosity verbosity,
 static const wchar_t* GetVerbosityString(Verbosity verbosity);
 static const wchar_t* GetChannelString(Channel channel);
 static std::wstring GetTimeString();
-//static int GetTimeString(wchar_t* buf, size_t bufSize);
 
 bool LogInit(const char* file) {
   strncpy_s(logFile, 20, file, 20);
@@ -85,8 +84,8 @@ static void Log(Verbosity verbosity,
 
   wchar_t bufStart[80];
   int written =
-      std::swprintf(bufStart, 80, L"[%s] %s %s: ", wtime.c_str(),
-                    GetVerbosityString(verbosity), GetChannelString(channel));
+      swprintf_s(bufStart, L"[%s] %s %s: ", wtime.c_str(),
+                 GetVerbosityString(verbosity), GetChannelString(channel));
 
   std::wstring wstr(bufStart);
 
@@ -169,8 +168,8 @@ static std::wstring GetTimeString() {
   GetLocalTime(&time);  // local time. Use GetSystemTime(&time) for UTC.
 
   wchar_t bufTime[20];
-  int written = swprintf(bufTime, 20, L"%02d:%02d:%02d.%03d", time.wHour,
-                         time.wMinute, time.wSecond, time.wMilliseconds);
+  int written = swprintf_s(bufTime, L"%02d:%02d:%02d.%03d", time.wHour,
+                           time.wMinute, time.wSecond, time.wMilliseconds);
 
   std::wstring ret;
   if (written > 0) {
@@ -179,18 +178,5 @@ static std::wstring GetTimeString() {
 
   return ret;
 }
-
-// output in form of "hh:mm:ss.fff"
-//static int GetTimeString(wchar_t* buf, size_t bufSize)
-//{
-//	int ret = 0;
-//
-//	SYSTEMTIME time;
-//	GetLocalTime(&time); // local time. Use GetSystemTime(&time) for UTC.
-//	ret = swprintf(buf, bufSize, L"%02d:%02d:%02d.%03d",
-//		time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
-//
-//	return ret;
-//}
 
 }  // namespace Mana
