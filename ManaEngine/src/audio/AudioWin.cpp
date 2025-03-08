@@ -678,9 +678,7 @@ void AudioWin::SetPan(AudioFileHandle audioFileHandle, float pan) {
   }
 
   // 8 channels support up to 7.1 surround
-  float outputMatrix[8];
-  for (int i = 0; i < 8; i++)
-    outputMatrix[i] = 0;
+  float outputMatrix[8] = {};
 
   // linear panning (simple, but not very accurate for center):
   float left = 0.5f - pan / 2;
