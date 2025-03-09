@@ -332,7 +332,7 @@
     <ClInclude Include="..\..\..\inc\target\TargetOS.h" />
     <ClInclude Include="..\..\..\inc\ui\SimpleMessageBox.h" />
     <ClInclude Include="..\..\..\inc\utils\CommandLine.h" />
-    <ClInclude Include="..\..\..\inc\utils\Com.h" />
+    <ClInclude Include="..\..\..\inc\utils\ScopedComInitializer.h" />
     <ClInclude Include="..\..\..\inc\utils\File.h" />
     <ClInclude Include="..\..\..\inc\utils\Log.h" />
     <ClInclude Include="..\..\..\inc\utils\Memory.h" />
@@ -369,7 +369,7 @@
     <ClCompile Include="..\..\os\WindowWin.cpp" />
     <ClCompile Include="..\..\ui\SimpleMessageBoxWin.cpp" />
     <ClCompile Include="..\..\utils\CommandLine.cpp" />
-    <ClCompile Include="..\..\utils\ComWin.cpp" />
+    <ClCompile Include="..\..\utils\ScopedComInitializerWin.cpp" />
     <ClCompile Include="..\..\utils\FileWin.cpp" />
     <ClCompile Include="..\..\utils\LogWin.cpp" />
     <ClCompile Include="..\..\utils\Memory.cpp" />

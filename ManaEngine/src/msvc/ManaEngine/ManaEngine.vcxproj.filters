@@ -67,7 +67,7 @@
     <ClCompile Include="..\..\utils\CommandLine.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\utils\ComWin.cpp">
+    <ClCompile Include="..\..\utils\ScopedComInitializerWin.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utils\FileWin.cpp">
@@ -225,7 +225,7 @@
     <ClInclude Include="..\..\..\inc\os\WindowBase.h">
       <Filter>src\os</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\inc\utils\Com.h">
+    <ClInclude Include="..\..\..\inc\utils\ScopedComInitializer.h">
       <Filter>src\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\inc\utils\CommandLine.h">

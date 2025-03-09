@@ -9,9 +9,11 @@ namespace Mana {
 
 AudioBase* g_pAudioEngine = nullptr;
 
-// Requires call to CoInitialize. Call: utils/Com.h::Init.
-// TODO: call Com from here and make it safe to do so (with a reference count?)
 bool AudioWin::Init() {
+  if (!com_.IsInitialized()) {
+    return false;
+  }
+
   pXAudio2_ = nullptr;
   pMasterVoice_ = nullptr;
 

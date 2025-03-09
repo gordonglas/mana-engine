@@ -15,8 +15,8 @@
 #include "mainloop/ManaGameBase.h"
 #include "os/WindowWin.h"
 #include "ui/SimpleMessageBox.h"
-#include "utils/Com.h"
 #include "utils/CommandLine.h"
+#include "utils/ScopedComInitializer.h"
 #include "utils/Strings.h"
 
 Mana::xstring title(_X("Unnamed ARPG"));
@@ -174,11 +174,17 @@ class ManaGame : public ManaGameBase {
   bool OnShutdown() final;
 
  private:
+  ScopedComInitializer com_;
   HINSTANCE hInstance_;
   int nCmdShow_;
 };
 
 bool ManaGame::OnInit() {
+  if (!com_.IsInitialized()) {
+    error_ = _X("ComInitializer error");
+    return false;
+  }
+
   ManaGameBase::OnInit();
 
   // TODO: init ConfigManager and load game configs
@@ -186,10 +192,6 @@ bool ManaGame::OnInit() {
   pWindow_ = new WindowWin(hInstance_, nCmdShow_, WndProc);
   if (!pWindow_->CreateMainWindow(commandLine_, title_)) {
     error_ = _X("CreateMainWindow error");
-    return false;
-  }
-
-  if (!ComInitializer::Init()) {
     return false;
   }
 
@@ -359,8 +361,6 @@ bool ManaGame::OnShutdown() {
     delete g_pEventMan;
     g_pEventMan = nullptr;
   }
-
-  ComInitializer::Uninit();
 
   return true;
 }

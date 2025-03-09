@@ -7,6 +7,7 @@
 #include "audio/AudioBase.h"
 #include "audio/AudioFileWin.h"
 #include "target/TargetOS.h"
+#include "utils/ScopedComInitializer.h"
 
 //#pragma comment(lib, "xaudio2_9redist.lib")
 
@@ -67,6 +68,8 @@ class AudioWin : public AudioBase {
   // although clipping can occur at 1.0f as well.
   // See: https://stackoverflow.com/a/40223133
   const float AUDIO_MAX_VOLUME = 1.0f;
+
+  ScopedComInitializer com_;
 
   IXAudio2* pXAudio2_ = nullptr;
   IXAudio2MasteringVoice* pMasterVoice_ = nullptr;
