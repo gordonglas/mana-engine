@@ -22,9 +22,15 @@
     <ClCompile Include="..\..\ManaGame.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\GameThread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Globals.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GameThread.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

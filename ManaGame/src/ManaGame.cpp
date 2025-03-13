@@ -10,6 +10,7 @@
 #include "config/ConfigManager.h"
 #include "debugging/DebugWin.h"
 #include "events/EventManager.h"
+#include "GameThread.h"
 #include "graphics/GraphicsDirectX11Win.h"
 #include "input/InputWin.h"
 #include "mainloop/ManaGameBase.h"
@@ -312,6 +313,8 @@ bool ManaGame::OnStartGameLoop() {
   // our game loop from being called,
   // such as when the window is begin moved.
 
+  // TODO: will be something like `gameThread.Run();`
+  //       called in `ManaGame::OnInitAndStartGameThread`
   gameThread.Init(GetWindow()->GetHWnd());
   gameThread.Start();
 

@@ -148,6 +148,9 @@
     <ClCompile Include="..\..\..\inc\graphics\DirectX11Common.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\inc\mainloop\GameThreadBase.cpp">
+      <Filter>src\mainloop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -278,6 +281,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\graphics\DirectX11Common.h">
       <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\mainloop\GameThreadBase.h">
+      <Filter>src\mainloop</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

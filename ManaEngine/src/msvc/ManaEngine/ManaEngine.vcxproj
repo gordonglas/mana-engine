@@ -322,6 +322,7 @@
     <ClInclude Include="..\..\..\inc\input\InputWin.h" />
     <ClInclude Include="..\..\..\inc\input\RawInputWin.h" />
     <ClInclude Include="..\..\..\inc\input\XInputWin.h" />
+    <ClInclude Include="..\..\..\inc\mainloop\GameThreadBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ManaGameBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessBase.h" />
     <ClInclude Include="..\..\..\inc\mainloop\ProcessManager.h" />
@@ -344,6 +345,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\inc\graphics\DirectX11DebugLayer.cpp" />
     <ClCompile Include="..\..\..\inc\graphics\DirectX11Common.cpp" />
+    <ClCompile Include="..\..\..\inc\mainloop\GameThreadBase.cpp" />
     <ClCompile Include="..\..\audio\AudioBase.cpp" />
     <ClCompile Include="..\..\audio\AudioFileBase.cpp" />
     <ClCompile Include="..\..\audio\AudioFileOggWin.cpp" />

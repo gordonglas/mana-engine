@@ -254,9 +254,11 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\GameThread.cpp" />
     <ClCompile Include="..\..\ManaGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\GameThread.h" />
     <ClInclude Include="..\..\Globals.h" />
   </ItemGroup>
   <ItemGroup>

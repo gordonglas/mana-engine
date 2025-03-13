@@ -10,7 +10,7 @@ namespace Mana {
 // Intended for background tasks, such as loading files.
 
 class IThread;
-typedef unsigned long (*ThreadFunc)(IThread* pThread);
+typedef unsigned long (*ThreadFunc)(void* data);
 
 // Thread interface.
 // Either pass a pointer to your own ThreadFunc,
@@ -24,7 +24,7 @@ class IThread {
   IThread& operator=(const IThread&) = delete;
 
   // TODO: maybe hide init somehow? make private with friend?
-  virtual bool Init(ThreadFunc pThreadFunc) = 0;
+  virtual bool Init(ThreadFunc pThreadFunc, void* data) = 0;
   virtual void Start() = 0;
   // once stopped, you cannot call Start again
   virtual void Stop() = 0;
@@ -43,7 +43,7 @@ class IThread {
 };
 
 namespace ThreadFactory {
-IThread* Create(ThreadFunc pThreadFunc = nullptr);
+IThread* Create(ThreadFunc pThreadFunc = nullptr, void* data = nullptr);
 };
 
 }  // namespace Mana

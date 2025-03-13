@@ -22,7 +22,7 @@ class Thread : public IThread {
     }
   }
 
-  bool Init(ThreadFunc pThreadFunc) override;
+  bool Init(ThreadFunc pThreadFunc, void* data) override;
 
   void Start() override {
     ScopedMutex lock(lock_);
@@ -84,7 +84,7 @@ class Thread : public IThread {
   friend DWORD WINAPI ThreadFunction(LPVOID lpParam);
 };
 
-bool Thread::Init(ThreadFunc pThreadFunc) {
+bool Thread::Init(ThreadFunc pThreadFunc, void* data) {
   ScopedMutex lock(lock_);
 
   if (bInitialized_)
@@ -94,7 +94,7 @@ bool Thread::Init(ThreadFunc pThreadFunc) {
 
   hThread_ = ::CreateThread(nullptr,  // default security attributes
                             0,        // use default stack size
-                            ThreadFunction, this,
+                            ThreadFunction, data ? data : this,
                             CREATE_SUSPENDED,  // user must call Thread::Start
                             nullptr);
 
@@ -160,16 +160,17 @@ class PrivateThreadFactory {
     return instance;
   }
 
-  IThread* CreateThread(ThreadFunc pThreadFunc);
+  IThread* CreateThread(ThreadFunc pThreadFunc, void* data);
 };
 
-IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc) {
+IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc,
+                                            void* data) {
   Thread* pThread = new Thread();
   if (!pThread) {
     return nullptr;
   }
 
-  if (!pThread->Init(pThreadFunc)) {
+  if (!pThread->Init(pThreadFunc, data)) {
     return nullptr;
   }
 
@@ -177,8 +178,8 @@ IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc) {
 }
 
 // public factory function
-IThread* Create(ThreadFunc pThreadFunc) {
-  return PrivateThreadFactory::Instance().CreateThread(pThreadFunc);
+IThread* Create(ThreadFunc pThreadFunc, void* data) {
+  return PrivateThreadFactory::Instance().CreateThread(pThreadFunc, data);
 }
 
 }  // namespace ThreadFactory
