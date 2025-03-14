@@ -2,18 +2,20 @@
 #include "mainloop/GameThreadBase.h"
 
 #include <cassert>
-#include "concurrency/IThread.h"
 #include "os/WindowBase.h"
 
 namespace Mana {
 
 GameThreadBase::GameThreadBase(WindowBase& window)
-    : window_(window), pThread_(nullptr) {}
+    : window_(window), pThread_(nullptr) {
+  threadData_.threadFunc = GameThreadFunction;
+}
 
 bool GameThreadBase::Run() {
   assert(!pThread_);
 
-  pThread_ = ThreadFactory::Create(GameThreadFunction, this);
+  threadData_.data = this;
+  pThread_ = ThreadFactory::Create(&threadData_);
   if (!pThread_) {
     return false;
   }
@@ -26,10 +28,11 @@ unsigned long GameThreadFunction(void* data) {
   GameThreadBase* game = (GameThreadBase*)data;
 
   if (game->OnInit()) {
-    game->OnStartGameLoop();
+    game->OnRunGameLoop();
   }
 
-  return game->OnShutdown();
+  //return game->OnShutdown();
+  return 0;
 }
 
 }  // namespace Mana

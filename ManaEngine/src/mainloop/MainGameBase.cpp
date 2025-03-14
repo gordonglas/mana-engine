@@ -1,10 +1,15 @@
 #include "pch.h"
+#include "mainloop/GameThreadBase.h"
 #include "mainloop/ManaGameBase.h"
 
 namespace Mana {
 
 ManaGameBase::ManaGameBase()
-    : argc_(0), argv_(nullptr), pWindow_(nullptr), nReturnCode_(0) {}
+    : argc_(0),
+      argv_(nullptr),
+      pWindow_(nullptr),
+      gameThread_(nullptr),
+      nReturnCode_(0) {}
 
 bool ManaGameBase::OnInit() {
   if (!commandLine_.Parse(argc_, argv_)) {
@@ -20,8 +25,8 @@ bool ManaGameBase::Run(int argc, char** argv, const xstring& title) {
   argv_ = argv;
   title_ = title;
 
-  if (OnInit()) {
-    OnStartGameLoop();
+  if (OnInit() && OnStartGameThread()) {
+    OnRunMessageLoop();
   }
 
   return OnShutdown();

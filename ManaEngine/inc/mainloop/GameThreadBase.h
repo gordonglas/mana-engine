@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ManaGlobals.h"
+#include "concurrency/IThread.h"
 
 namespace Mana {
 
@@ -19,6 +20,8 @@ class GameThreadBase {
 
   bool Run();
 
+  virtual bool OnShutdown() = 0;
+
  protected:
   // TODO: Not sure I like passing WindowBase into GameThread.
   //       If the GameThread makes changes to WindowBase,
@@ -28,9 +31,10 @@ class GameThreadBase {
 
   IThread* pThread_;
 
+  ThreadData threadData_;
+
   virtual bool OnInit() = 0;
-  virtual bool OnStartGameLoop() = 0;
-  virtual bool OnShutdown() = 0;
+  virtual bool OnRunGameLoop() = 0;
 
   friend unsigned long GameThreadFunction(void* data);
 };

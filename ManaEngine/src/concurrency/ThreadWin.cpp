@@ -4,6 +4,7 @@
 #include "utils/Log.h"
 #include "datastructures/SynchronizedQueue.h"
 #include <atomic>
+#include <cassert>
 #include <functional>
 #include <optional>
 #include <vector>
@@ -22,7 +23,7 @@ class Thread : public IThread {
     }
   }
 
-  bool Init(ThreadFunc pThreadFunc, void* data) override;
+  bool Init(ThreadData* threadData) override;
 
   void Start() override {
     ScopedMutex lock(lock_);
@@ -30,6 +31,7 @@ class Thread : public IThread {
   }
 
   void Stop() override {
+    // TODO: bStopping_.store(true, std::memory_order_release);
     bStopping_ = true;
     ScopedMutex lock(lock_);
     if (hWait_) {
@@ -39,6 +41,7 @@ class Thread : public IThread {
   }
 
   bool IsStopping() override {
+    // TODO: .load(std::memory_order_acquire)
     return bStopping_ == true;
   }
 
@@ -84,17 +87,20 @@ class Thread : public IThread {
   friend DWORD WINAPI ThreadFunction(LPVOID lpParam);
 };
 
-bool Thread::Init(ThreadFunc pThreadFunc, void* data) {
+bool Thread::Init(ThreadData* threadData) {
   ScopedMutex lock(lock_);
 
   if (bInitialized_)
     return false;
 
-  pThreadFunc_ = pThreadFunc;
+  pThreadFunc_ = threadData->threadFunc;
+  if (!threadData->data) {
+    threadData->data = this;
+  }
 
   hThread_ = ::CreateThread(nullptr,  // default security attributes
                             0,        // use default stack size
-                            ThreadFunction, data ? data : this,
+                            ThreadFunction, threadData,
                             CREATE_SUSPENDED,  // user must call Thread::Start
                             nullptr);
 
@@ -108,13 +114,15 @@ bool Thread::Init(ThreadFunc pThreadFunc, void* data) {
 }
 
 DWORD WINAPI ThreadFunction(LPVOID lpParam) {
-  Thread* pThread = (Thread*)lpParam;
+  ThreadData* threadData = (ThreadData*)lpParam;
 
   ManaLogLnInfo(Channel::Init, _X("ThreadFunction"));
 
-  if (pThread->pThreadFunc_) {
-    return pThread->pThreadFunc_(pThread);
+  if (threadData->threadFunc) {
+    return threadData->threadFunc(threadData->data);
   } else {
+    assert(threadData->data);
+    Thread* pThread = (Thread*)threadData->data;
     // TODO: does nullptr work for lpName when using multiple threads?
     pThread->hWait_ = CreateEventW(nullptr, FALSE, FALSE, nullptr);
     if (pThread->hWait_ == nullptr) {
@@ -160,17 +168,16 @@ class PrivateThreadFactory {
     return instance;
   }
 
-  IThread* CreateThread(ThreadFunc pThreadFunc, void* data);
+  IThread* CreateThread(ThreadData* threadData);
 };
 
-IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc,
-                                            void* data) {
+IThread* PrivateThreadFactory::CreateThread(ThreadData* threadData) {
   Thread* pThread = new Thread();
   if (!pThread) {
     return nullptr;
   }
 
-  if (!pThread->Init(pThreadFunc, data)) {
+  if (!pThread->Init(threadData)) {
     return nullptr;
   }
 
@@ -178,8 +185,11 @@ IThread* PrivateThreadFactory::CreateThread(ThreadFunc pThreadFunc,
 }
 
 // public factory function
-IThread* Create(ThreadFunc pThreadFunc, void* data) {
-  return PrivateThreadFactory::Instance().CreateThread(pThreadFunc, data);
+// TODO: passing ThreadData is ok, but it's fields need to be made clearer
+//       to the user.
+IThread* Create(ThreadData* threadData) {
+  assert(threadData);
+  return PrivateThreadFactory::Instance().CreateThread(threadData);
 }
 
 }  // namespace ThreadFactory

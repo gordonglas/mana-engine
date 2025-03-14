@@ -6,6 +6,8 @@
 
 namespace Mana {
 
+class GameThreadBase;
+
 class ManaGameBase {
  public:
   ManaGameBase();
@@ -33,10 +35,12 @@ class ManaGameBase {
   xstring title_;
   CommandLine commandLine_;
   WindowBase* pWindow_;
+  GameThreadBase* gameThread_;
   int nReturnCode_;
 
   virtual bool OnInit();
-  virtual bool OnStartGameLoop() = 0;
+  virtual bool OnStartGameThread() = 0;
+  virtual bool OnRunMessageLoop() = 0;
   virtual bool OnShutdown() = 0;
 };
 

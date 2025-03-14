@@ -4,6 +4,8 @@
 
 namespace Mana {
 
+extern uint64_t g_fps;
+
 class GameThread : public GameThreadBase {
  public:
   GameThread(WindowBase& window);
@@ -11,7 +13,7 @@ class GameThread : public GameThreadBase {
 
  protected:
   bool OnInit() override;
-  bool OnStartGameLoop() override;
+  bool OnRunGameLoop() override;
   bool OnShutdown() override;
 };
 

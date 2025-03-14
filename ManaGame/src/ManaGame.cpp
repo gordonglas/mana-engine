@@ -3,12 +3,13 @@
 #include <atomic>
 #include <shellapi.h>
 #include <string.h>
+#include "audio/AudioWin.h"
 #include "audio/WorkItemLoadAudio.h"
 #include "concurrency/IThread.h"
 #include "concurrency/IWorkItem.h"
 #include "concurrency/NamedMutex.h"
 #include "config/ConfigManager.h"
-#include "debugging/DebugWin.h"
+#include "debugging/DebugWin.h"  // Debug_DrawText_GDI
 #include "events/EventManager.h"
 #include "GameThread.h"
 #include "graphics/GraphicsDirectX11Win.h"
@@ -22,7 +23,6 @@
 
 Mana::xstring title(_X("Unnamed ARPG"));
 
-#include "audio/AudioWin.h"
 float g_masterVolume = 1.0f;
 const float VolumeIncrement = 0.02f;
 const float PanIncrement = 0.02f;
@@ -30,6 +30,7 @@ Mana::AudioFileHandle oggFile;
 Mana::AudioFileHandle jumpSFX;
 
 Mana::IThread* g_pLoadThread = nullptr;
+Mana::ThreadData loadThreadData;
 
 #define MAX_LOADSTRING 100
 
@@ -44,121 +45,6 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 namespace Mana {
 
-uint64_t g_fps;
-
-DWORD WINAPI GameLoopThreadFunction(LPVOID lpParam);
-
-class GameLoopThread {
- public:
-  bool Init(HWND hwnd);
-  void Start() { ResumeThread(hThread_); }
-  void Stop() {
-    bStopping_.store(true, std::memory_order_release);
-  }
-  void Join() {
-    // thread is signaled when it exits
-    WaitForSingleObject(hThread_, INFINITE);
-  }
-
-  HWND hwnd_ = nullptr;
-
- private:
-  HANDLE hThread_ = nullptr;
-  std::atomic<bool> bStopping_ = false;
-
- friend DWORD WINAPI GameLoopThreadFunction(LPVOID lpParam);
-};
-
-bool GameLoopThread::Init(HWND hwnd) {
-  hwnd_ = hwnd;
-  hThread_ = ::CreateThread(nullptr,  // default security attributes
-                            0,        // use default stack size
-                            GameLoopThreadFunction, this,
-                            CREATE_SUSPENDED,  // we must call Start()
-                            nullptr);
-  if (!hThread_) {
-    ManaLogLnError(Channel::Init, _X("GameLoopThread CreateThread failed"));
-    return false;
-  }
-  return true;
-}
-
-DWORD WINAPI GameLoopThreadFunction(LPVOID lpParam) {
-  GameLoopThread* pThread = (GameLoopThread*)lpParam;
-
-  // Using a fixed timestep loop per Game Loop Pattern.
-  // http://gameprogrammingpatterns.com/game-loop.html
-  // The accumulator is in microseconds as a 64 bit unsigned int,
-  // instead of double, to avoid floating-point rounding issues.
-
-  g_clock.Reset();
-
-  uint64_t current, elapsed;
-  uint64_t previous = g_clock.GetMicroseconds();
-  uint64_t lag = 0;  // aka, the accumulator
-
-  // 60 frames per second =
-  // 60 frames per 1000000 microseconds = 1000000 / 60 = ~16,666.
-  // We actually want it smaller than 60 FPS
-  uint64_t MICROSEC_PER_UPDATE = 16000;
-
-  // TODO: Figure out what a good number is for this on
-  //       our slowest supported machine. No idea yet.
-  int MAX_UPDATES = 10;
-  int max_updates;
-
-  int numFrames = 0;
-  uint64_t lastFPSCalculation = g_clock.GetMicroseconds();
-
-  std::vector<SynchronizedEvent> syncEvents;
-
-  while (!pThread->bStopping_.load(std::memory_order_acquire)) {
-    current = g_clock.GetMicroseconds();
-    elapsed = current - previous;
-    if (elapsed < 0)
-      elapsed = 0;
-    previous = current;
-    lag += elapsed;
-
-    // get raw input events from the main thread
-    if (!g_pEventMan->GetSyncQueue().Empty_NoLock()) {
-      g_pEventMan->GetSyncQueue().PopAll(syncEvents);
-
-      if (syncEvents.size() > 1) {
-        OutputDebugStringW((std::wstring(L"game-loop syncEvents: ") +
-                            std::to_wstring(syncEvents.size()) + L"\n")
-                               .c_str());
-      }
-    }
-
-    // TODO: OnProcessInput();
-
-    max_updates = MAX_UPDATES;
-    while (lag >= MICROSEC_PER_UPDATE && max_updates > 0) {
-      // TODO: OnUpdate();
-      g_pAudioEngine->Update();
-
-      lag -= MICROSEC_PER_UPDATE;
-      --max_updates;
-    }
-
-    ++numFrames;
-    // if 1 second elapsed, recalculate FPS
-    if (current - lastFPSCalculation >= 1000000) {
-      g_fps = numFrames;
-      numFrames = 0;
-      lastFPSCalculation += 1000000;
-      InvalidateRect(pThread->hwnd_, nullptr, TRUE);
-    }
-
-    // TODO: OnRender(lag / (double)MICROSEC_PER_UPDATE);
-  }
-
-  return 0;
-}
-
-GameLoopThread gameThread;
-
 class ManaGame : public ManaGameBase {
  public:
   ManaGame(HINSTANCE hInstance, int nCmdShow)
@@ -171,7 +57,8 @@ class ManaGame : public ManaGameBase {
 
  protected:
   bool OnInit() final;
-  bool OnStartGameLoop() final;
+  bool OnStartGameThread() final;
+  bool OnRunMessageLoop() final;
   bool OnShutdown() final;
 
  private:
@@ -200,10 +87,11 @@ bool ManaGame::OnInit() {
   g_pEventMan = new EventManager();
   g_pEventMan->Init();
 
-  // init input engine
+  // init keyboard and mouse input engine
   g_pInputEngine = new InputWin(GetWindow()->GetHWnd());
   g_pInputEngine->Init();
 
+  // TODO: move the following code into GameThread::Init.
   // init graphics engine
   g_pGraphicsEngine = new GraphicsDirectX11Win();
   g_pGraphicsEngine->Init();
@@ -248,7 +136,8 @@ bool ManaGame::OnInit() {
   // the "load thread" will always exist throughout the life of the app,
   // but can be suspended when we don't need it,
   // so the OS scheduler won't uneccessarily context-switch to it.
-  g_pLoadThread = ThreadFactory::Create();
+  loadThreadData = {};
+  g_pLoadThread = ThreadFactory::Create(&loadThreadData);
   g_pLoadThread->Start();
 
   // queue up the stuff that will be loaded in the load thread.
@@ -304,35 +193,41 @@ bool ManaGame::OnInit() {
   return true;
 }
 
-bool ManaGame::OnStartGameLoop() {
-  // Run the Windows message loop in this main thread,
-  // while we kick off the GameLoopThread which runs
-  // our main game loop logic/update/rendering.
-  // We keep these in separate threads because we want
-  // to avoid things in the main thread from preventing
-  // our game loop from being called,
-  // such as when the window is begin moved.
+bool ManaGame::OnStartGameThread() {
+  // Run game loop logic/update/rendering in a separate thread,
+  // to avoid things in the main thread from preventing the game loop
+  // from being called, such as when the window is begin moved.
+  gameThread_ = new GameThread(*GetWindow());
+  if (!gameThread_) {
+    return false;
+  }
 
-  // TODO: will be something like `gameThread.Run();`
-  //       called in `ManaGame::OnInitAndStartGameThread`
-  gameThread.Init(GetWindow()->GetHWnd());
-  gameThread.Start();
+  if (!gameThread_->Run()) {
+    return false;
+  }
 
+  return true;
+}
+
+bool ManaGame::OnRunMessageLoop() {
   MSG msg;
   while (GetMessage(&msg, NULL, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
 
-  gameThread.Stop();
-  gameThread.Join();
-
   nReturnCode_ = (int)msg.wParam;
   return true;
 }
 
 bool ManaGame::OnShutdown() {
-  // shutdown engine systems in reverse order to prevent deadlocks
+  // Shutdown engine systems in reverse order to prevent deadlocks
+
+  if (gameThread_) {
+    gameThread_->OnShutdown();
+    delete gameThread_;
+    gameThread_ = nullptr;
+  }
 
   if (g_pLoadThread) {
     g_pLoadThread->Stop();
@@ -363,6 +258,11 @@ bool ManaGame::OnShutdown() {
     g_pEventMan->Uninit();
     delete g_pEventMan;
     g_pEventMan = nullptr;
+  }
+
+  if (pWindow_) {
+    delete pWindow_;
+    pWindow_ = nullptr;
   }
 
   return true;
