@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "target/TargetOS.h"
 #include <atomic>
+#include <optional>
 #include <shellapi.h>
 #include <string.h>
 #include "audio/AudioWin.h"
@@ -8,6 +9,7 @@
 #include "concurrency/IThread.h"
 #include "concurrency/IWorkItem.h"
 #include "concurrency/NamedMutex.h"
+#include "concurrency/ThreadRunnerWin.h"
 #include "config/ConfigManager.h"
 #include "debugging/DebugWin.h"  // Debug_DrawText_GDI
 #include "events/EventManager.h"
@@ -48,12 +50,21 @@ namespace Mana {
 class ManaGame : public ManaGameBase {
  public:
   ManaGame(HINSTANCE hInstance, int nCmdShow)
-      : hInstance_(hInstance), nCmdShow_(nCmdShow) {}
-  ~ManaGame() final {}
+      : hInstance_(hInstance), nCmdShow_(nCmdShow), threadRunner_(nullptr) {
+    threadRunner_ = new ThreadRunnerWin();
+  }
+
+  ~ManaGame() final {
+    if (threadRunner_) {
+      delete threadRunner_;
+      threadRunner_ = nullptr;
+    }
+  }
 
   //uint64_t GetFps() final { return g_fps; }
 
   WindowWin* GetWindow() { return (WindowWin*)pWindow_; }
+  ThreadRunnerWin* GetThreadRunner() { return threadRunner_; }
 
  protected:
   bool OnInit() final;
@@ -65,6 +76,7 @@ class ManaGame : public ManaGameBase {
   ScopedComInitializer com_;
   HINSTANCE hInstance_;
   int nCmdShow_;
+  ThreadRunnerWin* threadRunner_;
 };
 
 bool ManaGame::OnInit() {
@@ -82,6 +94,8 @@ bool ManaGame::OnInit() {
     error_ = _X("CreateMainWindow error");
     return false;
   }
+
+  threadRunner_->SetWindow(dynamic_cast<WindowWin*>(pWindow_));
 
   // init event manager
   g_pEventMan = new EventManager();
@@ -197,7 +211,7 @@ bool ManaGame::OnStartGameThread() {
   // Run game loop logic/update/rendering in a separate thread,
   // to avoid things in the main thread from preventing the game loop
   // from being called, such as when the window is begin moved.
-  gameThread_ = new GameThread(*GetWindow());
+  gameThread_ = new GameThread(*GetWindow(), *GetThreadRunner());
   if (!gameThread_) {
     return false;
   }
@@ -342,6 +356,16 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 #endif
 
       Mana::g_pInputEngine->OnInputDeviceChange(deviceChangeType, deviceId);
+    } break;
+    // Allows other non-main threads (AKA the Game Thread) to run lambdas
+    // asynchronously on this main thread.
+    case WM_RUN_ON_MAIN_THREAD_ASYNC: {
+      Mana::ManaGame* game = (Mana::ManaGame*)g_pGame;
+      auto& queue = game->GetThreadRunner()->GetAsyncQueue();
+      auto func = queue.Pop();
+      if (func) {
+        (func.value())();
+      }
     } break;
     case WM_MENUCHAR: {
       // ignore message beep from alt-enter

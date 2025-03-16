@@ -3,6 +3,7 @@
 #include <cassert>
 #include "audio/AudioWin.h"
 #include "concurrency/IThread.h"
+#include "concurrency/ThreadRunnerWin.h"
 #include "events/EventManager.h"
 #include "os/WindowBase.h"
 #include "os/WindowWin.h"
@@ -11,8 +12,8 @@ namespace Mana {
 
 uint64_t g_fps;
 
-GameThread::GameThread(WindowBase& window)
-    : GameThreadBase(window) {}
+GameThread::GameThread(WindowBase& window, ThreadRunnerWin& threadRunner)
+    : GameThreadBase(window), threadRunner_(threadRunner) {}
 
 bool GameThread::OnInit() {
 
@@ -84,10 +85,11 @@ bool GameThread::OnRunGameLoop() {
       lastFPSCalculation += 1000000;
 
       WindowWin& window = dynamic_cast<WindowWin&>(window_);
-      // TODO: Technically InvalidateRect should be called on the main thread,
-      //       but this is just for some dirty display of the FPS until
-      //       we get proper DirectX rendering working.
-      InvalidateRect(window.GetHWnd(), nullptr, TRUE);
+      // TODO: This is just for a dirty display of the FPS (using WM_PAINT/GDI)
+      // until getting proper DirectX rendering working.
+      threadRunner_.RunOnMainThreadAsync([&window]() {
+        InvalidateRect(window.GetHWnd(), nullptr, TRUE);
+      });
     }
 
     // TODO: OnRender(lag / (double)MICROSEC_PER_UPDATE);

@@ -151,6 +151,9 @@
     <ClCompile Include="..\..\..\inc\mainloop\GameThreadBase.cpp">
       <Filter>src\mainloop</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\inc\concurrency\ThreadRunnerWin.cpp">
+      <Filter>src\concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -284,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\inc\mainloop\GameThreadBase.h">
       <Filter>src\mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\inc\concurrency\ThreadRunnerWin.h">
+      <Filter>src\concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

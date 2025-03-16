@@ -307,6 +307,7 @@
     <ClInclude Include="..\..\..\inc\concurrency\IWorkItem.h" />
     <ClInclude Include="..\..\..\inc\concurrency\Mutex.h" />
     <ClInclude Include="..\..\..\inc\concurrency\NamedMutex.h" />
+    <ClInclude Include="..\..\..\inc\concurrency\ThreadRunnerWin.h" />
     <ClInclude Include="..\..\..\inc\config\ConfigManager.h" />
     <ClInclude Include="..\..\..\inc\datastructures\SynchronizedQueue.h" />
     <ClInclude Include="..\..\..\inc\debugging\DebugWin.h" />
@@ -343,6 +344,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\inc\concurrency\ThreadRunnerWin.cpp" />
     <ClCompile Include="..\..\..\inc\graphics\DirectX11DebugLayer.cpp" />
     <ClCompile Include="..\..\..\inc\graphics\DirectX11Common.cpp" />
     <ClCompile Include="..\..\..\inc\mainloop\GameThreadBase.cpp" />
