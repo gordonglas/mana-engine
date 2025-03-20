@@ -10,6 +10,12 @@ namespace Mana {
 
 ThreadRunnerWin::ThreadRunnerWin() : pWindow_(nullptr) {}
 
+// TODO: This may have rare race condition that could cause this thread
+// to never exit. This could happen when RunOnMainThread starts, then the main
+// Windows Message thread exits before processing WM_RUN_ON_MAIN_THREAD.
+// A possible solution might be to expose a "ThreadRunnerWin::Shutdown"
+// function which calls condition.notify_one() and the "wait" can additionally
+// check a isShuttingDown atomic<bool>.
 void ThreadRunnerWin::RunOnMainThread(std::function<void()> func) {
   assert(pWindow_);
 
