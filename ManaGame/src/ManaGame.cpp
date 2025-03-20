@@ -358,6 +358,16 @@ LRESULT CALLBACK WndProc(HWND hWnd,
       Mana::g_pInputEngine->OnInputDeviceChange(deviceChangeType, deviceId);
     } break;
     // Allows other non-main threads (AKA the Game Thread) to run lambdas
+    // synchronously on this main thread.
+    case WM_RUN_ON_MAIN_THREAD: {
+      Mana::ManaGame* game = (Mana::ManaGame*)g_pGame;
+      auto& queue = game->GetThreadRunner()->GetSyncQueue();
+      auto func = queue.Pop();
+      if (func) {
+        (func.value())();
+      }
+    } break;
+    // Allows other non-main threads (AKA the Game Thread) to run lambdas
     // asynchronously on this main thread.
     case WM_RUN_ON_MAIN_THREAD_ASYNC: {
       Mana::ManaGame* game = (Mana::ManaGame*)g_pGame;

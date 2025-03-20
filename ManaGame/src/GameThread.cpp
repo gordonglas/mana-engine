@@ -90,6 +90,15 @@ bool GameThread::OnRunGameLoop() {
       threadRunner_.RunOnMainThreadAsync([&window]() {
         InvalidateRect(window.GetHWnd(), nullptr, TRUE);
       });
+
+      // Example of running code on main thread synchronously.
+      //if (error) {
+      //  threadRunner_.RunOnMainThread([&window]() {
+      //    MessageBoxW(window.GetHWnd(), L"Epic fail occurred", L"ERROR", MB_OK);
+      //    PostQuitMessage(0);
+      //  });
+      //  return false;
+      //}
     }
 
     // TODO: OnRender(lag / (double)MICROSEC_PER_UPDATE);

@@ -4,7 +4,8 @@
 #include <functional>
 #include "datastructures/SynchronizedQueue.h"
 
-#define WM_RUN_ON_MAIN_THREAD_ASYNC (WM_USER + 1)
+#define WM_RUN_ON_MAIN_THREAD       (WM_USER + 1)
+#define WM_RUN_ON_MAIN_THREAD_ASYNC (WM_USER + 2)
 
 namespace Mana {
 
@@ -20,7 +21,16 @@ class ThreadRunnerWin {
 
   void SetWindow(WindowWin* window) { pWindow_ = window; }
 
+  // Run |func| on main thread, synchronously.
+  // Blocks until |func| has finished running on the main thread.
+  void RunOnMainThread(std::function<void()> func);
+
+  // Run |func| on main thread, asynchronously. Doesn't block.
   void RunOnMainThreadAsync(std::function<void()> func);
+
+  SynchronizedQueue<std::function<void()>>& GetSyncQueue() {
+    return queue_;
+  }
 
   SynchronizedQueue<std::function<void()>>& GetAsyncQueue() {
     return queueAsync_;
@@ -28,6 +38,7 @@ class ThreadRunnerWin {
 
  private:
   WindowWin* pWindow_;
+  SynchronizedQueue<std::function<void()>> queue_;
   SynchronizedQueue<std::function<void()>> queueAsync_;
 };
 
