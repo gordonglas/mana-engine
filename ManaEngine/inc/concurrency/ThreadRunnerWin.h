@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ManaGlobals.h"
+#include <atomic>
 #include <functional>
 #include "datastructures/SynchronizedQueue.h"
 
@@ -14,7 +15,7 @@ class WindowWin;
 class ThreadRunnerWin {
  public:
   ThreadRunnerWin();
-  virtual ~ThreadRunnerWin() = default;
+  virtual ~ThreadRunnerWin();
 
   ThreadRunnerWin(const ThreadRunnerWin&) = delete;
   ThreadRunnerWin& operator=(const ThreadRunnerWin&) = delete;
@@ -40,6 +41,7 @@ class ThreadRunnerWin {
   WindowWin* pWindow_;
   SynchronizedQueue<std::function<void()>> queue_;
   SynchronizedQueue<std::function<void()>> queueAsync_;
+  std::atomic<bool> isShuttingDown_;
 };
 
 }  // namespace Mana

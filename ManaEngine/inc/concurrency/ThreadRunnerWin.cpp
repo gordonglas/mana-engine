@@ -2,20 +2,20 @@
 #include "concurrency/ThreadRunnerWin.h"
 
 #include <cassert>
+#include <chrono>
 #include <condition_variable>
 #include <mutex>
 #include "os/WindowWin.h"
 
 namespace Mana {
 
-ThreadRunnerWin::ThreadRunnerWin() : pWindow_(nullptr) {}
+ThreadRunnerWin::ThreadRunnerWin()
+    : pWindow_(nullptr), isShuttingDown_(false) {}
 
-// TODO: This may have rare race condition that could cause this thread
-// to never exit. This could happen when RunOnMainThread starts, then the main
-// Windows Message thread exits before processing WM_RUN_ON_MAIN_THREAD.
-// A possible solution might be to expose a "ThreadRunnerWin::Shutdown"
-// function which calls condition.notify_one() and the "wait" can additionally
-// check a isShuttingDown atomic<bool>.
+ThreadRunnerWin::~ThreadRunnerWin() {
+  isShuttingDown_ = true;
+}
+
 void ThreadRunnerWin::RunOnMainThread(std::function<void()> func) {
   assert(pWindow_);
 
@@ -38,7 +38,14 @@ void ThreadRunnerWin::RunOnMainThread(std::function<void()> func) {
 
   {
     std::unique_lock<std::mutex> lock(mutex);
-    condition.wait(lock, [&]() { return functionCompleted; });
+    // Loop while calling wait_for (with timeout), so we can check the
+    // isShuttingDown_ bool, to handle the rare case when the main thread exits
+    // before processing WM_RUN_ON_MAIN_THREAD, to prevent this thread from
+    // never exiting in that case.
+    while (!functionCompleted && !isShuttingDown_) {
+      condition.wait_for(lock, std::chrono::milliseconds(500),
+                         [&]() { return functionCompleted; });
+    }
   }
 }
 
