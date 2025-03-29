@@ -2,12 +2,14 @@
 
 namespace Mana {
 
-// RAII COM initializer
+// RAII COM initializer with separate Init() function,
+// so you have control over when it gets initialized.
 class ScopedComInitializer final {
  public:
-  ScopedComInitializer();
+  ScopedComInitializer() = default;
   ~ScopedComInitializer();
 
+  bool Init();
   bool IsInitialized() const { return initialized_; }
 
 private:

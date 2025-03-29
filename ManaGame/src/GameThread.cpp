@@ -16,7 +16,8 @@ GameThread::GameThread(WindowBase& window, ThreadRunnerWin& threadRunner)
     : GameThreadBase(window), threadRunner_(threadRunner) {}
 
 bool GameThread::OnInit() {
-
+  // TODO: Initialize COM in this thread.
+  // TODO: Move most of ManaGame::OnInit() to here.
   return true;
 }
 

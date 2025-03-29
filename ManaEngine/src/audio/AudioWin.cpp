@@ -10,7 +10,7 @@ namespace Mana {
 AudioBase* g_pAudioEngine = nullptr;
 
 bool AudioWin::Init() {
-  if (!com_.IsInitialized()) {
+  if (!com_.Init()) {
     return false;
   }
 

@@ -80,7 +80,7 @@ class ManaGame : public ManaGameBase {
 };
 
 bool ManaGame::OnInit() {
-  if (!com_.IsInitialized()) {
+  if (!com_.Init()) {
     error_ = _X("ComInitializer error");
     return false;
   }
