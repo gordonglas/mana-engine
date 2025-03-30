@@ -95,7 +95,7 @@ bool ManaGame::OnInit() {
     return false;
   }
 
-  threadRunner_->SetWindow(dynamic_cast<WindowWin*>(pWindow_));
+  threadRunner_->SetWindow(static_cast<WindowWin*>(pWindow_));
 
   // init event manager
   g_pEventMan = new EventManager();

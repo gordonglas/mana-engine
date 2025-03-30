@@ -85,7 +85,7 @@ bool GameThread::OnRunGameLoop() {
       numFrames = 0;
       lastFPSCalculation += 1000000;
 
-      WindowWin& window = dynamic_cast<WindowWin&>(window_);
+      WindowWin& window = static_cast<WindowWin&>(window_);
       // TODO: This is just for a dirty display of the FPS (using WM_PAINT/GDI)
       // until getting proper DirectX rendering working.
       threadRunner_.RunOnMainThreadAsync([&window]() {
