@@ -12,12 +12,17 @@ namespace Mana {
 
 uint64_t g_fps;
 
-GameThread::GameThread(WindowBase& window, ThreadRunnerWin& threadRunner)
-    : GameThreadBase(window), threadRunner_(threadRunner) {}
+GameThread::GameThread(WindowWin& window, ThreadRunnerWin& threadRunner)
+    : GameThreadBase(window, threadRunner) {}
 
 bool GameThread::OnInit() {
-  // TODO: Initialize COM in this thread.
+  if (!com_.Init()) {
+    error_ = _X("ComInitializer error");
+    return false;
+  }
+
   // TODO: Move most of ManaGame::OnInit() to here.
+
   return true;
 }
 
@@ -91,21 +96,24 @@ bool GameThread::OnRunGameLoop() {
       threadRunner_.RunOnMainThreadAsync([&window]() {
         InvalidateRect(window.GetHWnd(), nullptr, TRUE);
       });
-
-      // Example of running code on main thread synchronously.
-      //if (error) {
-      //  threadRunner_.RunOnMainThread([&window]() {
-      //    MessageBoxW(window.GetHWnd(), L"Epic fail occurred", L"ERROR", MB_OK);
-      //    PostQuitMessage(0);
-      //  });
-      //  return false;
-      //}
     }
 
     // TODO: OnRender(lag / (double)MICROSEC_PER_UPDATE);
   }
 
   return true;
+}
+
+void GameThread::PostQuitMessageWithPossibleError(const xstring& error) {
+  WindowWin& window = static_cast<WindowWin&>(window_);
+  // RunOnMainThread runs synchronously
+  threadRunner_.RunOnMainThread([&window, error]() {
+    if (!error.empty()) {
+      MessageBoxW(window.GetHWnd(), error.c_str(), L"ERROR",
+                  MB_ICONERROR | MB_OK);
+    }
+    PostQuitMessage(0);
+  });
 }
 
 bool GameThread::OnShutdown() {

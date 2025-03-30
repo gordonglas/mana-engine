@@ -9,11 +9,14 @@
 
 namespace Mana {
 
-ThreadRunnerWin::ThreadRunnerWin()
-    : pWindow_(nullptr), isShuttingDown_(false) {}
+ThreadRunnerWin::ThreadRunnerWin() : pWindow_(nullptr) {}
 
 ThreadRunnerWin::~ThreadRunnerWin() {
   isShuttingDown_ = true;
+}
+
+void ThreadRunnerWin::SetWindow(WindowBase* window) {
+  pWindow_ = static_cast<WindowWin*>(window);
 }
 
 void ThreadRunnerWin::RunOnMainThread(std::function<void()> func) {

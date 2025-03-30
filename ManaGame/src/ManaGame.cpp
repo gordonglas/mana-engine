@@ -64,7 +64,9 @@ class ManaGame : public ManaGameBase {
   //uint64_t GetFps() final { return g_fps; }
 
   WindowWin* GetWindow() { return (WindowWin*)pWindow_; }
-  ThreadRunnerWin* GetThreadRunner() { return threadRunner_; }
+  ThreadRunnerWin* GetThreadRunner() {
+    return static_cast<ThreadRunnerWin*>(threadRunner_);
+  }
 
  protected:
   bool OnInit() final;
@@ -76,7 +78,7 @@ class ManaGame : public ManaGameBase {
   ScopedComInitializer com_;
   HINSTANCE hInstance_;
   int nCmdShow_;
-  ThreadRunnerWin* threadRunner_;
+  ThreadRunnerBase* threadRunner_;
 };
 
 bool ManaGame::OnInit() {

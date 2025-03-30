@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 namespace Mana {
 
 // RAII COM initializer with separate Init() function,
@@ -13,7 +15,7 @@ class ScopedComInitializer final {
   bool IsInitialized() const { return initialized_; }
 
 private:
-  bool initialized_ = false;
+  std::atomic<bool> initialized_ = false;
 };
 
 }  // namespace Mana
