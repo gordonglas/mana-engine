@@ -4,17 +4,12 @@
 #include <optional>
 #include <shellapi.h>
 #include <string.h>
-#include "audio/AudioWin.h"
-#include "audio/WorkItemLoadAudio.h"
-#include "concurrency/IThread.h"
-#include "concurrency/IWorkItem.h"
 #include "concurrency/NamedMutex.h"
 #include "concurrency/ThreadRunnerWin.h"
 #include "config/ConfigManager.h"
 #include "debugging/DebugWin.h"  // Debug_DrawText_GDI
 #include "events/EventManager.h"
 #include "GameThread.h"
-#include "graphics/GraphicsDirectX11Win.h"
 #include "input/InputWin.h"
 #include "mainloop/ManaGameBase.h"
 #include "os/WindowWin.h"
@@ -25,22 +20,10 @@
 
 Mana::xstring title(_X("Unnamed ARPG"));
 
-float g_masterVolume = 1.0f;
-const float VolumeIncrement = 0.02f;
-const float PanIncrement = 0.02f;
-Mana::AudioFileHandle oggFile;
-Mana::AudioFileHandle jumpSFX;
-
-Mana::IThread* g_pLoadThread = nullptr;
-Mana::ThreadData loadThreadData;
-
 #define MAX_LOADSTRING 100
 
 WCHAR szTitle[MAX_LOADSTRING];        // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];  // the main window class name
-
-Mana::Timer g_clock;
-Mana::ManaGameBase* g_pGame;
 
 // Forward declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -82,6 +65,7 @@ class ManaGame : public ManaGameBase {
 };
 
 bool ManaGame::OnInit() {
+  // TODO: is com even needed here? probably not?
   if (!com_.Init()) {
     error_ = _X("ComInitializer error");
     return false;
@@ -106,101 +90,6 @@ bool ManaGame::OnInit() {
   // init keyboard and mouse input engine
   g_pInputEngine = new InputWin(GetWindow()->GetHWnd());
   g_pInputEngine->Init();
-
-  // TODO: move the following code into GameThread::Init.
-  // init graphics engine
-  g_pGraphicsEngine = new GraphicsDirectX11Win();
-  g_pGraphicsEngine->Init();
-  g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
-  std::vector<GraphicsDeviceBase*> gpus;
-  if (!g_pGraphicsEngine->GetSupportedGPUs(gpus)) {
-    error_ = _X("GetSupportedGPUs failed");
-    return false;
-  }
-  if (gpus.size() == 0) {
-    Mana::SimpleMessageBox::Show(
-        title.c_str(),
-        g_pGraphicsEngine->GetNoSupportedGPUFoundMessage().c_str());
-    return false;
-  }
-
-  // create device and device context
-  if (!g_pGraphicsEngine->SelectGPU(gpus[0])) {
-    Mana::SimpleMessageBox::Show(
-        title.c_str(), L"Failed to create gpu device");
-    return false;
-  }
-
-  std::vector<Mana::MultisampleLevel> msaaLevels;
-  if (!gpus[0]->GetSupportedMultisampleLevels(msaaLevels)) {
-    return false;
-  }
-
-  // TODO: Is it safe to Release the IDXGIAdapter1 that we passed to CreateDevice?
-  //       Might need to use ComPtr<T> to manage their lifetime.
-  //for (GraphicsDeviceBase* gpu : gpus) {
-  //  delete gpu;
-  //}
-
-  // init audio engine
-  g_pAudioEngine = new AudioWin();
-  g_pAudioEngine->Init();
-
-  // instead of loading audio synchronously, we'll use a separate thread
-  // while this main thread could render an animated "Loading" image.
-
-  // the "load thread" will always exist throughout the life of the app,
-  // but can be suspended when we don't need it,
-  // so the OS scheduler won't uneccessarily context-switch to it.
-  loadThreadData = {};
-  g_pLoadThread = ThreadFactory::Create(&loadThreadData);
-  g_pLoadThread->Start();
-
-  // queue up the stuff that will be loaded in the load thread.
-  // we call these "WorkItems"
-  WorkItemLoadAudio* pLoadOgg = new WorkItemLoadAudio(
-      g_pAudioEngine, _X("music/Kefka - NinjaGaiden - Evading the Enemy-loop.ogg"),
-      AudioCategory::Music, AudioFormat::Ogg, 18060);
-
-  //WorkItemLoadAudio* pLoadOgg = new WorkItemLoadAudio(
-  //    g_pAudioEngine, _X("003 - Grandpa's Theme-loop.ogg"),
-  //    AudioCategory::Music, AudioFormat::Ogg);
-
-  WorkItemLoadAudio* pLoadJumpSFX = new WorkItemLoadAudio(
-      g_pAudioEngine, _X("sound/jump001.ogg"), AudioCategory::Sound,
-      AudioFormat::Ogg, 0, 3);
-
-  g_pLoadThread->EnqueueWorkItem(pLoadOgg);
-  g_pLoadThread->EnqueueWorkItem(pLoadJumpSFX);
-
-  // TODO: this should run in our game loop,
-  //       since it has to show animation.
-
-  // Wait for all work items (audio files) to finish loading.
-  // We poll here instead of using a wait-function,
-  // so we may render an animated "Loading" image.
-  while (!g_pLoadThread->IsAllItemsProcessed()) {
-    // Probably don't need to do a full-blown busy-wait.
-    // Our Loading animation can still move.
-    Sleep(100);
-
-    // TODO: render Loading animation here
-  }
-  // TODO: Instead of clearing the processed items like this,
-  //       maybe we can use shared_ptrs within the LoadThread instead?
-  //       Although, we still need to get the handle like below. hmm
-  g_pLoadThread->ClearProcessedItems();
-
-  // cache the audio engine's sound handle, which we later use
-  // to play/pause/stop/etc the sound
-  oggFile = pLoadOgg->GetHandleIfDoneProcessing();
-  jumpSFX = pLoadJumpSFX->GetHandleIfDoneProcessing();
-
-  // the work items are not needed anymore
-  delete pLoadOgg;
-  pLoadOgg = nullptr;
-  delete pLoadJumpSFX;
-  pLoadJumpSFX = nullptr;
 
   if (!pWindow_->ShowWindow(SW_SHOWNORMAL)) {
     return false;
@@ -243,25 +132,6 @@ bool ManaGame::OnShutdown() {
     gameThread_->OnShutdown();
     delete gameThread_;
     gameThread_ = nullptr;
-  }
-
-  if (g_pLoadThread) {
-    g_pLoadThread->Stop();
-    g_pLoadThread->Join();
-    delete g_pLoadThread;
-    g_pLoadThread = nullptr;
-  }
-
-  if (g_pAudioEngine) {
-    g_pAudioEngine->Uninit();
-    delete g_pAudioEngine;
-    g_pAudioEngine = nullptr;
-  }
-
-  if (g_pGraphicsEngine) {
-    g_pGraphicsEngine->Uninit();
-    delete g_pGraphicsEngine;
-    g_pGraphicsEngine = nullptr;
   }
 
   if (g_pInputEngine) {
@@ -398,7 +268,10 @@ LRESULT CALLBACK WndProc(HWND hWnd,
             // OutputDebugStringW(L"alt-enter\n");
           }
         }
-      } else if (wParam == VK_UP) {
+      }
+      // TODO: Get these working in GameThread
+      /*
+      else if (wParam == VK_UP) {
         //Mana::g_pAudioEngine->Play(oggFile);
         Mana::g_pAudioEngine->Play(oggFile, Mana::AudioBase::LOOP_INFINITE);
       } else if (wParam == VK_DOWN) {
@@ -410,13 +283,15 @@ LRESULT CALLBACK WndProc(HWND hWnd,
       } else if (wParam == VK_RIGHT) {
         //Mana::g_pAudioEngine->Resume(jumpSFX);
         Mana::g_pAudioEngine->Resume(oggFile);
-      }
+      }*/
     } break;
     case WM_CHAR: {
       wchar_t msg[50];
       swprintf_s(msg, L"WM_CHAR: %c\n", (wchar_t)wParam);
       OutputDebugStringW(msg);
 
+      // TODO: Get these working in GameThread
+      /*
       wchar_t chr = (wchar_t)wParam;
       if (chr == L'j') {
         Mana::g_pAudioEngine->Play(jumpSFX);
@@ -463,11 +338,13 @@ LRESULT CALLBACK WndProc(HWND hWnd,
       {
         DXDBG_REPORT_LIVE_OBJECTS(Mana::g_pGraphicsEngine);
       }
+      */
     } break;
     case WM_CLOSE: {
       DestroyWindow(hWnd);
     } break;
     case WM_PAINT: {
+      // TODO: move this into GameThread, using DirectX, once it's up.
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hWnd, &ps);
       Mana::Debug_DrawText_GDI(

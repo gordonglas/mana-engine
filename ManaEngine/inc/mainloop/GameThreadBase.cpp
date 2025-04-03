@@ -35,8 +35,6 @@ unsigned long GameThreadFunction(void* data) {
     return 1;
   }
 
-  // TODO: Need to know if game thread was told to exit by the main thread or not.
-  //       If not, we need to tell the main thread to exit (without error).
   if (!game->OnRunGameLoop()) {
     assert(!game->GetLastError().empty());
     game->PostQuitMessageWithPossibleError(game->GetLastError());

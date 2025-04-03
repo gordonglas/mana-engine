@@ -1,16 +1,30 @@
 #include "GameThread.h"
 
 #include <cassert>
+#include <vector>
 #include "audio/AudioWin.h"
+#include "audio/WorkItemLoadAudio.h"
 #include "concurrency/IThread.h"
 #include "concurrency/ThreadRunnerWin.h"
 #include "events/EventManager.h"
+#include "graphics/GraphicsDirectX11Win.h"
 #include "os/WindowBase.h"
 #include "os/WindowWin.h"
 
 namespace Mana {
 
+// TODO: Can probably make these vars GameThread members
+
 uint64_t g_fps;
+
+Mana::IThread* g_pLoadThread = nullptr;
+Mana::ThreadData loadThreadData;
+
+float g_masterVolume = 1.0f;
+const float VolumeIncrement = 0.02f;
+const float PanIncrement = 0.02f;
+Mana::AudioFileHandle oggFile;
+Mana::AudioFileHandle jumpSFX;
 
 GameThread::GameThread(WindowWin& window, ThreadRunnerWin& threadRunner)
     : GameThreadBase(window, threadRunner) {}
@@ -21,7 +35,99 @@ bool GameThread::OnInit() {
     return false;
   }
 
-  // TODO: Move most of ManaGame::OnInit() to here.
+  // init graphics engine
+  g_pGraphicsEngine = new GraphicsDirectX11Win();
+  g_pGraphicsEngine->Init();
+  g_pGraphicsEngine->EnumerateAdaptersAndFullScreenModes();
+  std::vector<GraphicsDeviceBase*> gpus;
+  if (!g_pGraphicsEngine->GetSupportedGPUs(gpus)) {
+    error_ = _X("GetSupportedGPUs failed");
+    return false;
+  }
+  if (gpus.size() == 0) {
+    error_ = g_pGraphicsEngine->GetNoSupportedGPUFoundMessage();
+    return false;
+  }
+
+  // create device and device context
+  if (!g_pGraphicsEngine->SelectGPU(gpus[0])) {
+    error_ = _X("Failed to create gpu device");
+    return false;
+  }
+
+  std::vector<Mana::MultisampleLevel> msaaLevels;
+  if (!gpus[0]->GetSupportedMultisampleLevels(msaaLevels)) {
+    error_ = _X("GetSupportedMultisampleLevels failed");
+    return false;
+  }
+
+  // TODO: Is it safe to Release the IDXGIAdapter1 that we passed to
+  // CreateDevice?
+  //       Use ComPtr<T> to manage their lifetime.
+  // for (GraphicsDeviceBase* gpu : gpus) {
+  //  delete gpu;
+  //}
+
+  // init audio engine
+  g_pAudioEngine = new AudioWin();
+  g_pAudioEngine->Init();
+
+  // instead of loading audio synchronously, we'll use a separate thread
+  // while this main thread could render an animated "Loading" image.
+
+  // the "load thread" will always exist throughout the life of the app,
+  // but can be suspended when we don't need it,
+  // so the OS scheduler won't uneccessarily context-switch to it.
+  loadThreadData = {};
+  g_pLoadThread = ThreadFactory::Create(&loadThreadData);
+  g_pLoadThread->Start();
+
+  // queue up the stuff that will be loaded in the load thread.
+  // we call these "WorkItems"
+  WorkItemLoadAudio* pLoadOgg = new WorkItemLoadAudio(
+      g_pAudioEngine,
+      _X("music/Kefka - NinjaGaiden - Evading the Enemy-loop.ogg"),
+      AudioCategory::Music, AudioFormat::Ogg, 18060);
+
+  // WorkItemLoadAudio* pLoadOgg = new WorkItemLoadAudio(
+  //     g_pAudioEngine, _X("003 - Grandpa's Theme-loop.ogg"),
+  //     AudioCategory::Music, AudioFormat::Ogg);
+
+  WorkItemLoadAudio* pLoadJumpSFX =
+      new WorkItemLoadAudio(g_pAudioEngine, _X("sound/jump001.ogg"),
+                            AudioCategory::Sound, AudioFormat::Ogg, 0, 3);
+
+  g_pLoadThread->EnqueueWorkItem(pLoadOgg);
+  g_pLoadThread->EnqueueWorkItem(pLoadJumpSFX);
+
+  // TODO: this should run in our game loop,
+  //       since it has to show animation.
+
+  // Wait for all work items (audio files) to finish loading.
+  // We poll here instead of using a wait-function,
+  // so we may render an animated "Loading" image.
+  while (!g_pLoadThread->IsAllItemsProcessed()) {
+    // Probably don't need to do a full-blown busy-wait.
+    // Our Loading animation can still move.
+    Sleep(100);
+
+    // TODO: render Loading animation here
+  }
+  // TODO: Instead of clearing the processed items like this,
+  //       maybe we can use shared_ptrs within the LoadThread instead?
+  //       Although, we still need to get the handle like below. hmm
+  g_pLoadThread->ClearProcessedItems();
+
+  // cache the audio engine's sound handle, which we later use
+  // to play/pause/stop/etc the sound
+  oggFile = pLoadOgg->GetHandleIfDoneProcessing();
+  jumpSFX = pLoadJumpSFX->GetHandleIfDoneProcessing();
+
+  // the work items are not needed anymore
+  delete pLoadOgg;
+  pLoadOgg = nullptr;
+  delete pLoadJumpSFX;
+  pLoadJumpSFX = nullptr;
 
   return true;
 }
@@ -109,6 +215,7 @@ void GameThread::PostQuitMessageWithPossibleError(const xstring& error) {
   // RunOnMainThread runs synchronously
   threadRunner_.RunOnMainThread([&window, error]() {
     if (!error.empty()) {
+      // TODO: use SimpleMessageBox::Show instead, but pass the HWnd (or window obj)
       MessageBoxW(window.GetHWnd(), error.c_str(), L"ERROR",
                   MB_ICONERROR | MB_OK);
     }
@@ -121,6 +228,26 @@ bool GameThread::OnShutdown() {
 
   pThread_->Stop();
   pThread_->Join();
+
+  if (g_pLoadThread) {
+    g_pLoadThread->Stop();
+    g_pLoadThread->Join();
+    delete g_pLoadThread;
+    g_pLoadThread = nullptr;
+  }
+
+  if (g_pAudioEngine) {
+    g_pAudioEngine->Uninit();
+    delete g_pAudioEngine;
+    g_pAudioEngine = nullptr;
+  }
+
+  if (g_pGraphicsEngine) {
+    g_pGraphicsEngine->Uninit();
+    delete g_pGraphicsEngine;
+    g_pGraphicsEngine = nullptr;
+  }
+
   return true;
 }
 
