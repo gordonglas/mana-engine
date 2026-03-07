@@ -10,9 +10,9 @@ namespace Mana {
 // the SynchronizedEvent object, although we can usually tell this by fields
 // that are set to specific values within it's InputAction fields anyway.
 enum class SynchronizedEventType {
-  Unknown,
-  Input,
-  InputDeviceChange,
+  Unknown = 0,
+  Input = 1,
+  InputDeviceChange = 2,
 };
 
 // events that are sent across the thread boundary

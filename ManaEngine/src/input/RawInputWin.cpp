@@ -75,7 +75,7 @@ bool RawInputWin::UnregisterDevices() {
 // TODO: make sure the above comment's logic is consistent with
 //       other forms of input devices, such as XInput.
 bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
-  UINT dataSize;
+  UINT dataSize{};
   if (GetRawInputData(hRawInput, RID_INPUT, nullptr, &dataSize,
                       sizeof(RAWINPUTHEADER)) != 0) {
     return false;
@@ -83,6 +83,7 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
 
   if (dataSize == 0)
     return false;
+
   if (dataSize > rawInputSizeBytes_) {
     // this is ok, just want to make sure it doesn't happen often.
     // if it does happen often, adjust initial value for rawInputSizeBytes_
@@ -106,6 +107,7 @@ bool RawInputWin::OnRawInput(HRAWINPUT hRawInput) {
   // --- keyboard -------------------------------------------------
   if (input->header.dwType == RIM_TYPEKEYBOARD) {
 
+    // https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#scan-codes
 #ifndef NDEBUG
     wchar_t prefix[80];
     prefix[0] = L'\0';

@@ -171,10 +171,27 @@ bool GameThread::OnRunGameLoop() {
     if (!g_pEventMan->GetSyncQueue().Empty_NoLock()) {
       g_pEventMan->GetSyncQueue().PopAll(syncEvents);
 
-      if (syncEvents.size() > 1) {
-        OutputDebugStringW((std::wstring(L"game-loop syncEvents: ") +
+      if (syncEvents.size() > 0) {
+        OutputDebugStringW((std::wstring(L"game-thread syncEvents: ") +
                             std::to_wstring(syncEvents.size()) + L"\n")
                                .c_str());
+
+        for (SynchronizedEvent& event : syncEvents) {
+          if (event.syncEventType == (U8)SynchronizedEventType::Input &&
+              event.inputAction.deviceType == (U8)InputDeviceType::Keyboard) {
+            switch (event.inputAction.virtualKey) {
+              case VK_UP: {
+                if (event.inputAction.flags & INPUTACTION_FLAG_RELEASE) {
+                  OutputDebugStringW(L"game-thread VK_UP release\n");
+                  // TODO: HERE!!! play our music file!!!
+                  g_pAudioEngine->Play(oggFile, AudioBase::LOOP_INFINITE);
+                } else {
+                  OutputDebugStringW(L"game-thread VK_UP press\n");
+                }
+              } break;
+            }
+          }
+        }
       }
     }
 

@@ -192,9 +192,12 @@ LRESULT CALLBACK WndProc(HWND hWnd,
                          UINT message,
                          WPARAM wParam,
                          LPARAM lParam) {
+  // TODO: Most keys/events should be mapped by the InputEngine,
+  //       and sent to the GameThread via EventManager.
   switch (message) {
     case WM_MOUSEMOVE: {
-      ((Mana::InputWin*)Mana::g_pInputEngine)->OnMouseMove(wParam, lParam);
+      // TODO: uncomment
+      //((Mana::InputWin*)Mana::g_pInputEngine)->OnMouseMove(wParam, lParam);
     } break;
     case WM_MOUSEWHEEL: {
       // TODO: implement

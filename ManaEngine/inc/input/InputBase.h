@@ -30,9 +30,9 @@ class InputBase {
 };
 
 enum class InputDeviceType {
-  Unknown,
-  Keyboard,
-  Mouse,
+  Unknown = 0,
+  Keyboard = 1,
+  Mouse = 2,
   //Gamepad,
 };
 
@@ -56,6 +56,7 @@ struct InputAction {
   U16 flags;
   // RAWINPUT Keyboard MakeCode on Windows (without the E0 or E1 prefix)
   // https://kbdlayout.info/kbdusx/scancodes
+  // https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#scan-codes
   U16 scanCode;
 
   U8 deviceType;   // InputDeviceType
